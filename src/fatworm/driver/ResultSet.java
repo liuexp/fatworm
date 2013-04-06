@@ -10,7 +10,6 @@ import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
-import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -22,10 +21,16 @@ import java.util.Calendar;
 import java.util.Map;
 
 
-public class ResultSet implements java.sql.ResultSet {
+public abstract class ResultSet implements java.sql.ResultSet {
 
 	public ResultSet() {
 
+	}
+
+	@Override
+	public boolean wasNull() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
@@ -36,24 +41,6 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-
-		return false;
-	}
-
-	@Override
-	public boolean next() throws SQLException {
-
-		return false;
-	}
-
-	@Override
-	public void close() throws SQLException {
-
-		
-	}
-
-	@Override
-	public boolean wasNull() throws SQLException {
 
 		return false;
 	}
@@ -271,12 +258,6 @@ public class ResultSet implements java.sql.ResultSet {
 	}
 
 	@Override
-	public ResultSetMetaData getMetaData() throws SQLException {
-
-		return null;
-	}
-
-	@Override
 	public Object getObject(int columnIndex) throws SQLException {
 
 		return null;
@@ -316,12 +297,6 @@ public class ResultSet implements java.sql.ResultSet {
 	public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
 
 		return null;
-	}
-
-	@Override
-	public boolean isBeforeFirst() throws SQLException {
-
-		return false;
 	}
 
 	@Override
@@ -729,13 +704,6 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public Statement getStatement() throws SQLException {
-
-		return null;
-	}
-
-	@Override
-	public Object getObject(int columnIndex, Map<String, Class<?>> map)
-			throws SQLException {
 
 		return null;
 	}

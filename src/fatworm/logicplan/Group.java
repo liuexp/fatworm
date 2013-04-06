@@ -4,23 +4,22 @@ import org.antlr.runtime.tree.Tree;
 
 import fatworm.driver.ResultSet;
 
+public class Group extends Node {
 
-public class Select extends Node {
 	public Node src;
-
-	public Tree pred;
-	public Select(Node src, Tree pred) {
+	public String by;
+	public Tree having;
+	public Tree func;
+	public Group(Node src, Tree func, String by, Tree having) {
 		super(null);
 		this.src = src;
-		this.pred = pred;
+		this.by = by;
+		this.having = having;
+		this.func = func;
 		src.parent = this;
 	}
-	
-	@Override
-	public String toString(){
-		return "select (from="+src.toString()+", where="+pred.toStringTree()+")";
-	}
 
+	//TODO: Memory GroupBy and disk group by
 	@Override
 	public ResultSet eval() {
 		// TODO Auto-generated method stub
