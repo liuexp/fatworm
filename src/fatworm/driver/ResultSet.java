@@ -10,6 +10,7 @@ import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
+import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -20,10 +21,48 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import fatworm.logicplan.Node;
 
-public abstract class ResultSet implements java.sql.ResultSet {
+
+public class ResultSet implements java.sql.ResultSet {
 
 	public ResultSet() {
+	}
+
+	public ResultSet(Node x) throws SQLException {
+		if(!x.hasEval)throw new SQLException("not yet executed!");
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean next() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void close() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ResultSetMetaData getMetaData() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isBeforeFirst() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Object getObject(int columnIndex, Map<String, Class<?>> map)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

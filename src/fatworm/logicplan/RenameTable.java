@@ -2,16 +2,17 @@ package fatworm.logicplan;
 
 import fatworm.driver.Scan;
 
-public class Distinct extends Node {
+public class RenameTable extends Node {
 
 	public Node src;
-	public Distinct(Node src) {
+	String alias;
+	public RenameTable(Node src, String alias) {
 		super(null);
 		this.src = src;
-		src.parent = this;
+		this.alias = alias;
+		this.src.parent = this;
 	}
 
-	// TODO memory distinct and disk distinct
 	@Override
 	public Scan eval() {
 		// TODO Auto-generated method stub

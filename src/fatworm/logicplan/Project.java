@@ -1,17 +1,21 @@
 package fatworm.logicplan;
 
+import org.antlr.runtime.tree.Tree;
+
 import fatworm.driver.Scan;
 
-public class Distinct extends Node {
+public class Project extends Node {
+	
+	Node src;
+	Tree names;
 
-	public Node src;
-	public Distinct(Node src) {
+	public Project(Node src, Tree names) {
 		super(null);
 		this.src = src;
+		this.names = names;
 		src.parent = this;
 	}
 
-	// TODO memory distinct and disk distinct
 	@Override
 	public Scan eval() {
 		// TODO Auto-generated method stub

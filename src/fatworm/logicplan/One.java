@@ -1,16 +1,15 @@
 package fatworm.logicplan;
 
-import fatworm.driver.ResultSet;
+import fatworm.driver.Scan;
 
 public class One extends Node {
 
-	public One(Node parent) {
-		super(parent);
-		// TODO Auto-generated constructor stub
+	public One() {
+		super(null);
 	}
 
 	@Override
-	public ResultSet eval() {
+	public Scan eval() {
 		// TODO Auto-generated method stub
 		return null;
 	}

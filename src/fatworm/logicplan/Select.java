@@ -2,7 +2,7 @@ package fatworm.logicplan;
 
 import org.antlr.runtime.tree.Tree;
 
-import fatworm.driver.ResultSet;
+import fatworm.driver.Scan;
 
 
 public class Select extends Node {
@@ -22,7 +22,7 @@ public class Select extends Node {
 	}
 
 	@Override
-	public ResultSet eval() {
+	public Scan eval() {
 		// TODO Auto-generated method stub
 		return null;
 	}

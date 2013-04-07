@@ -2,7 +2,7 @@ package fatworm.logicplan;
 
 import org.antlr.runtime.tree.Tree;
 
-import fatworm.driver.ResultSet;
+import fatworm.driver.Scan;
 
 public class Group extends Node {
 
@@ -21,7 +21,7 @@ public class Group extends Node {
 
 	//TODO: Memory GroupBy and disk group by
 	@Override
-	public ResultSet eval() {
+	public Scan eval() {
 		// TODO Auto-generated method stub
 		return null;
 	}

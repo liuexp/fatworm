@@ -2,7 +2,7 @@ package fatworm.logicplan;
 
 import java.util.List;
 
-import fatworm.driver.ResultSet;
+import fatworm.driver.Scan;
 
 public class Rename extends Node {
 	
@@ -22,7 +22,7 @@ public class Rename extends Node {
 	}
 	
 	@Override
-	public ResultSet eval() {
+	public Scan eval() {
 		// TODO Auto-generated method stub
 		return null;
 	}

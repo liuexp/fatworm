@@ -1,14 +1,16 @@
 package fatworm.logicplan;
 
-import fatworm.driver.ResultSet;
+import fatworm.driver.Scan;
 
 public abstract class Node {
 
 	public Node parent;
+	public boolean hasEval;
 	public Node(Node parent) {
 		this.parent = parent;
+		hasEval = false;
 	}
 	
-	abstract public ResultSet eval();
+	abstract public Scan eval();
 
 }
