@@ -4,7 +4,6 @@ import org.antlr.runtime.tree.Tree;
 
 import fatworm.driver.Scan;
 
-
 public class Select extends Node {
 	public Node src;
 
