@@ -3,7 +3,6 @@ package fatworm.logicplan;
 import java.util.List;
 
 import fatworm.driver.Scan;
-
 public class Rename extends Node {
 	
 	public List<String> as;
