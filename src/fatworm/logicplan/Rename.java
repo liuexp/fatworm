@@ -1,26 +1,26 @@
 package fatworm.logicplan;
 
-import org.antlr.runtime.tree.Tree;
+import java.util.List;
 
 import fatworm.driver.ResultSet;
 
-
-public class Select extends Node {
+public class Rename extends Node {
+	
+	public List<String> as;
 	public Node src;
 
-	public Tree pred;
-	public Select(Node src, Tree pred) {
+	public Rename(Node src, List<String> as) {
 		super(null);
 		this.src = src;
-		this.pred = pred;
+		this.as = as;
 		src.parent = this;
 	}
-	
+
 	@Override
 	public String toString(){
-		return "select (from="+src.toString()+", where="+pred.toStringTree()+")";
+		return "rename (from="+src.toString()+")";
 	}
-
+	
 	@Override
 	public ResultSet eval() {
 		// TODO Auto-generated method stub
