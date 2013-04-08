@@ -21,7 +21,11 @@ public class Util {
 	}
 
 	public static Expr getExpr(Tree t) {
-		// TODO Auto-generated method stub
+		switch(t.getType()){
+		case FatwormParser.SELECT:
+		case FatwormParser.SELECT_DISTINCT:
+			
+		}
 		return null;
 	}
 
