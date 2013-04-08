@@ -1,15 +1,16 @@
 package fatworm.logicplan;
 
-import org.antlr.runtime.tree.Tree;
+import java.util.List;
 
+import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
 
 public class Project extends Node {
 	
 	Node src;
-	Tree names;
+	List<Expr> names;
 
-	public Project(Node src, Tree names) {
+	public Project(Node src, List<Expr> names) {
 		super(null);
 		this.src = src;
 		this.names = names;

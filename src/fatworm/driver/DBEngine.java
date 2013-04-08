@@ -29,9 +29,13 @@ import static fatworm.parser.FatwormParser.USE_DATABASE;
 import fatworm.absyn.*;
 import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
+import fatworm.logicplan.Group;
 import fatworm.logicplan.Join;
 import fatworm.logicplan.Node;
 import fatworm.logicplan.One;
+import fatworm.logicplan.Order;
+import fatworm.logicplan.Project;
+import fatworm.logicplan.Rename;
 import fatworm.logicplan.RenameTable;
 import fatworm.logicplan.Select;
 import fatworm.parser.FatwormLexer;
@@ -39,7 +43,8 @@ import fatworm.parser.FatwormParser;
 import fatworm.util.Traverse;
 import fatworm.util.Util;
 
-
+// It's true that byte code is much easier for (low-level) optimization, e.g. instruction re-order/elimination
+// but a direct interpreter is much easier to write.
 public class DBEngine {
 
 	public DBEngine() {
@@ -64,9 +69,12 @@ public class DBEngine {
 	}
 
 	private static Node transSelect(BaseTree t) {
-		// TODO
+		// Note: Group can't do projection at the same time as order might need those abandoned fields.
+		//			Rename must go after group
+		//			order must go after rename
 		// Plan order:
-		// Distinct $ Order $ Rename $ Group $ Select $ source
+		// hasAggr:		Distinct $ Project $ Order $ Rename $ Group $ Select $ source
+		// !hasAggr:	Distinct $ Project $ Order $ Rename $ Select $ source
 		Node ret=null,src=null;
 		Expr pred=null;
 		Expr having=null;
@@ -74,6 +82,7 @@ public class DBEngine {
 		
 		List<Integer> orderType = new ArrayList<Integer>();
 		List<String> orderField = new ArrayList<String>();
+		boolean hasOrder = false;
 		
 		// extract FROM, WHERE, GROUPBY, HAVING, ORDERBY first
 		for(Object x : t.getChildren()){
@@ -101,6 +110,7 @@ public class DBEngine {
 					orderField.add(zz.getType() == FatwormParser.DESC||zz.getType() == FatwormParser.ASC?
 							Util.getAttr(zz.getChild(0)):
 								Util.getAttr(zz));
+					hasOrder = true;
 				}
 				break;
 			}
@@ -110,8 +120,9 @@ public class DBEngine {
 		ret = src;
 		if(pred != null)ret = new Select(src, pred);
 		boolean hasAggr = !(groupBy == null&&having == null);
+		boolean hasRename = false;
 		
-		// next do projection
+		// next prepare projection and re-check global aggregation
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		for(Object x : t.getChildren()){
@@ -123,6 +134,7 @@ public class DBEngine {
 			if(y.getType() == FatwormParser.AS){
 				expr.add(Util.getExpr(y.getChild(0)));
 				alias.add(y.getChild(1).getText());
+				hasRename = true;
 			}else{
 				Expr tmp = Util.getExpr(y);
 				expr.add(tmp);
@@ -131,13 +143,17 @@ public class DBEngine {
 			hasAggr |= Util.findAggr(y);
 		}
 		
-		if(!alias.isEmpty()){
-			if(!hasAggr){
-				
-			}
-		}
+		if(hasAggr)
+			ret = new Group(ret, expr, groupBy, having);
+		if(hasRename)
+			ret = new Rename(ret, alias);
+		if(hasOrder)
+			ret = new Order(ret, orderField, orderType);
+		if(!expr.isEmpty()) //hasProject
+			ret = new Project(ret, expr);
+		if(t.getType() == SELECT_DISTINCT) //hasDistinct
+			ret = new Distinct(ret);
 		
-		if(t.getType() == SELECT_DISTINCT)ret = new Distinct(ret);
 		return ret;
 	}
 
