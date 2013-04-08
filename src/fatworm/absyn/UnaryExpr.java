@@ -1,5 +1,9 @@
 package fatworm.absyn;
 
+import fatworm.field.Field;
+import fatworm.util.Env;
+
+//FIXME Is this needed at all
 
 public class UnaryExpr extends Expr {
 	
@@ -11,6 +15,18 @@ public class UnaryExpr extends Expr {
 		this.expr = expr;
 		this.size=expr.size;
 		depth=expr.depth;
+	}
+
+	@Override
+	public boolean evalPred(Env env) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Field eval(Env env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
