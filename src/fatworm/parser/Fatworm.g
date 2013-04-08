@@ -26,8 +26,8 @@ tokens {
   NOT_EXISTS;
 }
 
-@header        { package parser; }
-@lexer::header { package parser; }
+@header        { package fatworm.parser; }
+@lexer::header { package fatworm.parser; }
 
 statement
   : database_statement
@@ -115,18 +115,14 @@ index_statement
   ;
 
 select_statement
-  : SELECT select_expr (',' select_expr)* select_suffix*
-    -> ^(SELECT select_expr* select_suffix*)
-  | SELECT DISTINCT select_expr (',' select_expr)* select_suffix*
-    -> ^(SELECT_DISTINCT select_expr* select_suffix*)
+  : SELECT select_expr (',' select_expr)* select_suffix?
+    -> ^(SELECT select_expr* select_suffix?)
+  | SELECT DISTINCT select_expr (',' select_expr)* select_suffix?
+    -> ^(SELECT_DISTINCT select_expr* select_suffix?)
   ;
 
 select_suffix
-  : from_clause
-  | where_clause
-  | group_by_clause
-  | having_clause
-  | order_by_clause
+  : from_clause where_clause? group_by_clause? having_clause? order_by_clause?
   ;
 
 from_clause
@@ -229,6 +225,7 @@ primary
   | value cop ANY^ '('! subquery ')'!
   | value cop ALL^ '('! subquery ')'!
   | '('! bool_expr ')'!
+  | const_value
   ;
 
 cop

@@ -1,5 +1,5 @@
-// $ANTLR 3.5 Fatworm.g 2013-03-27 08:58:15
-package fatworm.parser; 
+// $ANTLR 3.5 fatworm/parser/Fatworm.g 2013-04-07 20:02:28
+ package fatworm.parser; 
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -139,15 +139,15 @@ public class FatwormLexer extends Lexer {
 	public FatwormLexer(CharStream input, RecognizerSharedState state) {
 		super(input,state);
 	}
-	@Override public String getGrammarFileName() { return "Fatworm.g"; }
+	@Override public String getGrammarFileName() { return "fatworm/parser/Fatworm.g"; }
 
 	// $ANTLR start "T__105"
 	public final void mT__105() throws RecognitionException {
 		try {
 			int _type = T__105;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:4:8: ( '%' )
-			// Fatworm.g:4:10: '%'
+			// fatworm/parser/Fatworm.g:4:8: ( '%' )
+			// fatworm/parser/Fatworm.g:4:10: '%'
 			{
 			match('%'); 
 			}
@@ -166,8 +166,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__106;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:5:8: ( '(' )
-			// Fatworm.g:5:10: '('
+			// fatworm/parser/Fatworm.g:5:8: ( '(' )
+			// fatworm/parser/Fatworm.g:5:10: '('
 			{
 			match('('); 
 			}
@@ -186,8 +186,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__107;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:6:8: ( ')' )
-			// Fatworm.g:6:10: ')'
+			// fatworm/parser/Fatworm.g:6:8: ( ')' )
+			// fatworm/parser/Fatworm.g:6:10: ')'
 			{
 			match(')'); 
 			}
@@ -206,8 +206,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__108;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:7:8: ( '*' )
-			// Fatworm.g:7:10: '*'
+			// fatworm/parser/Fatworm.g:7:8: ( '*' )
+			// fatworm/parser/Fatworm.g:7:10: '*'
 			{
 			match('*'); 
 			}
@@ -226,8 +226,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__109;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:8:8: ( '+' )
-			// Fatworm.g:8:10: '+'
+			// fatworm/parser/Fatworm.g:8:8: ( '+' )
+			// fatworm/parser/Fatworm.g:8:10: '+'
 			{
 			match('+'); 
 			}
@@ -246,8 +246,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__110;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:9:8: ( ',' )
-			// Fatworm.g:9:10: ','
+			// fatworm/parser/Fatworm.g:9:8: ( ',' )
+			// fatworm/parser/Fatworm.g:9:10: ','
 			{
 			match(','); 
 			}
@@ -266,8 +266,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__111;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:10:8: ( '-' )
-			// Fatworm.g:10:10: '-'
+			// fatworm/parser/Fatworm.g:10:8: ( '-' )
+			// fatworm/parser/Fatworm.g:10:10: '-'
 			{
 			match('-'); 
 			}
@@ -286,8 +286,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__112;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:11:8: ( '.' )
-			// Fatworm.g:11:10: '.'
+			// fatworm/parser/Fatworm.g:11:8: ( '.' )
+			// fatworm/parser/Fatworm.g:11:10: '.'
 			{
 			match('.'); 
 			}
@@ -306,8 +306,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__113;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:12:8: ( '/' )
-			// Fatworm.g:12:10: '/'
+			// fatworm/parser/Fatworm.g:12:8: ( '/' )
+			// fatworm/parser/Fatworm.g:12:10: '/'
 			{
 			match('/'); 
 			}
@@ -326,8 +326,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__114;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:13:8: ( '<' )
-			// Fatworm.g:13:10: '<'
+			// fatworm/parser/Fatworm.g:13:8: ( '<' )
+			// fatworm/parser/Fatworm.g:13:10: '<'
 			{
 			match('<'); 
 			}
@@ -346,8 +346,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__115;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:14:8: ( '<=' )
-			// Fatworm.g:14:10: '<='
+			// fatworm/parser/Fatworm.g:14:8: ( '<=' )
+			// fatworm/parser/Fatworm.g:14:10: '<='
 			{
 			match("<="); 
 
@@ -367,8 +367,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__116;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:15:8: ( '<>' )
-			// Fatworm.g:15:10: '<>'
+			// fatworm/parser/Fatworm.g:15:8: ( '<>' )
+			// fatworm/parser/Fatworm.g:15:10: '<>'
 			{
 			match("<>"); 
 
@@ -388,8 +388,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__117;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:16:8: ( '=' )
-			// Fatworm.g:16:10: '='
+			// fatworm/parser/Fatworm.g:16:8: ( '=' )
+			// fatworm/parser/Fatworm.g:16:10: '='
 			{
 			match('='); 
 			}
@@ -408,8 +408,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__118;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:17:8: ( '>' )
-			// Fatworm.g:17:10: '>'
+			// fatworm/parser/Fatworm.g:17:8: ( '>' )
+			// fatworm/parser/Fatworm.g:17:10: '>'
 			{
 			match('>'); 
 			}
@@ -428,8 +428,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = T__119;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:18:8: ( '>=' )
-			// Fatworm.g:18:10: '>='
+			// fatworm/parser/Fatworm.g:18:8: ( '>=' )
+			// fatworm/parser/Fatworm.g:18:10: '>='
 			{
 			match(">="); 
 
@@ -449,8 +449,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = SELECT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:267:8: ( S E L E C T )
-			// Fatworm.g:267:10: S E L E C T
+			// fatworm/parser/Fatworm.g:264:8: ( S E L E C T )
+			// fatworm/parser/Fatworm.g:264:10: S E L E C T
 			{
 			mS(); 
 
@@ -480,8 +480,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = CREATE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:268:8: ( C R E A T E )
-			// Fatworm.g:268:10: C R E A T E
+			// fatworm/parser/Fatworm.g:265:8: ( C R E A T E )
+			// fatworm/parser/Fatworm.g:265:10: C R E A T E
 			{
 			mC(); 
 
@@ -511,8 +511,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DATABASE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:269:10: ( D A T A B A S E )
-			// Fatworm.g:269:12: D A T A B A S E
+			// fatworm/parser/Fatworm.g:266:10: ( D A T A B A S E )
+			// fatworm/parser/Fatworm.g:266:12: D A T A B A S E
 			{
 			mD(); 
 
@@ -546,8 +546,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DROP;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:270:6: ( D R O P )
-			// Fatworm.g:270:8: D R O P
+			// fatworm/parser/Fatworm.g:267:6: ( D R O P )
+			// fatworm/parser/Fatworm.g:267:8: D R O P
 			{
 			mD(); 
 
@@ -573,8 +573,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = USE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:271:5: ( U S E )
-			// Fatworm.g:271:7: U S E
+			// fatworm/parser/Fatworm.g:268:5: ( U S E )
+			// fatworm/parser/Fatworm.g:268:7: U S E
 			{
 			mU(); 
 
@@ -598,8 +598,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = INDEX;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:272:7: ( I N D E X )
-			// Fatworm.g:272:9: I N D E X
+			// fatworm/parser/Fatworm.g:269:7: ( I N D E X )
+			// fatworm/parser/Fatworm.g:269:9: I N D E X
 			{
 			mI(); 
 
@@ -627,8 +627,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = TABLE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:273:7: ( T A B L E )
-			// Fatworm.g:273:9: T A B L E
+			// fatworm/parser/Fatworm.g:270:7: ( T A B L E )
+			// fatworm/parser/Fatworm.g:270:9: T A B L E
 			{
 			mT(); 
 
@@ -656,8 +656,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = PRIMARY;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:274:9: ( P R I M A R Y )
-			// Fatworm.g:274:11: P R I M A R Y
+			// fatworm/parser/Fatworm.g:271:9: ( P R I M A R Y )
+			// fatworm/parser/Fatworm.g:271:11: P R I M A R Y
 			{
 			mP(); 
 
@@ -689,8 +689,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = KEY;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:275:5: ( K E Y )
-			// Fatworm.g:275:7: K E Y
+			// fatworm/parser/Fatworm.g:272:5: ( K E Y )
+			// fatworm/parser/Fatworm.g:272:7: K E Y
 			{
 			mK(); 
 
@@ -714,8 +714,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = NOT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:276:5: ( N O T )
-			// Fatworm.g:276:7: N O T
+			// fatworm/parser/Fatworm.g:273:5: ( N O T )
+			// fatworm/parser/Fatworm.g:273:7: N O T
 			{
 			mN(); 
 
@@ -739,8 +739,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = NULL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:277:6: ( N U L L )
-			// Fatworm.g:277:8: N U L L
+			// fatworm/parser/Fatworm.g:274:6: ( N U L L )
+			// fatworm/parser/Fatworm.g:274:8: N U L L
 			{
 			mN(); 
 
@@ -766,8 +766,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DEFAULT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:278:9: ( D E F A U L T )
-			// Fatworm.g:278:11: D E F A U L T
+			// fatworm/parser/Fatworm.g:275:9: ( D E F A U L T )
+			// fatworm/parser/Fatworm.g:275:11: D E F A U L T
 			{
 			mD(); 
 
@@ -799,8 +799,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = AUTO_INCREMENT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:279:16: ( A U T O '_' I N C R E M E N T )
-			// Fatworm.g:279:18: A U T O '_' I N C R E M E N T
+			// fatworm/parser/Fatworm.g:276:16: ( A U T O '_' I N C R E M E N T )
+			// fatworm/parser/Fatworm.g:276:18: A U T O '_' I N C R E M E N T
 			{
 			mA(); 
 
@@ -845,8 +845,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = INT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:280:5: ( I N T )
-			// Fatworm.g:280:7: I N T
+			// fatworm/parser/Fatworm.g:277:5: ( I N T )
+			// fatworm/parser/Fatworm.g:277:7: I N T
 			{
 			mI(); 
 
@@ -870,8 +870,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = FLOAT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:281:7: ( F L O A T )
-			// Fatworm.g:281:9: F L O A T
+			// fatworm/parser/Fatworm.g:278:7: ( F L O A T )
+			// fatworm/parser/Fatworm.g:278:9: F L O A T
 			{
 			mF(); 
 
@@ -899,8 +899,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = CHAR;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:282:6: ( C H A R )
-			// Fatworm.g:282:8: C H A R
+			// fatworm/parser/Fatworm.g:279:6: ( C H A R )
+			// fatworm/parser/Fatworm.g:279:8: C H A R
 			{
 			mC(); 
 
@@ -926,8 +926,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DATETIME;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:283:10: ( D A T E T I M E )
-			// Fatworm.g:283:12: D A T E T I M E
+			// fatworm/parser/Fatworm.g:280:10: ( D A T E T I M E )
+			// fatworm/parser/Fatworm.g:280:12: D A T E T I M E
 			{
 			mD(); 
 
@@ -961,8 +961,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = BOOLEAN;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:284:9: ( B O O L E A N )
-			// Fatworm.g:284:11: B O O L E A N
+			// fatworm/parser/Fatworm.g:281:9: ( B O O L E A N )
+			// fatworm/parser/Fatworm.g:281:11: B O O L E A N
 			{
 			mB(); 
 
@@ -994,8 +994,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DECIMAL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:285:9: ( D E C I M A L )
-			// Fatworm.g:285:11: D E C I M A L
+			// fatworm/parser/Fatworm.g:282:9: ( D E C I M A L )
+			// fatworm/parser/Fatworm.g:282:11: D E C I M A L
 			{
 			mD(); 
 
@@ -1027,8 +1027,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = TIMESTAMP;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:286:11: ( T I M E S T A M P )
-			// Fatworm.g:286:13: T I M E S T A M P
+			// fatworm/parser/Fatworm.g:283:11: ( T I M E S T A M P )
+			// fatworm/parser/Fatworm.g:283:13: T I M E S T A M P
 			{
 			mT(); 
 
@@ -1064,8 +1064,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = VARCHAR;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:287:9: ( V A R C H A R )
-			// Fatworm.g:287:11: V A R C H A R
+			// fatworm/parser/Fatworm.g:284:9: ( V A R C H A R )
+			// fatworm/parser/Fatworm.g:284:11: V A R C H A R
 			{
 			mV(); 
 
@@ -1097,8 +1097,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = INSERT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:288:8: ( I N S E R T )
-			// Fatworm.g:288:10: I N S E R T
+			// fatworm/parser/Fatworm.g:285:8: ( I N S E R T )
+			// fatworm/parser/Fatworm.g:285:10: I N S E R T
 			{
 			mI(); 
 
@@ -1128,8 +1128,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = INTO;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:289:6: ( I N T O )
-			// Fatworm.g:289:8: I N T O
+			// fatworm/parser/Fatworm.g:286:6: ( I N T O )
+			// fatworm/parser/Fatworm.g:286:8: I N T O
 			{
 			mI(); 
 
@@ -1155,8 +1155,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = VALUES;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:290:8: ( V A L U E S )
-			// Fatworm.g:290:10: V A L U E S
+			// fatworm/parser/Fatworm.g:287:8: ( V A L U E S )
+			// fatworm/parser/Fatworm.g:287:10: V A L U E S
 			{
 			mV(); 
 
@@ -1186,8 +1186,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DELETE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:291:8: ( D E L E T E )
-			// Fatworm.g:291:10: D E L E T E
+			// fatworm/parser/Fatworm.g:288:8: ( D E L E T E )
+			// fatworm/parser/Fatworm.g:288:10: D E L E T E
 			{
 			mD(); 
 
@@ -1217,8 +1217,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = FROM;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:292:6: ( F R O M )
-			// Fatworm.g:292:8: F R O M
+			// fatworm/parser/Fatworm.g:289:6: ( F R O M )
+			// fatworm/parser/Fatworm.g:289:8: F R O M
 			{
 			mF(); 
 
@@ -1244,8 +1244,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = WHERE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:293:7: ( W H E R E )
-			// Fatworm.g:293:9: W H E R E
+			// fatworm/parser/Fatworm.g:290:7: ( W H E R E )
+			// fatworm/parser/Fatworm.g:290:9: W H E R E
 			{
 			mW(); 
 
@@ -1273,8 +1273,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = UPDATE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:294:8: ( U P D A T E )
-			// Fatworm.g:294:10: U P D A T E
+			// fatworm/parser/Fatworm.g:291:8: ( U P D A T E )
+			// fatworm/parser/Fatworm.g:291:10: U P D A T E
 			{
 			mU(); 
 
@@ -1304,8 +1304,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = SET;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:295:5: ( S E T )
-			// Fatworm.g:295:7: S E T
+			// fatworm/parser/Fatworm.g:292:5: ( S E T )
+			// fatworm/parser/Fatworm.g:292:7: S E T
 			{
 			mS(); 
 
@@ -1329,8 +1329,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = UNIQUE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:296:8: ( U N I Q U E )
-			// Fatworm.g:296:10: U N I Q U E
+			// fatworm/parser/Fatworm.g:293:8: ( U N I Q U E )
+			// fatworm/parser/Fatworm.g:293:10: U N I Q U E
 			{
 			mU(); 
 
@@ -1360,8 +1360,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ON;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:297:4: ( O N )
-			// Fatworm.g:297:6: O N
+			// fatworm/parser/Fatworm.g:294:4: ( O N )
+			// fatworm/parser/Fatworm.g:294:6: O N
 			{
 			mO(); 
 
@@ -1383,8 +1383,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DISTINCT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:298:10: ( D I S T I N C T )
-			// Fatworm.g:298:12: D I S T I N C T
+			// fatworm/parser/Fatworm.g:295:10: ( D I S T I N C T )
+			// fatworm/parser/Fatworm.g:295:12: D I S T I N C T
 			{
 			mD(); 
 
@@ -1418,8 +1418,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = GROUP;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:299:7: ( G R O U P )
-			// Fatworm.g:299:9: G R O U P
+			// fatworm/parser/Fatworm.g:296:7: ( G R O U P )
+			// fatworm/parser/Fatworm.g:296:9: G R O U P
 			{
 			mG(); 
 
@@ -1447,8 +1447,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = BY;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:300:4: ( B Y )
-			// Fatworm.g:300:6: B Y
+			// fatworm/parser/Fatworm.g:297:4: ( B Y )
+			// fatworm/parser/Fatworm.g:297:6: B Y
 			{
 			mB(); 
 
@@ -1470,8 +1470,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = HAVING;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:301:8: ( H A V I N G )
-			// Fatworm.g:301:10: H A V I N G
+			// fatworm/parser/Fatworm.g:298:8: ( H A V I N G )
+			// fatworm/parser/Fatworm.g:298:10: H A V I N G
 			{
 			mH(); 
 
@@ -1501,8 +1501,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ORDER;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:302:7: ( O R D E R )
-			// Fatworm.g:302:9: O R D E R
+			// fatworm/parser/Fatworm.g:299:7: ( O R D E R )
+			// fatworm/parser/Fatworm.g:299:9: O R D E R
 			{
 			mO(); 
 
@@ -1530,8 +1530,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ASC;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:303:5: ( A S C )
-			// Fatworm.g:303:7: A S C
+			// fatworm/parser/Fatworm.g:300:5: ( A S C )
+			// fatworm/parser/Fatworm.g:300:7: A S C
 			{
 			mA(); 
 
@@ -1555,8 +1555,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = DESC;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:304:6: ( D E S C )
-			// Fatworm.g:304:8: D E S C
+			// fatworm/parser/Fatworm.g:301:6: ( D E S C )
+			// fatworm/parser/Fatworm.g:301:8: D E S C
 			{
 			mD(); 
 
@@ -1582,8 +1582,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = AS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:305:4: ( A S )
-			// Fatworm.g:305:6: A S
+			// fatworm/parser/Fatworm.g:302:4: ( A S )
+			// fatworm/parser/Fatworm.g:302:6: A S
 			{
 			mA(); 
 
@@ -1605,8 +1605,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = AVG;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:306:5: ( A V G )
-			// Fatworm.g:306:7: A V G
+			// fatworm/parser/Fatworm.g:303:5: ( A V G )
+			// fatworm/parser/Fatworm.g:303:7: A V G
 			{
 			mA(); 
 
@@ -1630,8 +1630,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = COUNT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:307:7: ( C O U N T )
-			// Fatworm.g:307:9: C O U N T
+			// fatworm/parser/Fatworm.g:304:7: ( C O U N T )
+			// fatworm/parser/Fatworm.g:304:9: C O U N T
 			{
 			mC(); 
 
@@ -1659,8 +1659,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = MIN;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:308:5: ( M I N )
-			// Fatworm.g:308:7: M I N
+			// fatworm/parser/Fatworm.g:305:5: ( M I N )
+			// fatworm/parser/Fatworm.g:305:7: M I N
 			{
 			mM(); 
 
@@ -1684,8 +1684,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = MAX;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:309:5: ( M A X )
-			// Fatworm.g:309:7: M A X
+			// fatworm/parser/Fatworm.g:306:5: ( M A X )
+			// fatworm/parser/Fatworm.g:306:7: M A X
 			{
 			mM(); 
 
@@ -1709,8 +1709,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = SUM;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:310:5: ( S U M )
-			// Fatworm.g:310:7: S U M
+			// fatworm/parser/Fatworm.g:307:5: ( S U M )
+			// fatworm/parser/Fatworm.g:307:7: S U M
 			{
 			mS(); 
 
@@ -1734,8 +1734,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = AND;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:311:5: ( A N D )
-			// Fatworm.g:311:7: A N D
+			// fatworm/parser/Fatworm.g:308:5: ( A N D )
+			// fatworm/parser/Fatworm.g:308:7: A N D
 			{
 			mA(); 
 
@@ -1759,8 +1759,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = OR;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:312:4: ( O R )
-			// Fatworm.g:312:6: O R
+			// fatworm/parser/Fatworm.g:309:4: ( O R )
+			// fatworm/parser/Fatworm.g:309:6: O R
 			{
 			mO(); 
 
@@ -1782,8 +1782,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = EXISTS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:313:8: ( E X I S T S )
-			// Fatworm.g:313:10: E X I S T S
+			// fatworm/parser/Fatworm.g:310:8: ( E X I S T S )
+			// fatworm/parser/Fatworm.g:310:10: E X I S T S
 			{
 			mE(); 
 
@@ -1813,8 +1813,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ANY;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:314:5: ( A N Y )
-			// Fatworm.g:314:7: A N Y
+			// fatworm/parser/Fatworm.g:311:5: ( A N Y )
+			// fatworm/parser/Fatworm.g:311:7: A N Y
 			{
 			mA(); 
 
@@ -1838,8 +1838,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = IN;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:315:4: ( I N )
-			// Fatworm.g:315:6: I N
+			// fatworm/parser/Fatworm.g:312:4: ( I N )
+			// fatworm/parser/Fatworm.g:312:6: I N
 			{
 			mI(); 
 
@@ -1861,8 +1861,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ALL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:316:5: ( A L L )
-			// Fatworm.g:316:7: A L L
+			// fatworm/parser/Fatworm.g:313:5: ( A L L )
+			// fatworm/parser/Fatworm.g:313:7: A L L
 			{
 			mA(); 
 
@@ -1886,8 +1886,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = TRUE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:317:6: ( T R U E )
-			// Fatworm.g:317:8: T R U E
+			// fatworm/parser/Fatworm.g:314:6: ( T R U E )
+			// fatworm/parser/Fatworm.g:314:8: T R U E
 			{
 			mT(); 
 
@@ -1913,8 +1913,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = FALSE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:318:7: ( F A L S E )
-			// Fatworm.g:318:9: F A L S E
+			// fatworm/parser/Fatworm.g:315:7: ( F A L S E )
+			// fatworm/parser/Fatworm.g:315:9: F A L S E
 			{
 			mF(); 
 
@@ -1942,12 +1942,12 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = ID;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:320:3: ( LETTER ( LETTER | '0' .. '9' )* )
-			// Fatworm.g:320:5: LETTER ( LETTER | '0' .. '9' )*
+			// fatworm/parser/Fatworm.g:317:3: ( LETTER ( LETTER | '0' .. '9' )* )
+			// fatworm/parser/Fatworm.g:317:5: LETTER ( LETTER | '0' .. '9' )*
 			{
 			mLETTER(); 
 
-			// Fatworm.g:320:12: ( LETTER | '0' .. '9' )*
+			// fatworm/parser/Fatworm.g:317:12: ( LETTER | '0' .. '9' )*
 			loop1:
 			while (true) {
 				int alt1=2;
@@ -1958,7 +1958,7 @@ public class FatwormLexer extends Lexer {
 
 				switch (alt1) {
 				case 1 :
-					// Fatworm.g:
+					// fatworm/parser/Fatworm.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 						input.consume();
@@ -1992,11 +1992,11 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = STRING_LITERAL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:324:3: ( '\\'' (~ ( '\\\\' | '\\'' ) )* '\\'' )
-			// Fatworm.g:324:5: '\\'' (~ ( '\\\\' | '\\'' ) )* '\\''
+			// fatworm/parser/Fatworm.g:321:3: ( '\\'' (~ ( '\\\\' | '\\'' ) )* '\\'' )
+			// fatworm/parser/Fatworm.g:321:5: '\\'' (~ ( '\\\\' | '\\'' ) )* '\\''
 			{
 			match('\''); 
-			// Fatworm.g:324:10: (~ ( '\\\\' | '\\'' ) )*
+			// fatworm/parser/Fatworm.g:321:10: (~ ( '\\\\' | '\\'' ) )*
 			loop2:
 			while (true) {
 				int alt2=2;
@@ -2007,7 +2007,7 @@ public class FatwormLexer extends Lexer {
 
 				switch (alt2) {
 				case 1 :
-					// Fatworm.g:
+					// fatworm/parser/Fatworm.g:
 					{
 					if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
 						input.consume();
@@ -2042,10 +2042,10 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = INTEGER_LITERAL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:328:3: ( ( DIGIT )+ )
-			// Fatworm.g:328:5: ( DIGIT )+
+			// fatworm/parser/Fatworm.g:325:3: ( ( DIGIT )+ )
+			// fatworm/parser/Fatworm.g:325:5: ( DIGIT )+
 			{
-			// Fatworm.g:328:5: ( DIGIT )+
+			// fatworm/parser/Fatworm.g:325:5: ( DIGIT )+
 			int cnt3=0;
 			loop3:
 			while (true) {
@@ -2057,7 +2057,7 @@ public class FatwormLexer extends Lexer {
 
 				switch (alt3) {
 				case 1 :
-					// Fatworm.g:
+					// fatworm/parser/Fatworm.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 						input.consume();
@@ -2094,8 +2094,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = FLOAT_LITERAL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:332:3: ( INTEGER_LITERAL '.' INTEGER_LITERAL )
-			// Fatworm.g:332:5: INTEGER_LITERAL '.' INTEGER_LITERAL
+			// fatworm/parser/Fatworm.g:329:3: ( INTEGER_LITERAL '.' INTEGER_LITERAL )
+			// fatworm/parser/Fatworm.g:329:5: INTEGER_LITERAL '.' INTEGER_LITERAL
 			{
 			mINTEGER_LITERAL(); 
 
@@ -2118,8 +2118,8 @@ public class FatwormLexer extends Lexer {
 		try {
 			int _type = WS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Fatworm.g:335:3: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
-			// Fatworm.g:335:5: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
+			// fatworm/parser/Fatworm.g:332:3: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
+			// fatworm/parser/Fatworm.g:332:5: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
 			{
 			if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||(input.LA(1) >= '\f' && input.LA(1) <= '\r')||input.LA(1)==' ' ) {
 				input.consume();
@@ -2144,8 +2144,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "LETTER"
 	public final void mLETTER() throws RecognitionException {
 		try {
-			// Fatworm.g:341:3: ( 'a' .. 'z' | 'A' .. 'Z' | '_' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:338:3: ( 'a' .. 'z' | 'A' .. 'Z' | '_' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 				input.consume();
@@ -2167,8 +2167,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "DIGIT"
 	public final void mDIGIT() throws RecognitionException {
 		try {
-			// Fatworm.g:348:3: ( '0' .. '9' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:345:3: ( '0' .. '9' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 				input.consume();
@@ -2190,8 +2190,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "A"
 	public final void mA() throws RecognitionException {
 		try {
-			// Fatworm.g:350:12: ( 'a' | 'A' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:347:12: ( 'a' | 'A' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
 				input.consume();
@@ -2213,8 +2213,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "B"
 	public final void mB() throws RecognitionException {
 		try {
-			// Fatworm.g:351:12: ( 'b' | 'B' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:348:12: ( 'b' | 'B' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
 				input.consume();
@@ -2236,8 +2236,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "C"
 	public final void mC() throws RecognitionException {
 		try {
-			// Fatworm.g:352:12: ( 'c' | 'C' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:349:12: ( 'c' | 'C' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
 				input.consume();
@@ -2259,8 +2259,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "D"
 	public final void mD() throws RecognitionException {
 		try {
-			// Fatworm.g:353:12: ( 'd' | 'D' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:350:12: ( 'd' | 'D' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
 				input.consume();
@@ -2282,8 +2282,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "E"
 	public final void mE() throws RecognitionException {
 		try {
-			// Fatworm.g:354:12: ( 'e' | 'E' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:351:12: ( 'e' | 'E' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
 				input.consume();
@@ -2305,8 +2305,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "F"
 	public final void mF() throws RecognitionException {
 		try {
-			// Fatworm.g:355:12: ( 'f' | 'F' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:352:12: ( 'f' | 'F' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='F'||input.LA(1)=='f' ) {
 				input.consume();
@@ -2328,8 +2328,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "G"
 	public final void mG() throws RecognitionException {
 		try {
-			// Fatworm.g:356:12: ( 'g' | 'G' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:353:12: ( 'g' | 'G' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
 				input.consume();
@@ -2351,8 +2351,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "H"
 	public final void mH() throws RecognitionException {
 		try {
-			// Fatworm.g:357:12: ( 'h' | 'H' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:354:12: ( 'h' | 'H' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
 				input.consume();
@@ -2374,8 +2374,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "I"
 	public final void mI() throws RecognitionException {
 		try {
-			// Fatworm.g:358:12: ( 'i' | 'I' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:355:12: ( 'i' | 'I' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
 				input.consume();
@@ -2397,8 +2397,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "J"
 	public final void mJ() throws RecognitionException {
 		try {
-			// Fatworm.g:359:12: ( 'j' | 'J' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:356:12: ( 'j' | 'J' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='J'||input.LA(1)=='j' ) {
 				input.consume();
@@ -2420,8 +2420,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "K"
 	public final void mK() throws RecognitionException {
 		try {
-			// Fatworm.g:360:12: ( 'k' | 'K' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:357:12: ( 'k' | 'K' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
 				input.consume();
@@ -2443,8 +2443,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "L"
 	public final void mL() throws RecognitionException {
 		try {
-			// Fatworm.g:361:12: ( 'l' | 'L' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:358:12: ( 'l' | 'L' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
 				input.consume();
@@ -2466,8 +2466,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "M"
 	public final void mM() throws RecognitionException {
 		try {
-			// Fatworm.g:362:12: ( 'm' | 'M' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:359:12: ( 'm' | 'M' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
 				input.consume();
@@ -2489,8 +2489,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "N"
 	public final void mN() throws RecognitionException {
 		try {
-			// Fatworm.g:363:12: ( 'n' | 'N' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:360:12: ( 'n' | 'N' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
 				input.consume();
@@ -2512,8 +2512,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "O"
 	public final void mO() throws RecognitionException {
 		try {
-			// Fatworm.g:364:12: ( 'o' | 'O' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:361:12: ( 'o' | 'O' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
 				input.consume();
@@ -2535,8 +2535,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "P"
 	public final void mP() throws RecognitionException {
 		try {
-			// Fatworm.g:365:12: ( 'p' | 'P' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:362:12: ( 'p' | 'P' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
 				input.consume();
@@ -2558,8 +2558,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "Q"
 	public final void mQ() throws RecognitionException {
 		try {
-			// Fatworm.g:366:12: ( 'q' | 'Q' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:363:12: ( 'q' | 'Q' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='Q'||input.LA(1)=='q' ) {
 				input.consume();
@@ -2581,8 +2581,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "R"
 	public final void mR() throws RecognitionException {
 		try {
-			// Fatworm.g:367:12: ( 'r' | 'R' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:364:12: ( 'r' | 'R' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
 				input.consume();
@@ -2604,8 +2604,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "S"
 	public final void mS() throws RecognitionException {
 		try {
-			// Fatworm.g:368:12: ( 's' | 'S' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:365:12: ( 's' | 'S' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
 				input.consume();
@@ -2627,8 +2627,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "T"
 	public final void mT() throws RecognitionException {
 		try {
-			// Fatworm.g:369:12: ( 't' | 'T' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:366:12: ( 't' | 'T' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
 				input.consume();
@@ -2650,8 +2650,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "U"
 	public final void mU() throws RecognitionException {
 		try {
-			// Fatworm.g:370:12: ( 'u' | 'U' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:367:12: ( 'u' | 'U' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
 				input.consume();
@@ -2673,8 +2673,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "V"
 	public final void mV() throws RecognitionException {
 		try {
-			// Fatworm.g:371:12: ( 'v' | 'V' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:368:12: ( 'v' | 'V' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='V'||input.LA(1)=='v' ) {
 				input.consume();
@@ -2696,8 +2696,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "W"
 	public final void mW() throws RecognitionException {
 		try {
-			// Fatworm.g:372:12: ( 'w' | 'W' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:369:12: ( 'w' | 'W' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
 				input.consume();
@@ -2719,8 +2719,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "X"
 	public final void mX() throws RecognitionException {
 		try {
-			// Fatworm.g:373:12: ( 'x' | 'X' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:370:12: ( 'x' | 'X' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
 				input.consume();
@@ -2742,8 +2742,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "Y"
 	public final void mY() throws RecognitionException {
 		try {
-			// Fatworm.g:374:12: ( 'y' | 'Y' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:371:12: ( 'y' | 'Y' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
 				input.consume();
@@ -2765,8 +2765,8 @@ public class FatwormLexer extends Lexer {
 	// $ANTLR start "Z"
 	public final void mZ() throws RecognitionException {
 		try {
-			// Fatworm.g:375:12: ( 'z' | 'Z' )
-			// Fatworm.g:
+			// fatworm/parser/Fatworm.g:372:12: ( 'z' | 'Z' )
+			// fatworm/parser/Fatworm.g:
 			{
 			if ( input.LA(1)=='Z'||input.LA(1)=='z' ) {
 				input.consume();
@@ -2787,509 +2787,509 @@ public class FatwormLexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// Fatworm.g:1:8: ( T__105 | T__106 | T__107 | T__108 | T__109 | T__110 | T__111 | T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | SELECT | CREATE | DATABASE | DROP | USE | INDEX | TABLE | PRIMARY | KEY | NOT | NULL | DEFAULT | AUTO_INCREMENT | INT | FLOAT | CHAR | DATETIME | BOOLEAN | DECIMAL | TIMESTAMP | VARCHAR | INSERT | INTO | VALUES | DELETE | FROM | WHERE | UPDATE | SET | UNIQUE | ON | DISTINCT | GROUP | BY | HAVING | ORDER | ASC | DESC | AS | AVG | COUNT | MIN | MAX | SUM | AND | OR | EXISTS | ANY | IN | ALL | TRUE | FALSE | ID | STRING_LITERAL | INTEGER_LITERAL | FLOAT_LITERAL | WS )
+		// fatworm/parser/Fatworm.g:1:8: ( T__105 | T__106 | T__107 | T__108 | T__109 | T__110 | T__111 | T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | SELECT | CREATE | DATABASE | DROP | USE | INDEX | TABLE | PRIMARY | KEY | NOT | NULL | DEFAULT | AUTO_INCREMENT | INT | FLOAT | CHAR | DATETIME | BOOLEAN | DECIMAL | TIMESTAMP | VARCHAR | INSERT | INTO | VALUES | DELETE | FROM | WHERE | UPDATE | SET | UNIQUE | ON | DISTINCT | GROUP | BY | HAVING | ORDER | ASC | DESC | AS | AVG | COUNT | MIN | MAX | SUM | AND | OR | EXISTS | ANY | IN | ALL | TRUE | FALSE | ID | STRING_LITERAL | INTEGER_LITERAL | FLOAT_LITERAL | WS )
 		int alt4=72;
 		alt4 = dfa4.predict(input);
 		switch (alt4) {
 			case 1 :
-				// Fatworm.g:1:10: T__105
+				// fatworm/parser/Fatworm.g:1:10: T__105
 				{
 				mT__105(); 
 
 				}
 				break;
 			case 2 :
-				// Fatworm.g:1:17: T__106
+				// fatworm/parser/Fatworm.g:1:17: T__106
 				{
 				mT__106(); 
 
 				}
 				break;
 			case 3 :
-				// Fatworm.g:1:24: T__107
+				// fatworm/parser/Fatworm.g:1:24: T__107
 				{
 				mT__107(); 
 
 				}
 				break;
 			case 4 :
-				// Fatworm.g:1:31: T__108
+				// fatworm/parser/Fatworm.g:1:31: T__108
 				{
 				mT__108(); 
 
 				}
 				break;
 			case 5 :
-				// Fatworm.g:1:38: T__109
+				// fatworm/parser/Fatworm.g:1:38: T__109
 				{
 				mT__109(); 
 
 				}
 				break;
 			case 6 :
-				// Fatworm.g:1:45: T__110
+				// fatworm/parser/Fatworm.g:1:45: T__110
 				{
 				mT__110(); 
 
 				}
 				break;
 			case 7 :
-				// Fatworm.g:1:52: T__111
+				// fatworm/parser/Fatworm.g:1:52: T__111
 				{
 				mT__111(); 
 
 				}
 				break;
 			case 8 :
-				// Fatworm.g:1:59: T__112
+				// fatworm/parser/Fatworm.g:1:59: T__112
 				{
 				mT__112(); 
 
 				}
 				break;
 			case 9 :
-				// Fatworm.g:1:66: T__113
+				// fatworm/parser/Fatworm.g:1:66: T__113
 				{
 				mT__113(); 
 
 				}
 				break;
 			case 10 :
-				// Fatworm.g:1:73: T__114
+				// fatworm/parser/Fatworm.g:1:73: T__114
 				{
 				mT__114(); 
 
 				}
 				break;
 			case 11 :
-				// Fatworm.g:1:80: T__115
+				// fatworm/parser/Fatworm.g:1:80: T__115
 				{
 				mT__115(); 
 
 				}
 				break;
 			case 12 :
-				// Fatworm.g:1:87: T__116
+				// fatworm/parser/Fatworm.g:1:87: T__116
 				{
 				mT__116(); 
 
 				}
 				break;
 			case 13 :
-				// Fatworm.g:1:94: T__117
+				// fatworm/parser/Fatworm.g:1:94: T__117
 				{
 				mT__117(); 
 
 				}
 				break;
 			case 14 :
-				// Fatworm.g:1:101: T__118
+				// fatworm/parser/Fatworm.g:1:101: T__118
 				{
 				mT__118(); 
 
 				}
 				break;
 			case 15 :
-				// Fatworm.g:1:108: T__119
+				// fatworm/parser/Fatworm.g:1:108: T__119
 				{
 				mT__119(); 
 
 				}
 				break;
 			case 16 :
-				// Fatworm.g:1:115: SELECT
+				// fatworm/parser/Fatworm.g:1:115: SELECT
 				{
 				mSELECT(); 
 
 				}
 				break;
 			case 17 :
-				// Fatworm.g:1:122: CREATE
+				// fatworm/parser/Fatworm.g:1:122: CREATE
 				{
 				mCREATE(); 
 
 				}
 				break;
 			case 18 :
-				// Fatworm.g:1:129: DATABASE
+				// fatworm/parser/Fatworm.g:1:129: DATABASE
 				{
 				mDATABASE(); 
 
 				}
 				break;
 			case 19 :
-				// Fatworm.g:1:138: DROP
+				// fatworm/parser/Fatworm.g:1:138: DROP
 				{
 				mDROP(); 
 
 				}
 				break;
 			case 20 :
-				// Fatworm.g:1:143: USE
+				// fatworm/parser/Fatworm.g:1:143: USE
 				{
 				mUSE(); 
 
 				}
 				break;
 			case 21 :
-				// Fatworm.g:1:147: INDEX
+				// fatworm/parser/Fatworm.g:1:147: INDEX
 				{
 				mINDEX(); 
 
 				}
 				break;
 			case 22 :
-				// Fatworm.g:1:153: TABLE
+				// fatworm/parser/Fatworm.g:1:153: TABLE
 				{
 				mTABLE(); 
 
 				}
 				break;
 			case 23 :
-				// Fatworm.g:1:159: PRIMARY
+				// fatworm/parser/Fatworm.g:1:159: PRIMARY
 				{
 				mPRIMARY(); 
 
 				}
 				break;
 			case 24 :
-				// Fatworm.g:1:167: KEY
+				// fatworm/parser/Fatworm.g:1:167: KEY
 				{
 				mKEY(); 
 
 				}
 				break;
 			case 25 :
-				// Fatworm.g:1:171: NOT
+				// fatworm/parser/Fatworm.g:1:171: NOT
 				{
 				mNOT(); 
 
 				}
 				break;
 			case 26 :
-				// Fatworm.g:1:175: NULL
+				// fatworm/parser/Fatworm.g:1:175: NULL
 				{
 				mNULL(); 
 
 				}
 				break;
 			case 27 :
-				// Fatworm.g:1:180: DEFAULT
+				// fatworm/parser/Fatworm.g:1:180: DEFAULT
 				{
 				mDEFAULT(); 
 
 				}
 				break;
 			case 28 :
-				// Fatworm.g:1:188: AUTO_INCREMENT
+				// fatworm/parser/Fatworm.g:1:188: AUTO_INCREMENT
 				{
 				mAUTO_INCREMENT(); 
 
 				}
 				break;
 			case 29 :
-				// Fatworm.g:1:203: INT
+				// fatworm/parser/Fatworm.g:1:203: INT
 				{
 				mINT(); 
 
 				}
 				break;
 			case 30 :
-				// Fatworm.g:1:207: FLOAT
+				// fatworm/parser/Fatworm.g:1:207: FLOAT
 				{
 				mFLOAT(); 
 
 				}
 				break;
 			case 31 :
-				// Fatworm.g:1:213: CHAR
+				// fatworm/parser/Fatworm.g:1:213: CHAR
 				{
 				mCHAR(); 
 
 				}
 				break;
 			case 32 :
-				// Fatworm.g:1:218: DATETIME
+				// fatworm/parser/Fatworm.g:1:218: DATETIME
 				{
 				mDATETIME(); 
 
 				}
 				break;
 			case 33 :
-				// Fatworm.g:1:227: BOOLEAN
+				// fatworm/parser/Fatworm.g:1:227: BOOLEAN
 				{
 				mBOOLEAN(); 
 
 				}
 				break;
 			case 34 :
-				// Fatworm.g:1:235: DECIMAL
+				// fatworm/parser/Fatworm.g:1:235: DECIMAL
 				{
 				mDECIMAL(); 
 
 				}
 				break;
 			case 35 :
-				// Fatworm.g:1:243: TIMESTAMP
+				// fatworm/parser/Fatworm.g:1:243: TIMESTAMP
 				{
 				mTIMESTAMP(); 
 
 				}
 				break;
 			case 36 :
-				// Fatworm.g:1:253: VARCHAR
+				// fatworm/parser/Fatworm.g:1:253: VARCHAR
 				{
 				mVARCHAR(); 
 
 				}
 				break;
 			case 37 :
-				// Fatworm.g:1:261: INSERT
+				// fatworm/parser/Fatworm.g:1:261: INSERT
 				{
 				mINSERT(); 
 
 				}
 				break;
 			case 38 :
-				// Fatworm.g:1:268: INTO
+				// fatworm/parser/Fatworm.g:1:268: INTO
 				{
 				mINTO(); 
 
 				}
 				break;
 			case 39 :
-				// Fatworm.g:1:273: VALUES
+				// fatworm/parser/Fatworm.g:1:273: VALUES
 				{
 				mVALUES(); 
 
 				}
 				break;
 			case 40 :
-				// Fatworm.g:1:280: DELETE
+				// fatworm/parser/Fatworm.g:1:280: DELETE
 				{
 				mDELETE(); 
 
 				}
 				break;
 			case 41 :
-				// Fatworm.g:1:287: FROM
+				// fatworm/parser/Fatworm.g:1:287: FROM
 				{
 				mFROM(); 
 
 				}
 				break;
 			case 42 :
-				// Fatworm.g:1:292: WHERE
+				// fatworm/parser/Fatworm.g:1:292: WHERE
 				{
 				mWHERE(); 
 
 				}
 				break;
 			case 43 :
-				// Fatworm.g:1:298: UPDATE
+				// fatworm/parser/Fatworm.g:1:298: UPDATE
 				{
 				mUPDATE(); 
 
 				}
 				break;
 			case 44 :
-				// Fatworm.g:1:305: SET
+				// fatworm/parser/Fatworm.g:1:305: SET
 				{
 				mSET(); 
 
 				}
 				break;
 			case 45 :
-				// Fatworm.g:1:309: UNIQUE
+				// fatworm/parser/Fatworm.g:1:309: UNIQUE
 				{
 				mUNIQUE(); 
 
 				}
 				break;
 			case 46 :
-				// Fatworm.g:1:316: ON
+				// fatworm/parser/Fatworm.g:1:316: ON
 				{
 				mON(); 
 
 				}
 				break;
 			case 47 :
-				// Fatworm.g:1:319: DISTINCT
+				// fatworm/parser/Fatworm.g:1:319: DISTINCT
 				{
 				mDISTINCT(); 
 
 				}
 				break;
 			case 48 :
-				// Fatworm.g:1:328: GROUP
+				// fatworm/parser/Fatworm.g:1:328: GROUP
 				{
 				mGROUP(); 
 
 				}
 				break;
 			case 49 :
-				// Fatworm.g:1:334: BY
+				// fatworm/parser/Fatworm.g:1:334: BY
 				{
 				mBY(); 
 
 				}
 				break;
 			case 50 :
-				// Fatworm.g:1:337: HAVING
+				// fatworm/parser/Fatworm.g:1:337: HAVING
 				{
 				mHAVING(); 
 
 				}
 				break;
 			case 51 :
-				// Fatworm.g:1:344: ORDER
+				// fatworm/parser/Fatworm.g:1:344: ORDER
 				{
 				mORDER(); 
 
 				}
 				break;
 			case 52 :
-				// Fatworm.g:1:350: ASC
+				// fatworm/parser/Fatworm.g:1:350: ASC
 				{
 				mASC(); 
 
 				}
 				break;
 			case 53 :
-				// Fatworm.g:1:354: DESC
+				// fatworm/parser/Fatworm.g:1:354: DESC
 				{
 				mDESC(); 
 
 				}
 				break;
 			case 54 :
-				// Fatworm.g:1:359: AS
+				// fatworm/parser/Fatworm.g:1:359: AS
 				{
 				mAS(); 
 
 				}
 				break;
 			case 55 :
-				// Fatworm.g:1:362: AVG
+				// fatworm/parser/Fatworm.g:1:362: AVG
 				{
 				mAVG(); 
 
 				}
 				break;
 			case 56 :
-				// Fatworm.g:1:366: COUNT
+				// fatworm/parser/Fatworm.g:1:366: COUNT
 				{
 				mCOUNT(); 
 
 				}
 				break;
 			case 57 :
-				// Fatworm.g:1:372: MIN
+				// fatworm/parser/Fatworm.g:1:372: MIN
 				{
 				mMIN(); 
 
 				}
 				break;
 			case 58 :
-				// Fatworm.g:1:376: MAX
+				// fatworm/parser/Fatworm.g:1:376: MAX
 				{
 				mMAX(); 
 
 				}
 				break;
 			case 59 :
-				// Fatworm.g:1:380: SUM
+				// fatworm/parser/Fatworm.g:1:380: SUM
 				{
 				mSUM(); 
 
 				}
 				break;
 			case 60 :
-				// Fatworm.g:1:384: AND
+				// fatworm/parser/Fatworm.g:1:384: AND
 				{
 				mAND(); 
 
 				}
 				break;
 			case 61 :
-				// Fatworm.g:1:388: OR
+				// fatworm/parser/Fatworm.g:1:388: OR
 				{
 				mOR(); 
 
 				}
 				break;
 			case 62 :
-				// Fatworm.g:1:391: EXISTS
+				// fatworm/parser/Fatworm.g:1:391: EXISTS
 				{
 				mEXISTS(); 
 
 				}
 				break;
 			case 63 :
-				// Fatworm.g:1:398: ANY
+				// fatworm/parser/Fatworm.g:1:398: ANY
 				{
 				mANY(); 
 
 				}
 				break;
 			case 64 :
-				// Fatworm.g:1:402: IN
+				// fatworm/parser/Fatworm.g:1:402: IN
 				{
 				mIN(); 
 
 				}
 				break;
 			case 65 :
-				// Fatworm.g:1:405: ALL
+				// fatworm/parser/Fatworm.g:1:405: ALL
 				{
 				mALL(); 
 
 				}
 				break;
 			case 66 :
-				// Fatworm.g:1:409: TRUE
+				// fatworm/parser/Fatworm.g:1:409: TRUE
 				{
 				mTRUE(); 
 
 				}
 				break;
 			case 67 :
-				// Fatworm.g:1:414: FALSE
+				// fatworm/parser/Fatworm.g:1:414: FALSE
 				{
 				mFALSE(); 
 
 				}
 				break;
 			case 68 :
-				// Fatworm.g:1:420: ID
+				// fatworm/parser/Fatworm.g:1:420: ID
 				{
 				mID(); 
 
 				}
 				break;
 			case 69 :
-				// Fatworm.g:1:423: STRING_LITERAL
+				// fatworm/parser/Fatworm.g:1:423: STRING_LITERAL
 				{
 				mSTRING_LITERAL(); 
 
 				}
 				break;
 			case 70 :
-				// Fatworm.g:1:438: INTEGER_LITERAL
+				// fatworm/parser/Fatworm.g:1:438: INTEGER_LITERAL
 				{
 				mINTEGER_LITERAL(); 
 
 				}
 				break;
 			case 71 :
-				// Fatworm.g:1:454: FLOAT_LITERAL
+				// fatworm/parser/Fatworm.g:1:454: FLOAT_LITERAL
 				{
 				mFLOAT_LITERAL(); 
 
 				}
 				break;
 			case 72 :
-				// Fatworm.g:1:468: WS
+				// fatworm/parser/Fatworm.g:1:468: WS
 				{
 				mWS(); 
 
