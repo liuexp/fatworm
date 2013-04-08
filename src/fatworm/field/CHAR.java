@@ -2,8 +2,10 @@ package fatworm.field;
 
 public class CHAR extends Field {
 
+	String v;
 	public CHAR(String x) {
-		// TODO Auto-generated constructor stub
+		v = x;
+		type = java.sql.Types.CHAR;
 	}
 
 }
