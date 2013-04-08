@@ -1,9 +1,8 @@
 package fatworm.util;
-
+// FIXME for continuation-like traversal, DEPRECATED
 public abstract class Traverse {
 
 	public Traverse() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	abstract public Object op(Object x);
