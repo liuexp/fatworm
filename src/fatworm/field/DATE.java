@@ -32,11 +32,6 @@ public class DATE extends Field {
 		return false;
 	}
 	@Override
-	public int getInt() {
-		error("DATE.getInt dead end.");
-		return v.hashCode();
-	}
-	@Override
 	public int hashCode() {
 		return v.hashCode();
 	}

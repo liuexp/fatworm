@@ -35,9 +35,4 @@ public class TIMESTAMP extends Field {
 		error("TIMESTAMP.compWith missing type");
 		return false;
 	}
-	@Override
-	public int getInt() {
-		error("TIMESTAMP.getInt dead end.");
-		return v.hashCode();
-	}
 }

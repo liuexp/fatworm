@@ -18,11 +18,6 @@ public class CHAR extends Field {
 		return Field.cmpString(op, v, x.toString());
 	}
 	@Override
-	public int getInt() {
-		error("CHAR.getInt dead end.");
-		return 0;
-	}
-	@Override
 	public String toString() {
 		return "'" + v + "'";
 	}
