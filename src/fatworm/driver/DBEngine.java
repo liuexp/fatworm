@@ -26,7 +26,8 @@ import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import static fatworm.parser.FatwormParser.UPDATE;
 import static fatworm.parser.FatwormParser.USE_DATABASE;
-
+import fatworm.absyn.*;
+import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
 import fatworm.logicplan.Join;
 import fatworm.logicplan.Node;
@@ -63,23 +64,32 @@ public class DBEngine {
 	}
 
 	private static Node transSelect(BaseTree t) {
+		// TODO
+		// Plan order:
+		// Distinct $ Order $ Rename $ Group $ Select $ source
 		Node ret=null,src=null;
-		Tree pred=null;
-		Tree having=null;
+		Expr pred=null;
+		Expr having=null;
 		String groupBy = null;
 		
 		List<Integer> orderType = new ArrayList<Integer>();
 		List<String> orderField = new ArrayList<String>();
 		
-		// extract WHERE, FROM, ORDERING, GROUPBY, HAVING first
+		// extract FROM, WHERE, GROUPBY, HAVING, ORDERBY first
 		for(Object x : t.getChildren()){
 			Tree y = (Tree) x;
 			switch(y.getType()){
-			case FatwormParser.WHERE:
-				pred = y.getChild(0);
-				break;
 			case FatwormParser.FROM:
 				src = transFrom((BaseTree)y);
+				break;
+			case FatwormParser.WHERE:
+				pred = Util.getExpr(y.getChild(0));
+				break;
+			case FatwormParser.GROUP:
+				groupBy = Util.getAttr(y.getChild(0));
+				break;
+			case FatwormParser.HAVING:
+				having = Util.getExpr(y.getChild(0));
 				break;
 			case FatwormParser.ORDER:
 				for(Object zzz : ((BaseTree) y).getChildren()){
@@ -93,22 +103,16 @@ public class DBEngine {
 								Util.getAttr(zz));
 				}
 				break;
-			case FatwormParser.GROUP:
-				groupBy = Util.getAttr(y.getChild(0));
-				break;
-			case FatwormParser.HAVING:
-				having = y.getChild(0);
-				break;
 			}
 		}
 		
 		if(src == null)src = new One();
+		ret = src;
 		if(pred != null)ret = new Select(src, pred);
-		boolean distinct = t.getType() == SELECT_DISTINCT;
 		boolean hasAggr = !(groupBy == null&&having == null);
 		
 		// next do projection
-		List<Tree> expr = new ArrayList<Tree>();
+		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		for(Object x : t.getChildren()){
 			Tree y = (Tree) x;
@@ -116,9 +120,25 @@ public class DBEngine {
 				break;
 			if(y.getText().equals("*") && y.getChildCount() == 0)
 				break;
-			
+			if(y.getType() == FatwormParser.AS){
+				expr.add(Util.getExpr(y.getChild(0)));
+				alias.add(y.getChild(1).getText());
+			}else{
+				Expr tmp = Util.getExpr(y);
+				expr.add(tmp);
+				alias.add(tmp.toString());
+			}
+			hasAggr |= Util.findAggr(y);
 		}
-		return null;
+		
+		if(!alias.isEmpty()){
+			if(!hasAggr){
+				
+			}
+		}
+		
+		if(t.getType() == SELECT_DISTINCT)ret = new Distinct(ret);
+		return ret;
 	}
 
 	private static void traverse(CommonTree t, Traverse traverse) {
