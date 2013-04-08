@@ -2,7 +2,7 @@ package fatworm.absyn;
 
 public class IntLiteral extends Expr {
 	
-	public int i;
+	public IntField i;
 
 	public IntLiteral(int i) {
 		this.i = i;

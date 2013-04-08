@@ -1,10 +1,10 @@
 package fatworm.absyn;
-
+import fatworm.field.Field;
 
 public abstract class Expr {
 	
 	public Integer size,depth;
-	public Object value;
+	public Field value;
 	public boolean isConst;
 	public boolean hasAggr;
 

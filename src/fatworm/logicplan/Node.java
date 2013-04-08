@@ -14,6 +14,6 @@ public abstract class Node {
 		hasEval = false;
 	}
 	
-	abstract public Scan eval();
+	public abstract Scan eval();
 
 }

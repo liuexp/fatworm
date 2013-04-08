@@ -7,9 +7,9 @@ public abstract class Scan {
 		// TODO Auto-generated constructor stub
 	}
 
-	abstract public void close();
+	public abstract void close();
 
-	abstract public boolean next();
+	public abstract boolean next();
 
 	public Schema getSchema(){
 		return null;
