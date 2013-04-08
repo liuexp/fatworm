@@ -21,7 +21,11 @@ public class BinaryExpr extends Expr {
 			value=calc(op,l.value,r.value);
 		}
 	}
-	public static int calc(BinaryOp o, int a, int b) {
+	public static Object calc(BinaryOp o, Object aa, Object bb) {
+		if(aa == null || !(aa instanceof Integer)|| !(aa instanceof Float))return null;
+		if(bb == null || !(bb instanceof Integer)|| !(bb instanceof Float))return null;
+		//FIXME Floating point?
+		Integer a=(Integer) aa,b=(Integer) bb;
 		switch(o){
 		case MULTIPLY:
 			return a*b;

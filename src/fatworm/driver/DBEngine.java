@@ -131,16 +131,19 @@ public class DBEngine {
 				break;
 			if(y.getText().equals("*") && y.getChildCount() == 0)
 				break;
+			
 			if(y.getType() == FatwormParser.AS){
-				expr.add(Util.getExpr(y.getChild(0)));
+				Expr tmp = Util.getExpr(y.getChild(0));
+				expr.add(tmp);
 				alias.add(y.getChild(1).getText());
 				hasRename = true;
+				hasAggr |= tmp.hasAggr;
 			}else{
 				Expr tmp = Util.getExpr(y);
 				expr.add(tmp);
 				alias.add(tmp.toString());
+				hasAggr |= tmp.hasAggr;
 			}
-			hasAggr |= Util.findAggr(y);
 		}
 		
 		if(hasAggr)
@@ -155,11 +158,6 @@ public class DBEngine {
 			ret = new Distinct(ret);
 		
 		return ret;
-	}
-
-	private static void traverse(CommonTree t, Traverse traverse) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	protected static Node transFrom(BaseTree t) {
