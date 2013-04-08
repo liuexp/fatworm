@@ -14,6 +14,13 @@ public abstract class Expr {
 		depth=1;
 		isConst = false;
 		hasAggr = false;
+		value = null;
 	}
+	//eval as a predicate
 	public abstract boolean evalPred(Env env);
+	
+	//eval as an expression
+	public abstract Field eval(Env env);
+	
+	
 }
