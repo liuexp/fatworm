@@ -1,6 +1,6 @@
 package fatworm.driver;
 
-
+//FIXME this might/should be deprecated?
 public abstract class Scan {
 
 	public Scan() {

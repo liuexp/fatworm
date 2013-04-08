@@ -7,6 +7,7 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+//TODO actually now I think rewriting a lexer&parser from scratch in antlr4 might be much simpler and much less painful.
 
 public class Tester {
 
