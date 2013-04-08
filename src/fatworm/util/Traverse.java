@@ -5,6 +5,6 @@ public abstract class Traverse {
 	public Traverse() {
 	}
 	
-	abstract public Object op(Object x);
+	public abstract Object op(Object x);
 
 }

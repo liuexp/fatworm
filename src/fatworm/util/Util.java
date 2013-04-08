@@ -21,4 +21,9 @@ public class Util {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public static boolean toBoolean(Object c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
