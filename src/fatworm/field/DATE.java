@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public class DATE extends Field {
 
@@ -18,7 +17,7 @@ public class DATE extends Field {
 		v = x;
 	}
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		switch(x.type){
 		case java.sql.Types.TIMESTAMP:
 			return Field.cmpHelper(op, v, ((TIMESTAMP)x).v);
@@ -33,7 +32,7 @@ public class DATE extends Field {
 		return false;
 	}
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		error("DATE.getInt dead end.");
 		return v.hashCode();
 	}

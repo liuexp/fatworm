@@ -3,7 +3,6 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public class DECIMAL extends Field{
 
@@ -21,7 +20,7 @@ public class DECIMAL extends Field{
 	}
 
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		switch(x.type){
 		case java.sql.Types.DECIMAL:
 			return Field.cmpHelper(op, v, ((DECIMAL)x).v);
@@ -35,7 +34,7 @@ public class DECIMAL extends Field{
 	}
 
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		error("DECIMAL.getInt dead end.");
 		return 0;
 	}
