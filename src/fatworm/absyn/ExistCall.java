@@ -1,12 +1,16 @@
 package fatworm.absyn;
 
 import fatworm.field.Field;
+import fatworm.logicplan.Plan;
 import fatworm.util.Env;
 
-public class ExistsCall extends Expr {
+public class ExistCall extends Expr {
 
-	public ExistsCall() {
-		// TODO Auto-generated constructor stub
+	public boolean not;
+	public Plan src;
+	public ExistCall(Plan src, boolean not) {
+		this.src = src;
+		this.not = not;
 	}
 
 	@Override
@@ -20,5 +24,8 @@ public class ExistsCall extends Expr {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString() {
+		return (not? "not ":"") + "exist " + src.toString();
+	}
 }
