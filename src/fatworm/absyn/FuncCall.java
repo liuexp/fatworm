@@ -1,12 +1,15 @@
 package fatworm.absyn;
 
 import fatworm.field.Field;
-import fatworm.util.Env;
+import fatworm.util.*;
 
 public class FuncCall extends Expr {
 
-	public FuncCall() {
-		// TODO Auto-generated constructor stub
+	int func;
+	public String col;
+	public FuncCall(int func, String col) {
+		this.col = col;
+		this.func = func;
 	}
 
 	@Override
@@ -20,5 +23,9 @@ public class FuncCall extends Expr {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString() {
+		return Util.getFuncName(func) + "(" + col + ")";
+	}
+ 
 }

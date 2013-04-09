@@ -1,14 +1,27 @@
 package fatworm.util;
 
+import static fatworm.parser.FatwormParser.SELECT;
+import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.tree.BaseTree;
 import org.antlr.runtime.tree.Tree;
 
+import fatworm.absyn.BinaryExpr;
+import fatworm.absyn.BinaryOp;
+import fatworm.absyn.BoolLiteral;
 import fatworm.absyn.Expr;
+import fatworm.absyn.FloatLiteral;
+import fatworm.absyn.FuncCall;
+import fatworm.absyn.Id;
+import fatworm.absyn.IntLiteral;
 import fatworm.absyn.QueryCall;
+import fatworm.absyn.StringLiteral;
+import fatworm.field.FLOAT;
 import fatworm.field.Field;
+import fatworm.field.INT;
 import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
 import fatworm.logicplan.Group;
@@ -21,10 +34,6 @@ import fatworm.logicplan.Rename;
 import fatworm.logicplan.RenameTable;
 import fatworm.logicplan.Select;
 import fatworm.parser.FatwormParser;
-import static fatworm.parser.FatwormParser.SELECT;
-import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
-import static java.sql.Types.*;
-import fatworm.field.BOOL;
 
 public class Util {
 
@@ -42,8 +51,50 @@ public class Util {
 		case FatwormParser.SELECT:
 		case FatwormParser.SELECT_DISTINCT:
 			return new QueryCall(Util.transSelect((BaseTree) t));
+		case FatwormParser.SUM:
+		case FatwormParser.AVG:
+		case FatwormParser.COUNT:
+		case FatwormParser.MAX:
+		case FatwormParser.MIN:
+			return new FuncCall(t.getType(), getAttr(t.getChild(0)));
+		case FatwormParser.INTEGER_LITERAL:
+			return new IntLiteral(Integer.parseInt(t.getText()));
+		case FatwormParser.FLOAT_LITERAL:
+			return new FloatLiteral(Float.parseFloat(t.getText()));
+		case FatwormParser.STRING_LITERAL:
+			return new StringLiteral(strip(t.getText()));
+		case FatwormParser.TRUE:
+		case FatwormParser.FALSE:
+			return new BoolLiteral(t.getType() == FatwormParser.TRUE);
+			default:
+				String ops = t.getText();
+				BinaryOp op = null;
+				if(ops.equals("+"))
+					op = BinaryOp.PLUS;
+				else if(ops.equals("-"))
+					op = BinaryOp.MINUS;
+				else if(ops.equals("*"))
+					op = BinaryOp.MULTIPLY;
+				else if(ops.equals("/"))
+					op = BinaryOp.DIVIDE;
+				else if(ops.equals("%"))
+					op = BinaryOp.MODULO;
+				
+				if(op!=null && t.getChildCount() == 2){
+					return new BinaryExpr(getExpr(t.getChild(0)), op, getExpr(t.getChild(1)));
+				} else {
+					Expr tmp = getExpr(t.getChild(0));
+					if(tmp instanceof IntLiteral){
+						INT f = (INT)((IntLiteral)tmp).i;
+						return new IntLiteral(-f.v);
+					}else if(tmp instanceof FloatLiteral){
+						FLOAT f = (FLOAT)((FloatLiteral)tmp).i;
+						return new FloatLiteral(-f.v);
+					}
+					else
+						return new Id(getAttr(t));
+				}
 		}
-		return null;
 	}
 
 	public static boolean toBoolean(Field c) {
@@ -62,6 +113,10 @@ public class Util {
 			return s.substring(1,s.length()-1);
 		else 
 			return s;
+	}
+	
+	public static String strip(String s){
+		return s.substring(1, s.length() - 1);
 	}
 
 	public static Plan transSelect(BaseTree t) {
@@ -176,5 +231,21 @@ public class Util {
 			ret = ret == null ? src : new Join(ret,src);
 		}
 		return ret;
+	}
+
+	public static String getFuncName(int func) {
+		switch(func){
+		case FatwormParser.SUM:
+			return "sum";
+		case FatwormParser.AVG:
+			return "avg";
+		case FatwormParser.COUNT:
+			return "count";
+		case FatwormParser.MAX:
+			return "max";
+		case FatwormParser.MIN:
+			return "min";
+		}
+		return "MEOWFunc";
 	}
 }

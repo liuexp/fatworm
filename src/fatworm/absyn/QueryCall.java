@@ -24,5 +24,9 @@ public class QueryCall extends Expr {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString() {
+		return "@subquery("+src.toString() +")";
+	}
+ 
 }
