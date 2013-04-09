@@ -2,7 +2,7 @@ package fatworm.logicplan;
 
 import fatworm.driver.Scan;
 
-public class One extends Node {
+public class One extends Plan {
 
 	public One() {
 		super(null);

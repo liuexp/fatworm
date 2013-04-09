@@ -2,10 +2,10 @@ package fatworm.logicplan;
 
 import fatworm.driver.Scan;
 
-public class Join extends Node {
+public class Join extends Plan {
 
-	public Node left,right;
-	public Join(Node left, Node right) {
+	public Plan left,right;
+	public Join(Plan left, Plan right) {
 		super(null);
 		this.left = left;
 		this.right = right;

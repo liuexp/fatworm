@@ -3,7 +3,7 @@ package fatworm.logicplan;
 import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Scan;
 
-public class FetchTable extends Node {
+public class FetchTable extends Plan {
 
 	//public ResultSetMetaData table;
 	public String tableName;

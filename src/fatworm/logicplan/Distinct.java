@@ -2,10 +2,10 @@ package fatworm.logicplan;
 
 import fatworm.driver.Scan;
 
-public class Distinct extends Node {
+public class Distinct extends Plan {
 
-	public Node src;
-	public Distinct(Node src) {
+	public Plan src;
+	public Distinct(Plan src) {
 		super(null);
 		this.src = src;
 		src.parent = this;

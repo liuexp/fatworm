@@ -3,12 +3,12 @@ package fatworm.logicplan;
 import java.util.List;
 
 import fatworm.driver.Scan;
-public class Rename extends Node {
+public class Rename extends Plan {
 	
 	public List<String> as;
-	public Node src;
+	public Plan src;
 
-	public Rename(Node src, List<String> as) {
+	public Rename(Plan src, List<String> as) {
 		super(null);
 		this.src = src;
 		this.as = as;

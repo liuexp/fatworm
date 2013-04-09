@@ -2,11 +2,11 @@ package fatworm.logicplan;
 
 import fatworm.driver.Scan;
 
-public class RenameTable extends Node {
+public class RenameTable extends Plan {
 
-	public Node src;
+	public Plan src;
 	String alias;
-	public RenameTable(Node src, String alias) {
+	public RenameTable(Plan src, String alias) {
 		super(null);
 		this.src = src;
 		this.alias = alias;
