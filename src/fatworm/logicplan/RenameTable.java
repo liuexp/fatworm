@@ -18,5 +18,9 @@ public class RenameTable extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "renameTable (from="+src.toString()+")";
+	}
+	
 }

@@ -22,5 +22,8 @@ public class Order extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "order (from="+src.toString()+")";
+	}
 }

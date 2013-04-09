@@ -39,7 +39,9 @@ public class DBEngine {
 	
 	public ResultSet execute(String sql) throws Exception {
 		CommonTree t = parse(sql);
+		System.out.println(t.toStringTree());
 		Plan x = buildPlan(t);
+		System.out.println(x.toString());
 		x.eval();
 		return new ResultSet(x);
 	}

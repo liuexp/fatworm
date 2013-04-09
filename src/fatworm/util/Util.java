@@ -82,7 +82,7 @@ public class Util {
 				
 				if(op!=null && t.getChildCount() == 2){
 					return new BinaryExpr(getExpr(t.getChild(0)), op, getExpr(t.getChild(1)));
-				} else {
+				} else if(op!=null){
 					Expr tmp = getExpr(t.getChild(0));
 					if(tmp instanceof IntLiteral){
 						INT f = (INT)((IntLiteral)tmp).i;
@@ -90,10 +90,10 @@ public class Util {
 					}else if(tmp instanceof FloatLiteral){
 						FLOAT f = (FLOAT)((FloatLiteral)tmp).i;
 						return new FloatLiteral(-f.v);
-					}
-					else
-						return new Id(getAttr(t));
-				}
+					}else
+						return new BinaryExpr(new IntLiteral(0), op, tmp);
+				}else
+					return new Id(getAttr(t));
 		}
 	}
 

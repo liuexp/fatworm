@@ -22,5 +22,8 @@ public class Project extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "Project (from="+src.toString()+")";
+	}
 }
