@@ -1,7 +1,5 @@
 package fatworm.logicplan;
 
-import org.antlr.runtime.tree.Tree;
-
 import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
 import fatworm.util.Env;

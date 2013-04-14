@@ -45,7 +45,7 @@ public class BinaryExpr extends Expr {
 	
 	@Override
 	public String toString(){
-		return l.toString() + op.toString() + r.toString();
+		return "("+l.toString()+")" + op.toString() +"("+ r.toString()+")";
 	}
 	@Override
 	public Field eval(Env env) {

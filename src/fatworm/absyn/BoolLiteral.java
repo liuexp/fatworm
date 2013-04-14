@@ -1,10 +1,8 @@
 package fatworm.absyn;
 
 import fatworm.field.BOOL;
-import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.util.Env;
-import fatworm.util.Util;
 
 public class BoolLiteral extends Expr {
 
