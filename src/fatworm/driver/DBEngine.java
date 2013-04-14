@@ -42,7 +42,7 @@ public class DBEngine {
 		System.out.println(t.toStringTree());
 		Plan x = buildPlan(t);
 		System.out.println(x.toString());
-		x.eval();
+		x.eval(null);
 		return new ResultSet(x);
 	}
 

@@ -16,10 +16,12 @@ import fatworm.absyn.Expr;
 import fatworm.absyn.FloatLiteral;
 import fatworm.absyn.FuncCall;
 import fatworm.absyn.Id;
+import fatworm.absyn.InCall;
 import fatworm.absyn.IntLiteral;
 import fatworm.absyn.QueryCall;
 import fatworm.absyn.StringLiteral;
 import fatworm.absyn.ExistCall;
+import fatworm.absyn.AnyCall;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
@@ -76,38 +78,15 @@ public class Util {
 			if(!(t.getChild(0) instanceof BaseTree))return null;
 			return new ExistCall(transSelect((BaseTree) t.getChild(0)), t.getType() == FatwormParser.NOT_EXISTS);
 		case FatwormParser.IN:
-			// FIXME how to do this
-			//return null;
+			// FIXME according to Fatowrm.g only subquery is allowed
+			// FIXME according to Fatowrm.g there's no NOT_IN
+			return new InCall(transSelect((BaseTree)t.getChild(1)), getExpr(t.getChild(0)), t.getType() != FatwormParser.IN);
 		case FatwormParser.ANY:
 		case FatwormParser.ALL:
-			// FIXME how to do this
-			return new QueryCall(Util.transSelect((BaseTree) t));
+			// FIXME according to Fatowrm.g only subquery is allowed
+			return new AnyCall(transSelect((BaseTree) t.getChild(2)), getExpr(t.getChild(0)), getBinaryOp(t.getChild(1).getText()), t.getType() == FatwormParser.ALL);
 			default:
-				String ops = t.getText();
-				BinaryOp op = null;
-				if(ops.equals("+"))
-					op = BinaryOp.PLUS;
-				else if(ops.equals("-"))
-					op = BinaryOp.MINUS;
-				else if(ops.equals("*"))
-					op = BinaryOp.MULTIPLY;
-				else if(ops.equals("/"))
-					op = BinaryOp.DIVIDE;
-				else if(ops.equals("%"))
-					op = BinaryOp.MODULO;
-				else if(ops.equals("="))
-					op = BinaryOp.EQ;
-				else if(ops.equals("<"))
-					op = BinaryOp.LESS;
-				else if(ops.equals(">"))
-					op = BinaryOp.GREATER;
-				else if(ops.equals("<="))
-					op = BinaryOp.LESS_EQ;
-				else if(ops.equals(">="))
-					op = BinaryOp.GREATER_EQ;
-				else if(ops.equals("<>"))
-					op = BinaryOp.NEQ;
-				
+				BinaryOp op = getBinaryOp(t.getText());
 				if(op!=null && t.getChildCount() == 2){
 					return new BinaryExpr(getExpr(t.getChild(0)), op, getExpr(t.getChild(1)));
 				} else if(op!=null){
@@ -277,5 +256,32 @@ public class Util {
 			return "min";
 		}
 		return "MEOWFunc";
+	}
+	
+	public static BinaryOp getBinaryOp(String ops){
+		BinaryOp op = null;
+		if(ops.equals("+"))
+			op = BinaryOp.PLUS;
+		else if(ops.equals("-"))
+			op = BinaryOp.MINUS;
+		else if(ops.equals("*"))
+			op = BinaryOp.MULTIPLY;
+		else if(ops.equals("/"))
+			op = BinaryOp.DIVIDE;
+		else if(ops.equals("%"))
+			op = BinaryOp.MODULO;
+		else if(ops.equals("="))
+			op = BinaryOp.EQ;
+		else if(ops.equals("<"))
+			op = BinaryOp.LESS;
+		else if(ops.equals(">"))
+			op = BinaryOp.GREATER;
+		else if(ops.equals("<="))
+			op = BinaryOp.LESS_EQ;
+		else if(ops.equals(">="))
+			op = BinaryOp.GREATER_EQ;
+		else if(ops.equals("<>"))
+			op = BinaryOp.NEQ;
+		return op;
 	}
 }

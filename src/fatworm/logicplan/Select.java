@@ -4,6 +4,7 @@ import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
+import fatworm.util.Env;
 
 public class Select extends Plan {
 	public Plan src;
@@ -22,7 +23,7 @@ public class Select extends Plan {
 	}
 
 	@Override
-	public Scan eval() {
+	public Scan eval(Env env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
