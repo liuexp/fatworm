@@ -1,5 +1,6 @@
 package fatworm.absyn;
 import fatworm.field.Field;
+import fatworm.util.Env;
 
 public abstract class Expr {
 	
@@ -14,4 +15,6 @@ public abstract class Expr {
 		isConst = false;
 		hasAggr = false;
 	}
+	public abstract boolean evalPred(Env env);
+	
 }
