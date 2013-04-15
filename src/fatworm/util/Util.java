@@ -4,6 +4,8 @@ import org.antlr.runtime.tree.BaseTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.QueryCall;
+import fatworm.driver.DBEngine;
 import fatworm.field.Field;
 import fatworm.parser.FatwormParser;
 import static java.sql.Types.*;
@@ -24,7 +26,7 @@ public class Util {
 		switch(t.getType()){
 		case FatwormParser.SELECT:
 		case FatwormParser.SELECT_DISTINCT:
-			
+			return new QueryCall(DBEngine.transSelect((BaseTree) t));
 		}
 		return null;
 	}

@@ -68,7 +68,7 @@ public class DBEngine {
 		}
 	}
 
-	private static Node transSelect(BaseTree t) {
+	public static Node transSelect(BaseTree t) {
 		// Note: Group can't do projection at the same time as order might need those abandoned fields.
 		//			Rename must go after group
 		//			order must go after rename
