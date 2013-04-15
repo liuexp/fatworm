@@ -20,14 +20,12 @@ public class BinaryExpr extends Expr {
 		size=l.size+r.size+1;
 		depth=max(l.depth,r.depth)+1;
 		isConst=l.isConst&&r.isConst;
-		if(isConst){
-			//value=calc(op,l.value,r.value);
-		}
+		value=isConst ? eval(null) : null;
 	}
+	
 	public boolean evalPred(Env env){
-		boolean a = l.evalPred(env);
-		boolean b = r.evalPred(env);
-		return Util.toBoolean(calc(op, a, b));
+		Field x = eval(env);
+		return Util.toBoolean(x);
 	}
 	
 	private boolean calc(BinaryOp o, boolean a, boolean b) {
@@ -50,46 +48,11 @@ public class BinaryExpr extends Expr {
 			return ia>ib;
 		case GREATER_EQ:
 			return ia>=ib;
+			default:
+				return false;
 		}
 	}
-	public static Field calc(BinaryOp o, Field aa, Field bb) {
-		switch(o){
-		case MULTIPLY:
-			return multiply(a,b);
-		case DIVIDE:
-			return a/b;
-		case MODULO:
-			return a%b;
-		case MINUS:
-			return a-b;
-		case AND:
-			return (a!=0&&b!=0)?1:0;
-		case OR:
-			return (a!=0||b!=0)?1:0;
-		case PLUS:
-			return a+b;
-		case EQ:
-			return a==b?1:0;
-		case NEQ:
-			return a!=b?1:0;
-		case LESS:
-			return a<b?1:0;
-		case LESS_EQ:
-			return a<=b?1:0;
-		case GREATER:
-			return a>b?1:0;
-		case GREATER_EQ:
-			return a>=b?1:0;
-		case ASSIGN:
-			error("non-lvalue");
-			return 0;
-		case COMMA:
-			return b;
-		default:
-			error(o.toString()+" : looks like 2012 stuff.");
-			return 0;
-		}
-	}
+	
 	private Integer max(Integer a, Integer b) {
 		return a>b?a:b;
 	}
@@ -101,5 +64,19 @@ public class BinaryExpr extends Expr {
 	@Override
 	public String toString(){
 		return l.toString() + op.toString() + r.toString();
+	}
+	@Override
+	public Field eval(Env env) {
+		//Note that value!=null shouldn't count for isConst
+		if(isConst)return value;
+		switch(op){
+		case LESS:
+		case GREATER:
+		case LESS_EQ:
+		case GREATER_EQ:
+		case EQ:
+		case NEQ:
+			return l.eval(env).applyWithComp(env, op, r.eval(env));
+		}
 	}
 }
