@@ -5,19 +5,26 @@ import fatworm.field.Field;
 import fatworm.logicplan.Plan;
 import fatworm.util.Env;
 
-public class ExistCall extends Expr {
+public class InCall extends Expr {
 
 	public boolean not;
 	public Plan src;
-	public ExistCall(Plan src, boolean not) {
+	public Expr expr;
+	public InCall(Plan src, Expr expr, boolean not) {
 		this.src = src;
+		this.expr = expr;
 		this.not = not;
 	}
 
 	@Override
 	public boolean evalPred(Env env) {
+		Field l = expr.eval(env);
 		src.eval(env);
-		return not ^ src.hasNext();
+		boolean ret=false;
+		while(src.hasNext()){
+			if(l.applyWithComp(BinaryOp.EQ, src.next().cols.get(0)))ret=true;
+		}
+		return not ^ ret;
 	}
 
 	@Override
@@ -26,6 +33,7 @@ public class ExistCall extends Expr {
 	}
 	@Override
 	public String toString() {
-		return (not? "not ":"") + "exist " + src.toString();
+		return expr.toString() + (not? " not ":" ") + "in " + src.toString();
 	}
+
 }

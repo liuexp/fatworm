@@ -2,6 +2,7 @@ package fatworm.logicplan;
 
 import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Scan;
+import fatworm.util.Env;
 
 public class FetchTable extends Plan {
 
@@ -14,7 +15,7 @@ public class FetchTable extends Plan {
 
 	// TODO Range Fetch?
 	@Override
-	public Scan eval() {
+	public Scan eval(Env env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

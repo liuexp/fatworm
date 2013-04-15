@@ -3,6 +3,7 @@ package fatworm.logicplan;
 import java.util.List;
 
 import fatworm.driver.Scan;
+import fatworm.util.Env;
 public class Rename extends Plan {
 	
 	public List<String> as;
@@ -21,7 +22,7 @@ public class Rename extends Plan {
 	}
 	
 	@Override
-	public Scan eval() {
+	public Scan eval(Env env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

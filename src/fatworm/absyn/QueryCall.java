@@ -20,7 +20,7 @@ public class QueryCall extends Expr {
 
 	@Override
 	public Field eval(Env env) {
-		src.eval();
+		src.eval(null);
 		// TODO Auto-generated method stub
 		return null;
 	}
