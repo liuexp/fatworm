@@ -1,22 +1,41 @@
 package fatworm.logicplan;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import fatworm.driver.Record;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class Distinct extends Plan {
 
 	public Plan src;
+	List<Record> results;
+	int ptr;
 	public Distinct(Plan src) {
 		super(null);
 		this.src = src;
 		src.parent = this;
+		results = new ArrayList<Record>();
+		ptr = 0;
 	}
 
 	// TODO memory distinct and disk distinct
 	@Override
-	public void eval(Env env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void eval(Env envGlobal) {
+		hasEval = true;
+		Env env = envGlobal.clone();
+		src.eval(env);
+		Set<Record> set = new HashSet<Record>();
+		while(src.hasNext()){
+			Record r = src.next();
+			if(!set.contains(r))
+				results.add(r);
+			else
+				set.add(r);
+		}
 	}
 	@Override
 	public String toString(){
@@ -25,13 +44,13 @@ public class Distinct extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		if(!hasEval)Util.error("Distinct not eval");
+		return ptr != results.size();
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		if(!hasEval)Util.error("Distinct not eval");
+		return results.get(ptr++);
 	}
 }

@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
 import fatworm.field.NULL;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class Group extends Plan {
 
@@ -43,6 +43,7 @@ public class Group extends Plan {
 	//		* Disk:		????
 	@Override
 	public void eval(Env envGlobal) {
+		hasEval = true;
 		results = new ArrayList<Record>();
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
@@ -77,11 +78,13 @@ public class Group extends Plan {
 
 	@Override
 	public boolean hasNext() {
+		if(!hasEval)Util.error("Group not eval");
 		return ptr != results.size();
 	}
 
 	@Override
 	public Record next() {
+		if(!hasEval)Util.error("Group not eval");
 		return results.get(ptr++);
 	}
 

@@ -7,6 +7,7 @@ import fatworm.absyn.Expr;
 import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class Record {
 
@@ -37,5 +38,19 @@ public class Record {
 			if(!(e instanceof FuncCall))
 				cols.set(i, e.eval(env));
 		}
+	}
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Record))
+			return false;
+
+		Record z = (Record) o;
+
+		return Util.deepEquals(cols, z.cols);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Util.deepHashCode(cols);
 	}
 }
