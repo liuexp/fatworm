@@ -21,9 +21,9 @@ public abstract class Plan {
 
 	public abstract String toString();
 	
-	// FIXME change to abstract
 	public abstract boolean hasNext();
 	
-	// FIXME change to abstract
 	public abstract Record next();
+
+	public abstract void reset();
 }
