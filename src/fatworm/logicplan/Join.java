@@ -18,5 +18,8 @@ public class Join extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "Join (left="+left.toString()+", right="+right.toString()+")";
+	}
 }

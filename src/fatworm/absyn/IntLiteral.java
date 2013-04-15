@@ -17,7 +17,7 @@ public class IntLiteral extends Expr {
 	
 	@Override
 	public String toString() {
-		return String.format("%d", i);
+		return String.format("%d", i.v);
 	}
 
 	@Override

@@ -17,5 +17,8 @@ public class Distinct extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "distinct (from="+src.toString()+")";
+	}
 }

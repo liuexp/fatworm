@@ -13,5 +13,8 @@ public class One extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "ONE";
+	}
 }

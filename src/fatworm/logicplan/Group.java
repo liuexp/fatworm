@@ -28,5 +28,8 @@ public class Group extends Plan {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public String toString(){
+		return "Group (from="+src.toString()+", by=" + by + ", having=" + having.toString()+")";
+	}
 }

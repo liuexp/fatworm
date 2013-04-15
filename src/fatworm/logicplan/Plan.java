@@ -16,4 +16,5 @@ public abstract class Plan {
 	
 	public abstract Scan eval();
 
+	public abstract String toString();
 }
