@@ -28,7 +28,8 @@ public class BinaryExpr extends Expr {
 		depth=max(l.depth,r.depth)+1;
 		isConst=l.isConst&&r.isConst;
 		value=isConst ? eval(null) : null;
-		hasAggr = l.hasAggr | r.hasAggr;
+		myAggr.addAll(l.getAggr());
+		myAggr.addAll(r.getAggr());
 	}
 	
 	public boolean evalPred(Env env){
@@ -139,10 +140,5 @@ public class BinaryExpr extends Expr {
 			return new FLOAT(ret.floatValue());
 		error("missing type");
 		return new NULL();
-	}
-
-	@Override
-	public boolean hasAggr() {
-		return hasAggr;
 	}
 }

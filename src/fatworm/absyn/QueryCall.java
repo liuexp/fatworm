@@ -10,7 +10,9 @@ public class QueryCall extends Expr {
 
 	Plan src;
 	public QueryCall(Plan src) {
+		super();
 		this.src = src;
+		myAggr.addAll(this.src.getAggr());
 	}
 
 	@Override

@@ -10,6 +10,7 @@ public class Id extends Expr {
 	public String name;
 
 	public Id(String sym) {
+		super();
 		this.name = sym;
 		this.size=1;
 	}

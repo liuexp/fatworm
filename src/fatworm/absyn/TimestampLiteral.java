@@ -9,6 +9,7 @@ public class TimestampLiteral extends Expr {
 
 	public DATE i;
 	public TimestampLiteral(java.sql.Timestamp v) {
+		super();
 		this.isConst = true;
 		this.size=1;
 		this.i = new DATE(v);

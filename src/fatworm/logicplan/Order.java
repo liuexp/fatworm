@@ -22,13 +22,14 @@ public class Order extends Plan {
 	public int ptr;
 	
 	public Order(Plan src, List<String> a, List<Integer> b) {
-		super(null);
+		super();
 		this.src = src;
 		src.parent = this;
 		orderField = a;
 		orderType = b;
 		ptr = 0;
 		results = new ArrayList<Record>();
+		myAggr.addAll(this.src.getAggr());
 	}
 
 	@Override
