@@ -7,6 +7,7 @@ public abstract class Expr {
 	public Object value;
 	public boolean isConst;
 	public boolean hasAggr;
+
 	public Expr() {
 		size=1;
 		depth=1;

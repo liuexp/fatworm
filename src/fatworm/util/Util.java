@@ -10,7 +10,7 @@ public class Util {
 
 	public Util() {
 	}
-
+	
 	public static String getAttr(Tree t) {
 		return t.getText().equals(".")?
 				t.getChild(0).getText() + "."+ t.getChild(1).getText():
