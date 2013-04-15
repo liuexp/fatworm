@@ -7,7 +7,7 @@ import fatworm.absyn.BinaryOp;
 
 public class INT extends Field {
 
-	int v;
+	public int v;
 	public INT(){
 		this.type = java.sql.Types.INTEGER;
 	}
