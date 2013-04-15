@@ -2,16 +2,20 @@ package fatworm.field;
 
 import java.nio.ByteBuffer;
 
-public class Int extends Field {
+public class INT extends Field {
 
 	int v;
-	public Int(int v) {
+	public INT(int v) {
 		this.v = v;
 		this.type = java.sql.Types.INTEGER;
 	}
 	
-	public Int(ByteBuffer b){
+	public INT(ByteBuffer b){
 		v = b.getInt();
+	}
+
+	public INT(String x) {
+		v = Integer.valueOf(x);
 	}
 
 }
