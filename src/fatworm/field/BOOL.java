@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 import fatworm.util.Util;
 
 public class BOOL extends Field {
@@ -16,22 +15,22 @@ public class BOOL extends Field {
 		type = java.sql.Types.BOOLEAN;
 	}
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		switch(x.type){
 		case java.sql.Types.BOOLEAN:
 		case java.sql.Types.INTEGER:
 			switch(op){
 			case EQ:
-				return getInt(env) == x.getInt(env);
+				return getInt() == x.getInt();
 			case NEQ:
-				return getInt(env) != x.getInt(env);
+				return getInt() != x.getInt();
 			default:
 				throw new RuntimeException("applyWithComp missing op!");
 			}
 		}
 		throw new RuntimeException("applyWithComp missing types!");
 	}
-	public int getInt(Env env) {
+	public int getInt() {
 		return v?1:0;
 	}
 	@Override

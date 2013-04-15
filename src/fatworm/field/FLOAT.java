@@ -3,7 +3,6 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public class FLOAT extends Field {
 
@@ -37,7 +36,7 @@ public class FLOAT extends Field {
 	}
 
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		BigDecimal value = toDecimal();
 		switch(x.type){
 		case java.sql.Types.DECIMAL:
@@ -52,7 +51,7 @@ public class FLOAT extends Field {
 	}
 
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		error("FLOAT.getInt dead end.");
 		return 0;
 	}

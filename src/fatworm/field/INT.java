@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public class INT extends Field {
 
@@ -41,7 +40,7 @@ public class INT extends Field {
 	}
 
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		BigDecimal value = toDecimal();
 		switch(x.type){
 		case java.sql.Types.DECIMAL:
@@ -56,7 +55,7 @@ public class INT extends Field {
 	}
 
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		return v;
 	}
 }

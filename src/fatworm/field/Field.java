@@ -1,7 +1,6 @@
 package fatworm.field;
 import static java.sql.Types.*;
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public abstract class Field {
 
@@ -83,7 +82,7 @@ public abstract class Field {
 		throw new RuntimeException(e);
 	}
 	
-	public abstract boolean applyWithComp(Env env, BinaryOp op, Field x);
+	public abstract boolean applyWithComp(BinaryOp op, Field x);
 	//extract an int
-	public abstract int getInt(Env env);
+	public abstract int getInt();
 }

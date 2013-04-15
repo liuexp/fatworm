@@ -76,7 +76,7 @@ public class BinaryExpr extends Expr {
 		case GREATER_EQ:
 		case EQ:
 		case NEQ:
-			return l.eval(env).applyWithComp(env, op, r.eval(env));
+			return l.eval(env).applyWithComp(op, r.eval(env));
 		}
 	}
 }

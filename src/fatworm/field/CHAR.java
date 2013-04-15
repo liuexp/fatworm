@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 import fatworm.util.Util;
 
 public class CHAR extends Field {
@@ -15,11 +14,11 @@ public class CHAR extends Field {
 		v = Util.trim(x);
 	}
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		return Field.cmpString(op, v, x.toString());
 	}
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		error("CHAR.getInt dead end.");
 		return 0;
 	}

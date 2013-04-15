@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
-import fatworm.util.Env;
 
 public class NULL extends Field {
 
@@ -10,14 +9,14 @@ public class NULL extends Field {
 	}
 
 	@Override
-	public boolean applyWithComp(Env env, BinaryOp op, Field x) {
+	public boolean applyWithComp(BinaryOp op, Field x) {
 		// FIXME Not implemented
 		error("NULL.compWith missing type.");
 		return false;
 	}
 
 	@Override
-	public int getInt(Env env) {
+	public int getInt() {
 		error("NULL.getInt dead end.");
 		return 0;
 	}
