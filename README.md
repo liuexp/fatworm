@@ -7,6 +7,14 @@ Warning
 =====================
 * Always push to git before git rebase trunk and git svn dcommit
 
+TODO
+====================
+* Finish refactoring Group Scan.
+* Project/Rename/Select Scan.
+* Schema & Record metadata, and building schema in Group Scan & Product Scan.
+* FetchTable Scan.
+* Finish data manipulation language.
+
 Reference
 ====================
 
