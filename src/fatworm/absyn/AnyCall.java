@@ -12,10 +12,12 @@ public class AnyCall extends Expr {
 	public Expr expr;
 	public BinaryOp op;
 	public AnyCall(Plan src, Expr expr, BinaryOp op, boolean isAll) {
+		super();
 		this.src = src;
 		this.expr = expr;
 		this.op = op;
 		this.isAll = isAll;
+		hasAggr = this.expr.hasAggr;
 	}
 
 	@Override
@@ -42,5 +44,10 @@ public class AnyCall extends Expr {
 	@Override
 	public String toString() {
 		return expr.toString() + op.toString() + (isAll? "all ":"any") + src.toString();
+	}
+
+	@Override
+	public boolean hasAggr() {
+		return hasAggr;
 	}
 }

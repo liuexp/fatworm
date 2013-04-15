@@ -62,7 +62,10 @@ public class Group extends Plan {
 			}
 			pr.updateColWithAggr(env, func);
 		}
-		
+		// FIXME this works okay for projected values but not for funcCall within having clause
+		//		workaround: extract all FuncCalls out from subquery as well, then on each record, greedily calculate every functions possible to calculate.
+		//		Note: for each record it's necessary to re-eval on each FuncCall node, to tackle cases like max(a+b) group by c, 
+		//				but it's not necessary to re-eval on the whole expression tree, which can be expensive as this tree could be a sub-query.
 		env = envGlobal.clone();
 		for(Record r : groupHelper.values()){
 			env.appendFromRecord(r);
