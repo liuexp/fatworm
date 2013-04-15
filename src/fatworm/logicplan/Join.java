@@ -21,6 +21,7 @@ public class Join extends Plan {
 
 	@Override
 	public void eval(Env envGlobal) {
+		hasEval = true;
 		Env env = envGlobal.clone();
 		left.eval(env);
 		right.eval(env);
@@ -32,13 +33,13 @@ public class Join extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		if(!hasEval)Util.error("Distinct not eval");
+		if(!hasEval)Util.error("Join not eval");
 		return right.hasNext();
 	}
 
 	@Override
 	public Record next() {
-		if(!hasEval)Util.error("Distinct not eval");
+		if(!hasEval)Util.error("Join not eval");
 		Record r = right.next();
 		if(curLeft == null)
 			curLeft = left.next();
