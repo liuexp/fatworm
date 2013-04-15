@@ -19,6 +19,7 @@ import fatworm.absyn.Id;
 import fatworm.absyn.IntLiteral;
 import fatworm.absyn.QueryCall;
 import fatworm.absyn.StringLiteral;
+import fatworm.absyn.ExistCall;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
@@ -66,6 +67,21 @@ public class Util {
 		case FatwormParser.TRUE:
 		case FatwormParser.FALSE:
 			return new BoolLiteral(t.getType() == FatwormParser.TRUE);
+		case FatwormParser.AND:
+			return new BinaryExpr(getExpr(t.getChild(0)), BinaryOp.AND, getExpr(t.getChild(1)));
+		case FatwormParser.OR:
+			return new BinaryExpr(getExpr(t.getChild(0)), BinaryOp.OR, getExpr(t.getChild(1)));
+		case FatwormParser.EXISTS:
+		case FatwormParser.NOT_EXISTS:
+			if(!(t.getChild(0) instanceof BaseTree))return null;
+			return new ExistCall(transSelect((BaseTree) t.getChild(0)), t.getType() == FatwormParser.NOT_EXISTS);
+		case FatwormParser.IN:
+			// FIXME how to do this
+			//return null;
+		case FatwormParser.ANY:
+		case FatwormParser.ALL:
+			// FIXME how to do this
+			return new QueryCall(Util.transSelect((BaseTree) t));
 			default:
 				String ops = t.getText();
 				BinaryOp op = null;
@@ -79,6 +95,18 @@ public class Util {
 					op = BinaryOp.DIVIDE;
 				else if(ops.equals("%"))
 					op = BinaryOp.MODULO;
+				else if(ops.equals("="))
+					op = BinaryOp.EQ;
+				else if(ops.equals("<"))
+					op = BinaryOp.LESS;
+				else if(ops.equals(">"))
+					op = BinaryOp.GREATER;
+				else if(ops.equals("<="))
+					op = BinaryOp.LESS_EQ;
+				else if(ops.equals(">="))
+					op = BinaryOp.GREATER_EQ;
+				else if(ops.equals("<>"))
+					op = BinaryOp.NEQ;
 				
 				if(op!=null && t.getChildCount() == 2){
 					return new BinaryExpr(getExpr(t.getChild(0)), op, getExpr(t.getChild(1)));
@@ -126,6 +154,8 @@ public class Util {
 		// Plan order:
 		// hasAggr:		Distinct $ Project $ Order $ Rename $ Group $ Select $ source
 		// !hasAggr:	Distinct $ Project $ Order $ Rename $ Select $ source
+		if(t.getType()!=FatwormParser.SELECT && t.getType()!=FatwormParser.SELECT_DISTINCT)
+			return null;
 		Plan ret=null,src=null;
 		Expr pred=null;
 		Expr having=null;
