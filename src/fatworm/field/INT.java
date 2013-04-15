@@ -54,8 +54,4 @@ public class INT extends Field {
 		return false;
 	}
 
-	@Override
-	public int getInt() {
-		return v;
-	}
 }

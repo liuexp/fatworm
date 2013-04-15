@@ -34,11 +34,6 @@ public class DECIMAL extends Field{
 	}
 
 	@Override
-	public int getInt() {
-		error("DECIMAL.getInt dead end.");
-		return 0;
-	}
-	@Override
 	public int hashCode() {
 		return v.hashCode();
 	}

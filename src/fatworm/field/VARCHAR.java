@@ -19,11 +19,6 @@ public class VARCHAR extends Field {
 		return Field.cmpString(op, v, x.toString());
 	}
 	@Override
-	public int getInt() {
-		error("VARCHAR.getInt dead end.");
-		return 0;
-	}
-	@Override
 	public String toString() {
 		return "'" + v + "'";
 	}

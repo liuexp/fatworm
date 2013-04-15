@@ -21,19 +21,11 @@ public class BOOL extends Field {
 		switch(x.type){
 		case java.sql.Types.BOOLEAN:
 		case java.sql.Types.INTEGER:
-			switch(op){
-			case EQ:
-				return getInt() == x.getInt();
-			case NEQ:
-				return getInt() != x.getInt();
-			default:
-				throw new RuntimeException("applyWithComp missing op!");
-			}
+		case java.sql.Types.DECIMAL:
+		case java.sql.Types.FLOAT:
+			return Field.cmpHelper(op, toDecimal(), x.toDecimal());
 		}
 		throw new RuntimeException("applyWithComp missing types!");
-	}
-	public int getInt() {
-		return v?1:0;
 	}
 	@Override
 	public String toString() {

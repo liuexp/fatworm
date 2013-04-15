@@ -86,8 +86,6 @@ public abstract class Field {
 	}
 	
 	public abstract boolean applyWithComp(BinaryOp op, Field x);
-	// FIXME extract BigDecimal might be enough
-	public abstract int getInt();
 	
 	public BigDecimal toDecimal(){
 		return null;

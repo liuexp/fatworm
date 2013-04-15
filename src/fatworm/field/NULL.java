@@ -16,12 +16,6 @@ public class NULL extends Field {
 	}
 
 	@Override
-	public int getInt() {
-		error("NULL.getInt dead end.");
-		return 0;
-	}
-
-	@Override
 	public String toString() {
 		return "null";
 	}

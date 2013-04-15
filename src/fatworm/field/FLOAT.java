@@ -50,9 +50,4 @@ public class FLOAT extends Field {
 		return false;
 	}
 
-	@Override
-	public int getInt() {
-		error("FLOAT.getInt dead end.");
-		return 0;
-	}
 }
