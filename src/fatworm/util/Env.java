@@ -29,6 +29,12 @@ public class Env {
 		return new Env(new HashMap<String, Field>(res));
 	}
 	
+	public void appendFromRecord(Record x){
+		for(int i=0;i<x.cols.size();i++){
+			res.put(x.meta.columnName.get(i), x.cols.get(i));
+		}
+	}
+	
 	public static Env appendFromRecord(Record x, Env y){
 		Env ret = y.clone();
 		for(int i=0;i<x.cols.size();i++){
