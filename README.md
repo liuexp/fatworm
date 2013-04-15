@@ -1,11 +1,12 @@
-=======================
 Fatworm
 =======================
 
 meow
 
+Warning
+=====================
+* Always push to git before git rebase trunk and git svn dcommit
 
-=======================
 Reference
 ====================
 
