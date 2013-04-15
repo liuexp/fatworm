@@ -1,15 +1,19 @@
 package fatworm.absyn;
 
+import java.math.BigDecimal;
+
+import fatworm.field.DECIMAL;
 import fatworm.field.Field;
+import fatworm.field.INT;
+import fatworm.field.NULL;
+import fatworm.parser.FatwormParser;
 import fatworm.util.*;
 
 public class FuncCall extends Expr {
 
-	// TODO How to specify the return type?
-	// FIXME this might not be just a column name and rather an expression?
 	int func;
+	// FIXME this might not be just a column name rather than an expression?
 	public String col;
-	public ContField cont;
 	public FuncCall(int func, String col) {
 		this.col = col;
 		this.func = func;
@@ -22,9 +26,15 @@ public class FuncCall extends Expr {
 
 	@Override
 	public Field eval(Env env) {
-		// TODO remember to put func value into env!!!
-		// FIXME what's this doing!!!
-		return env.get(this.toString());
+		Field f = env.get(this.toString());
+		if(f == null){
+			env.put(this.toString(), ContField.newContField(func));
+			return env.get(col);
+		} else if(f instanceof ContField){
+			((ContField) f).applyWithAggr(env.get(col));
+			return ((ContField) f).getFinalResults();
+		}
+		return f;
 	}
 	@Override
 	public String toString() {
@@ -33,22 +43,148 @@ public class FuncCall extends Expr {
 	
 	// XXX A hack to make Record work with ContField
 	// in particular to tackle cases like SELECT AVG( a + ab ) FROM  `meow` GROUP BY a
-	public static class ContField extends Field{
-
-		public int func;
+	public abstract static class ContField extends Field{
 		
 		public ContField(){
-			
 		}
 		@Override
 		public boolean applyWithComp(BinaryOp op, Field x) {
-			error("ContField never reac");
+			error("ContField never reach");
 			return false;
 		}
 		
-		public ContField applyWithAggr(){
-			//TODO
-			return null;
+		public abstract void applyWithAggr(Field x);
+		
+		public abstract Field getFinalResults();
+		
+		public static ContField newContField(int func){
+			switch(func){
+			case FatwormParser.AVG:
+				return new AvgContField();
+			case FatwormParser.COUNT:
+				return new CountContField();
+			case FatwormParser.MAX:
+				return new MaxContField();
+			case FatwormParser.MIN:
+				return new MinContField();
+			case FatwormParser.SUM:
+				return new SumContField();
+			default:
+				error("ContField never reach.");
+				return null;
+			}
+		}
+	}
+	
+	public static class AvgContField extends ContField{
+
+		BigDecimal res;
+		int cnt;
+		boolean isNull;
+		
+		public AvgContField(){
+			cnt = 0;
+			isNull=true;
+			res = new BigDecimal(0).setScale(10);
+		}
+		
+		public void applyWithAggr(Field x){
+			if(x instanceof NULL || x.type == java.sql.Types.NULL)return;
+			isNull = false;
+			res = res.add(x.toDecimal());
+			cnt++;
+		}
+		
+		public Field getFinalResults(){
+			return isNull? NULL.getInstance() : 
+				new DECIMAL(res.divide(new BigDecimal(cnt), 10, BigDecimal.ROUND_HALF_UP));
+		}
+	}
+	public static class CountContField extends ContField{
+
+		int cnt;
+		
+		public CountContField(){
+			cnt = 0;
+		}
+		
+		public void applyWithAggr(Field x){
+			cnt++;
+		}
+		
+		public Field getFinalResults(){
+			return new INT(cnt);
+		}
+	}
+	public static class MaxContField extends ContField{
+
+		Field res;
+		boolean isNull;
+		
+		public MaxContField(){
+			res = NULL.getInstance();
+			isNull = true;
+		}
+		
+		public void applyWithAggr(Field x){
+			if(x instanceof NULL || x.type == java.sql.Types.NULL)return;
+			if(isNull){
+				res = x;
+				isNull = false;
+				return;
+			}
+			if(res.applyWithComp(BinaryOp.LESS, x))
+				res = x;
+		}
+		
+		public Field getFinalResults(){
+			return isNull? NULL.getInstance(): res;
+		}
+	}
+	public static class MinContField extends ContField{
+
+		Field res;
+		boolean isNull;
+		
+		public MinContField(){
+			res = NULL.getInstance();
+			isNull = true;
+		}
+		
+		public void applyWithAggr(Field x){
+			if(x instanceof NULL || x.type == java.sql.Types.NULL)return;
+			if(isNull){
+				res = x;
+				isNull = false;
+				return;
+			}
+			if(res.applyWithComp(BinaryOp.GREATER, x))
+				res = x;
+		}
+		
+		public Field getFinalResults(){
+			return isNull? NULL.getInstance(): res;
+		}
+	}
+	public static class SumContField extends ContField{
+
+		BigDecimal res;
+		boolean isNull;
+		
+		public SumContField(){
+			isNull=true;
+			res = new BigDecimal(0).setScale(10);
+		}
+		
+		public void applyWithAggr(Field x){
+			if(x instanceof NULL || x.type == java.sql.Types.NULL)return;
+			isNull = false;
+			res = res.add(x.toDecimal());
+		}
+		
+		public Field getFinalResults(){
+			return isNull? NULL.getInstance() : 
+				new DECIMAL(res);
 		}
 	}
 }
