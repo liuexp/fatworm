@@ -22,5 +22,5 @@ public abstract class Expr {
 	//eval as an expression
 	public abstract Field eval(Env env);
 	
-	
+	public abstract boolean hasAggr();
 }

@@ -20,14 +20,15 @@ public class BinaryExpr extends Expr {
 	
     
 	public BinaryExpr(Expr lhs, BinaryOp op, Expr rhs) {
-			l = lhs;
-			r = rhs;
-			this.op = op;
-			
+		super();
+		l = lhs;
+		r = rhs;
+		this.op = op;
 		size=l.size+r.size+1;
 		depth=max(l.depth,r.depth)+1;
 		isConst=l.isConst&&r.isConst;
 		value=isConst ? eval(null) : null;
+		hasAggr = l.hasAggr | r.hasAggr;
 	}
 	
 	public boolean evalPred(Env env){
@@ -138,5 +139,10 @@ public class BinaryExpr extends Expr {
 			return new FLOAT(ret.floatValue());
 		error("missing type");
 		return new NULL();
+	}
+
+	@Override
+	public boolean hasAggr() {
+		return hasAggr;
 	}
 }

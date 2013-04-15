@@ -112,6 +112,7 @@ public class Util {
 		s = trim(s);
 		if(s.equalsIgnoreCase("false") || s.equals("0"))
 			return false;
+		//TODO if s is digit then Integer.valueOf first
 		return true;
 	}
 	
