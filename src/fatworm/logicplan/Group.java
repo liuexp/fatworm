@@ -88,4 +88,9 @@ public class Group extends Plan {
 		return results.get(ptr++);
 	}
 
+	@Override
+	public void reset() {
+		ptr = 0;
+	}
+
 }

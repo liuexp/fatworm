@@ -53,4 +53,9 @@ public class Distinct extends Plan {
 		if(!hasEval)Util.error("Distinct not eval");
 		return results.get(ptr++);
 	}
+
+	@Override
+	public void reset() {
+		ptr = 0;
+	}
 }

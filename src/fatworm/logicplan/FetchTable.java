@@ -17,7 +17,6 @@ public class FetchTable extends Plan {
 	@Override
 	public void eval(Env env) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 	@Override
 	public String toString(){
@@ -34,5 +33,11 @@ public class FetchTable extends Plan {
 	public Record next() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
 	}
 }
