@@ -4,6 +4,7 @@ import fatworm.absyn.BinaryOp;
 
 public class NULL extends Field {
 
+	//FIXME maybe one instance for NULL is enough
 	public NULL() {
 		type = java.sql.Types.NULL;
 	}

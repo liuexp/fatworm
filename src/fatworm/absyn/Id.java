@@ -2,6 +2,7 @@ package fatworm.absyn;
 
 import fatworm.field.Field;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 
 public class Id extends Expr {
@@ -20,13 +21,11 @@ public class Id extends Expr {
 
 	@Override
 	public boolean evalPred(Env env) {
-		// TODO Auto-generated method stub
-		return false;
+		return Util.toBoolean(eval(env));
 	}
 
 	@Override
 	public Field eval(Env env) {
-		// TODO Auto-generated method stub
-		return null;
+		return env.get(name);
 	}
 }

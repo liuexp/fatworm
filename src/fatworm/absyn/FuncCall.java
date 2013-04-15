@@ -5,6 +5,7 @@ import fatworm.util.*;
 
 public class FuncCall extends Expr {
 
+	// TODO How to specify the return type?
 	int func;
 	public String col;
 	public FuncCall(int func, String col) {
@@ -14,14 +15,13 @@ public class FuncCall extends Expr {
 
 	@Override
 	public boolean evalPred(Env env) {
-		// TODO Auto-generated method stub
-		return false;
+		return Util.toBoolean(eval(env));
 	}
 
 	@Override
 	public Field eval(Env env) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO remember to put func value into env!!!
+		return env.get(this.toString());
 	}
 	@Override
 	public String toString() {
