@@ -1,7 +1,6 @@
 package fatworm.logicplan;
 
 import fatworm.driver.Record;
-import fatworm.driver.Scan;
 import fatworm.util.Env;
 
 // This Logic plan implements the upper levels of the interpreter
@@ -18,7 +17,7 @@ public abstract class Plan {
 	}
 	
 	// FIXME for subquery we need nested Env?
-	public abstract Scan eval(Env env);
+	public abstract void eval(Env env);
 
 	public abstract String toString();
 	

@@ -1,6 +1,5 @@
 package fatworm.logicplan;
 
-import fatworm.driver.Scan;
 import fatworm.util.Env;
 
 public class Join extends Plan {
@@ -15,7 +14,7 @@ public class Join extends Plan {
 	}
 
 	@Override
-	public Scan eval(Env env) {
+	public void eval(Env env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

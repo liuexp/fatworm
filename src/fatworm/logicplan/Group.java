@@ -8,7 +8,6 @@ import java.util.Map;
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
 import fatworm.driver.Record;
-import fatworm.driver.Scan;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
 import fatworm.field.NULL;
@@ -43,11 +42,12 @@ public class Group extends Plan {
 	//		* Memory: List<Record>
 	//		* Disk:		????
 	@Override
-	public Scan eval(Env envGlobal) {
+	public void eval(Env envGlobal) {
 		results = new ArrayList<Record>();
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
 		Env env = envGlobal.clone();
+		
 		src.eval(env);
 		while(src.hasNext()){
 			Record r = src.next();
@@ -61,7 +61,14 @@ public class Group extends Plan {
 			}
 			pr.updateColWithAggr(env, func);
 		}
-		return null;
+		
+		env = envGlobal.clone();
+		for(Record r : groupHelper.values()){
+			env.appendFromRecord(r);
+			if(having.evalPred(env)){
+				results.add(r);
+			}
+		}
 	}
 	@Override
 	public String toString(){
