@@ -1,14 +1,14 @@
 package fatworm.absyn;
 
 import fatworm.field.Field;
-import fatworm.logicplan.Node;
+import fatworm.logicplan.Plan;
 import fatworm.util.Env;
 
 //TODO how to do this?
 public class QueryCall extends Expr {
 
-	Node src;
-	public QueryCall(Node src) {
+	Plan src;
+	public QueryCall(Plan src) {
 		this.src = src;
 	}
 

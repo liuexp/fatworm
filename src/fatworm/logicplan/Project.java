@@ -5,12 +5,12 @@ import java.util.List;
 import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
 
-public class Project extends Node {
+public class Project extends Plan {
 	
-	Node src;
+	Plan src;
 	List<Expr> names;
 
-	public Project(Node src, List<Expr> names) {
+	public Project(Plan src, List<Expr> names) {
 		super(null);
 		this.src = src;
 		this.names = names;

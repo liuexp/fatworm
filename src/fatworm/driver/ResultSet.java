@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-import fatworm.logicplan.Node;
+import fatworm.logicplan.Plan;
 
 
 public class ResultSet implements java.sql.ResultSet {
@@ -29,7 +29,7 @@ public class ResultSet implements java.sql.ResultSet {
 	public ResultSet() {
 	}
 
-	public ResultSet(Node x) throws SQLException {
+	public ResultSet(Plan x) throws SQLException {
 		if(!x.hasEval)throw new SQLException("not yet executed!");
 		// TODO Auto-generated method stub
 	}

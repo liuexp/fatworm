@@ -7,13 +7,13 @@ import org.antlr.runtime.tree.Tree;
 import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
 
-public class Group extends Node {
+public class Group extends Plan {
 
-	public Node src;
+	public Plan src;
 	public String by;
 	public Expr having;
 	public List<Expr> func;
-	public Group(Node src, List<Expr> func, String by, Expr having) {
+	public Group(Plan src, List<Expr> func, String by, Expr having) {
 		super(null);
 		this.src = src;
 		this.by = by;

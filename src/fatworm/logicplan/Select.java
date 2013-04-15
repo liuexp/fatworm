@@ -5,11 +5,11 @@ import org.antlr.runtime.tree.Tree;
 import fatworm.absyn.Expr;
 import fatworm.driver.Scan;
 
-public class Select extends Node {
-	public Node src;
+public class Select extends Plan {
+	public Plan src;
 
 	public Expr pred;
-	public Select(Node src, Expr pred) {
+	public Select(Plan src, Expr pred) {
 		super(null);
 		this.src = src;
 		this.pred = pred;

@@ -4,12 +4,12 @@ import java.util.List;
 
 import fatworm.driver.Scan;
 
-public class Order extends Node {
+public class Order extends Plan {
 
-	public Node src;
+	public Plan src;
 	public List<String> orderField;
 	public List<Integer> orderType;
-	public Order(Node src, List<String> a, List<Integer> b) {
+	public Order(Plan src, List<String> a, List<Integer> b) {
 		super(null);
 		this.src = src;
 		src.parent = this;

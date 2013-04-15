@@ -5,11 +5,11 @@ import fatworm.driver.Scan;
 // This Logic plan implements the upper levels of the interpreter
 // TODO add liveness analysis
 
-public abstract class Node {
+public abstract class Plan {
 
-	public Node parent;
+	public Plan parent;
 	public boolean hasEval;
-	public Node(Node parent) {
+	public Plan(Plan parent) {
 		this.parent = parent;
 		hasEval = false;
 	}
