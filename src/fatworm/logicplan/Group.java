@@ -11,6 +11,7 @@ import fatworm.driver.Record;
 import fatworm.driver.Scan;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
+import fatworm.field.NULL;
 import fatworm.util.Env;
 
 public class Group extends Plan {
@@ -37,7 +38,7 @@ public class Group extends Plan {
 	//TODO: Memory GroupBy and disk group by. 
 	//NOTE:
 	//		On eval I generate a list of results. Group by field's hash code.
-	//		
+	//		For each record from source, partially aggregate it with groupHelper.
 	// 		Do I need a separate container?
 	//		* Memory: List<Record>
 	//		* Disk:		????
@@ -49,13 +50,12 @@ public class Group extends Plan {
 		src.eval(env);
 		while(src.hasNext()){
 			Record r = src.next();
-			Field f = r.getCol(by);
+			Field f = by==null? new NULL(): r.getCol(by);
 			Record pr = groupHelper.get(f);
 			Env newEnv = Env.appendFromRecord(r, env);
 			if(pr == null){
 				pr = new Record(meta);
 				groupHelper.put(f, pr);
-				
 			}
 			//TODO
 			pr.updateColWithAggr(by, f, func);
