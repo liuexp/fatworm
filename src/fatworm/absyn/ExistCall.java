@@ -10,8 +10,10 @@ public class ExistCall extends Expr {
 	public boolean not;
 	public Plan src;
 	public ExistCall(Plan src, boolean not) {
+		super();
 		this.src = src;
 		this.not = not;
+		myAggr.addAll(this.src.getAggr());
 	}
 
 	@Override

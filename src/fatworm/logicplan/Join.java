@@ -11,12 +11,14 @@ public class Join extends Plan {
 	public Record curLeft;
 	public Schema schema;
 	public Join(Plan left, Plan right) {
-		super(null);
+		super();
 		this.left = left;
 		this.right = right;
 		this.left.parent = this;
 		this.right.parent = this;
 		curLeft = null;
+		myAggr.addAll(this.left.getAggr());
+		myAggr.addAll(this.right.getAggr());
 	}
 
 	@Override

@@ -198,12 +198,12 @@ public class Util {
 				expr.add(tmp);
 				alias.add(y.getChild(1).getText());
 				hasRename = true;
-				hasAggr |= tmp.hasAggr;
+				hasAggr |= tmp.hasAggr();
 			}else{
 				Expr tmp = getExpr(y);
 				expr.add(tmp);
 				alias.add(tmp.toString());
-				hasAggr |= tmp.hasAggr;
+				hasAggr |= tmp.hasAggr();
 			}
 		}
 		

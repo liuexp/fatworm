@@ -22,5 +22,16 @@ public class Schema {
 		}
 		return -1;
 	}
+	
+	// NO tolerance on tablename mismatch.
+	public int findStrictIndex(String x) {
+		for(int i=0;i<columnName.size();i++){
+			String y = columnName.get(i);
+			if(x.equalsIgnoreCase(y) || x.equalsIgnoreCase(this.tableName + "." + y))
+				return i;
+			if(!y.contains("."))continue;
+		}
+		return -1;
+	}
 
 }

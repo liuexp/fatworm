@@ -15,11 +15,12 @@ public class Distinct extends Plan {
 	List<Record> results;
 	int ptr;
 	public Distinct(Plan src) {
-		super(null);
+		super();
 		this.src = src;
 		src.parent = this;
 		results = new ArrayList<Record>();
 		ptr = 0;
+		myAggr.addAll(this.src.getAggr());
 	}
 
 	// TODO memory distinct and disk distinct

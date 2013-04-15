@@ -2,6 +2,7 @@ package fatworm.absyn;
 
 import java.math.BigDecimal;
 
+import fatworm.driver.Schema;
 import fatworm.field.DECIMAL;
 import fatworm.field.Field;
 import fatworm.field.INT;
@@ -15,8 +16,10 @@ public class FuncCall extends Expr {
 	// FIXME this might not be just a column name rather than an expression?
 	public String col;
 	public FuncCall(int func, String col) {
+		super();
 		this.col = col;
 		this.func = func;
+		myAggr.add(this);
 	}
 
 	@Override
@@ -39,6 +42,10 @@ public class FuncCall extends Expr {
 	@Override
 	public String toString() {
 		return Util.getFuncName(func) + "(" + col + ")";
+	}
+	
+	public boolean canEvalOn(Schema schema){
+		return schema.findStrictIndex(col)>=0;
 	}
 	
 	// XXX A hack to make Record work with ContField

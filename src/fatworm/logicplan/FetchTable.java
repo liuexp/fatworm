@@ -9,7 +9,7 @@ public class FetchTable extends Plan {
 	//public ResultSetMetaData table;
 	public String tableName;
 	public FetchTable(String table) {
-		super(null);
+		super();
 		tableName = table;
 	}
 

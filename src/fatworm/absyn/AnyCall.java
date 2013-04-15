@@ -17,7 +17,8 @@ public class AnyCall extends Expr {
 		this.expr = expr;
 		this.op = op;
 		this.isAll = isAll;
-		hasAggr = this.expr.hasAggr;
+		myAggr.addAll(this.expr.getAggr());
+		myAggr.addAll(this.src.getAggr());
 	}
 
 	@Override
@@ -46,8 +47,4 @@ public class AnyCall extends Expr {
 		return expr.toString() + op.toString() + (isAll? "all ":"any") + src.toString();
 	}
 
-	@Override
-	public boolean hasAggr() {
-		return hasAggr;
-	}
 }

@@ -11,9 +11,12 @@ public class InCall extends Expr {
 	public Plan src;
 	public Expr expr;
 	public InCall(Plan src, Expr expr, boolean not) {
+		super();
 		this.src = src;
 		this.expr = expr;
 		this.not = not;
+		myAggr.addAll(this.src.getAggr());
+		myAggr.addAll(this.expr.getAggr());
 	}
 
 	@Override

@@ -24,13 +24,18 @@ public class Group extends Plan {
 	public Schema meta;
 	
 	public Group(Plan src, List<Expr> func, String by, Expr having) {
-		super(null);
+		super();
 		this.src = src;
 		this.by = by;
 		this.having = having;
 		this.func = func;
 		src.parent = this;
 		ptr = 0;
+		myAggr.addAll(this.src.getAggr());
+		for(int i=0;i<func.size();i++){
+			myAggr.addAll(func.get(i).getAggr());
+		}
+		myAggr.addAll(this.having.getAggr());
 		// TODO build schema
 	}
 

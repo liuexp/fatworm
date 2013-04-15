@@ -9,6 +9,7 @@ public class FloatLiteral extends Expr {
 
 	public FLOAT i;
 	public FloatLiteral(double v) {
+		super();
 		this.isConst = true;
 		this.size=1;
 		this.i = new FLOAT(v);

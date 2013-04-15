@@ -9,6 +9,7 @@ public class IntLiteral extends Expr {
 	public INT i;
 
 	public IntLiteral(int i) {
+		super();
 		this.isConst = true;
 		this.size=1;
 		this.i = new INT(i);

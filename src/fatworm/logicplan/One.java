@@ -6,7 +6,7 @@ import fatworm.util.Env;
 public class One extends Plan {
 
 	public One() {
-		super(null);
+		super();
 	}
 
 	@Override

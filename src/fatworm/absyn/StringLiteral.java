@@ -10,6 +10,7 @@ public class StringLiteral extends Expr {
 	public String s;
 
 	public StringLiteral(String s) {
+		super();
 		this.s = s;
 		this.isConst = true;
 		this.size=1;

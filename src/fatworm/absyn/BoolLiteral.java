@@ -8,6 +8,7 @@ public class BoolLiteral extends Expr {
 
 	public BOOL i;
 	public BoolLiteral(boolean v) {
+		super();
 		this.isConst = true;
 		this.size=1;
 		this.i = new BOOL(v);
