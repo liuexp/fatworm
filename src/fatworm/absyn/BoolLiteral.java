@@ -1,33 +1,34 @@
 package fatworm.absyn;
 
+import fatworm.field.BOOL;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
-public class FloatLiteral extends Expr {
+public class BoolLiteral extends Expr {
 
-	public FLOAT i;
-	public FloatLiteral(double v) {
+	public BOOL i;
+	public BoolLiteral(boolean v) {
 		this.isConst = true;
 		this.size=1;
-		this.i = new FLOAT(v);
+		this.i = new BOOL(v);
 		value = this.i;
 	}
-
 	@Override
 	public String toString() {
 		return i.toString();
 	}
-
+ 
 	@Override
 	public boolean evalPred(Env env) {
-		return Util.toBoolean(i);
+		return i.v;
 	}
 
 	@Override
 	public Field eval(Env env) {
 		return i;
 	}
+
 
 }

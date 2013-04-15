@@ -22,6 +22,11 @@ public class FLOAT extends Field {
 		v = x;
 	}
 
+	public FLOAT(double x) {
+		this();
+		v = x;
+	}
+
 	public BigDecimal toDecimal() {
 		return new BigDecimal(v).setScale(10, BigDecimal.ROUND_HALF_UP);
 	}
