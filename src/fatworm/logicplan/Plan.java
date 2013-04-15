@@ -23,12 +23,8 @@ public abstract class Plan {
 	public abstract String toString();
 	
 	// FIXME change to abstract
-	public boolean hasNext(){
-		return false;
-	}
+	public abstract boolean hasNext();
 	
 	// FIXME change to abstract
-	public Record next(){
-		return null;
-	}
+	public abstract Record next();
 }
