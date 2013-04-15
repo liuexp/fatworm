@@ -1,5 +1,7 @@
 package fatworm.field;
 
+import java.math.BigDecimal;
+
 import fatworm.absyn.BinaryOp;
 import fatworm.util.Util;
 
@@ -40,5 +42,9 @@ public class BOOL extends Field {
 	@Override
 	public int hashCode() {
 		return v?1:0;
+	}
+	@Override
+	public BigDecimal toDecimal() {
+		return new BigDecimal(v?1:0).setScale(10);
 	}
 }

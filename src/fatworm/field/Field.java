@@ -1,5 +1,8 @@
 package fatworm.field;
 import static java.sql.Types.*;
+
+import java.math.BigDecimal;
+
 import fatworm.absyn.BinaryOp;
 
 public abstract class Field {
@@ -83,6 +86,10 @@ public abstract class Field {
 	}
 	
 	public abstract boolean applyWithComp(BinaryOp op, Field x);
-	//extract an int
+	// FIXME extract BigDecimal might be enough
 	public abstract int getInt();
+	
+	public BigDecimal toDecimal(){
+		return null;
+	}
 }
