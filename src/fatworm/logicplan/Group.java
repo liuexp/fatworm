@@ -43,22 +43,23 @@ public class Group extends Plan {
 	//		* Memory: List<Record>
 	//		* Disk:		????
 	@Override
-	public Scan eval(Env env) {
+	public Scan eval(Env envGlobal) {
 		results = new ArrayList<Record>();
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
+		Env env = envGlobal.clone();
 		src.eval(env);
 		while(src.hasNext()){
 			Record r = src.next();
-			Field f = by==null? new NULL(): r.getCol(by);
+			Field f = by==null? NULL.getInstance(): r.getCol(by);
 			Record pr = groupHelper.get(f);
-			Env newEnv = Env.appendFromRecord(r, env);
+			env.appendFromRecord(r);
 			if(pr == null){
 				pr = new Record(meta);
 				groupHelper.put(f, pr);
+				pr.initCol(env, func);
 			}
-			//TODO
-			pr.updateColWithAggr(by, f, func);
+			pr.updateColWithAggr(env, func);
 		}
 		return null;
 	}

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
+import fatworm.util.Env;
 
 public class Record {
 
@@ -22,8 +24,18 @@ public class Record {
 	public void addCol(Field x){
 		cols.add(x);
 	}
-	public void updateColWithAggr(String by, Field f, List<Expr> func) {
-		// TODO Auto-generated method stub
-		
+	public void updateColWithAggr(Env env, List<Expr> func) {
+		for(int i=0;i<func.size();i++){
+			Expr e = func.get(i);
+			if(e instanceof FuncCall)
+				cols.set(i, e.eval(env));
+		}
+	}
+	public void initCol(Env env, List<Expr> func) {
+		for(int i=0;i<func.size();i++){
+			Expr e = func.get(i);
+			if(!(e instanceof FuncCall))
+				cols.set(i, e.eval(env));
+		}
 	}
 }

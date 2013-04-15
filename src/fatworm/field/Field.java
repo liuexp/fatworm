@@ -12,6 +12,7 @@ public abstract class Field {
 		// TODO Auto-generated constructor stub
 	}
 
+	// FIXME watch & check this!!! Cause equals is used in HashMap besides hash code!!!
 	public boolean equals(Object o){
 		if(o == null)return false;
 		return this.toString().equals(o.toString());
@@ -90,4 +91,5 @@ public abstract class Field {
 	public BigDecimal toDecimal(){
 		return null;
 	}
+	
 }
