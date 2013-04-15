@@ -21,6 +21,7 @@ public class FuncCall extends Expr {
 	@Override
 	public Field eval(Env env) {
 		// TODO remember to put func value into env!!!
+		// FIXME what's this doing!!!
 		return env.get(this.toString());
 	}
 	@Override

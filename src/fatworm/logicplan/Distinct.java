@@ -1,5 +1,6 @@
 package fatworm.logicplan;
 
+import fatworm.driver.Record;
 import fatworm.driver.Scan;
 import fatworm.util.Env;
 
@@ -21,5 +22,17 @@ public class Distinct extends Plan {
 	@Override
 	public String toString(){
 		return "distinct (from="+src.toString()+")";
+	}
+
+	@Override
+	public boolean hasNext() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Record next() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
