@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
 import fatworm.driver.Record;
 import fatworm.driver.Scan;
@@ -50,10 +51,13 @@ public class Group extends Plan {
 			Record r = src.next();
 			Field f = r.getCol(by);
 			Record pr = groupHelper.get(f);
+			Env newEnv = Env.appendFromRecord(r, env);
 			if(pr == null){
 				pr = new Record(meta);
 				groupHelper.put(f, pr);
+				
 			}
+			//TODO
 			pr.updateColWithAggr(by, f, func);
 		}
 		return null;
@@ -72,4 +76,5 @@ public class Group extends Plan {
 	public Record next() {
 		return results.get(ptr++);
 	}
+
 }
