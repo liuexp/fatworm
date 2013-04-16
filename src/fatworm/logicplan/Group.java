@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.FuncCall;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
@@ -21,7 +22,7 @@ public class Group extends Plan {
 	public List<Expr> func;
 	public int ptr;
 	public List<Record> results;
-	public Schema meta;
+	public Schema schema;
 	
 	public Group(Plan src, List<Expr> func, String by, Expr having) {
 		super();
@@ -46,6 +47,10 @@ public class Group extends Plan {
 	// 		Do I need a separate container?
 	//		* Memory: List<Record>
 	//		* Disk:		????
+	//		--------------------------------
+	//		workaround for FuncCall within having clause: extract all FuncCall out from subquery as well, then on each record, greedily calculate every functions possible to calculate.
+	//		Note: for each record it's necessary to re-eval on each FuncCall node, to tackle cases like max(a+b) group by c, 
+	//				but it's not necessary to re-eval on the whole expression tree, which can be expensive as this tree could be a sub-query.
 	@Override
 	public void eval(Env envGlobal) {
 		hasEval = true;
@@ -55,23 +60,33 @@ public class Group extends Plan {
 		Env env = envGlobal.clone();
 		
 		src.eval(env);
+		for(FuncCall a : myAggr){
+			if(a.canEvalOn(schema))env.remove(a.toString());
+		}
+		
+		// First propagate for aggregation by evalCont().
+		while(src.hasNext()){
+			Record r = src.next();
+			env.appendFromRecord(r);
+			for(FuncCall a : myAggr){
+				a.evalCont(env);
+			}
+		}
+		src.reset();
+
+		// Now we can fill all FuncCall with ContField's final results by calling eval() as we fillCol().
 		while(src.hasNext()){
 			Record r = src.next();
 			Field f = by==null? NULL.getInstance(): r.getCol(by);
 			Record pr = groupHelper.get(f);
-			env.appendFromRecord(r);
 			if(pr == null){
-				pr = new Record(meta);
+				env.appendFromRecord(r);
+				pr = new Record(schema);
 				groupHelper.put(f, pr);
-				pr.initCol(env, func);
+				pr.fillCol(env, func);
 			}
-			pr.updateColWithAggr(env, func);
 		}
-		// FIXME this works okay for projected values but not for funcCall within having clause
-		//		workaround: extract all FuncCalls out from subquery as well, then on each record, greedily calculate every functions possible to calculate.
-		//		Note: for each record it's necessary to re-eval on each FuncCall node, to tackle cases like max(a+b) group by c, 
-		//				but it's not necessary to re-eval on the whole expression tree, which can be expensive as this tree could be a sub-query.
-		env = envGlobal.clone();
+
 		for(Record r : groupHelper.values()){
 			env.appendFromRecord(r);
 			if(having.evalPred(env)){
@@ -79,6 +94,7 @@ public class Group extends Plan {
 			}
 		}
 	}
+	
 	@Override
 	public String toString(){
 		return "Group (from="+src.toString()+", by=" + by + ", having=" + (having == null? "null": having.toString())+")";
