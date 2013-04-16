@@ -61,4 +61,9 @@ public class Join extends Plan {
 		right.reset();
 		curLeft = null;
 	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
+	}
 }

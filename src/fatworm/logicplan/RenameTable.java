@@ -1,23 +1,35 @@
 package fatworm.logicplan;
 
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class RenameTable extends Plan {
 
 	public Plan src;
 	String alias;
+	public Schema schema;
 	public RenameTable(Plan src, String alias) {
 		super();
 		this.src = src;
 		this.alias = alias;
 		this.src.parent = this;
 		myAggr.addAll(this.src.getAggr());
+		this.schema = new Schema(alias);
+		for(int i = 0; i < src.getSchema().columnName.size(); ++i){
+			String a = src.getSchema().columnName.get(i);
+			String b = schema.tableName + "." + Util.getAttr(a);
+			schema.columnName.add(b);
+			schema.columnDef.put(b, src.getSchema().columnDef.get(a));
+		}
+		schema.primaryKey = src.getSchema().primaryKey;
 	}
 
 	@Override
 	public void eval(Env env) {
-		// TODO Auto-generated method stub
+		hasEval = true;
+		src.eval(env);
 	}
 	@Override
 	public String toString(){
@@ -26,20 +38,25 @@ public class RenameTable extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		return src.hasNext();
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		Record r = src.next();
+		Record ret = new Record(schema);
+		ret.cols.addAll(r.cols);
+		return ret;
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		src.reset();
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
 	}
 	
 }

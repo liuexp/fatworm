@@ -9,8 +9,8 @@ Warning
 
 TODO
 ====================
-* Finish refactoring Group Scan.
-* Project/Rename/Select Scan.
+* Rename Scan.(how to do it before Project)
+* Scan iterator doesnt look right.
 * Schema & Record metadata, and building schema in Group Scan & Product Scan.
 * FetchTable Scan.
 * Finish data manipulation language.

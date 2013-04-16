@@ -39,5 +39,5 @@ public abstract class Plan {
 	public List<FuncCall> getAggr() {
 		return myAggr;
 	}
-	public Schema getSchema(){return null;}
+	public abstract Schema getSchema();
 }

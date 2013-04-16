@@ -133,6 +133,7 @@ public class Util {
 		// Note: Group can't do projection at the same time as order might need those abandoned fields.
 		//			Rename must go after group
 		//			order must go after rename
+		//			rename must go after project
 		// Plan order:
 		// hasAggr:		Distinct $ Project $ Order $ Rename $ Group $ Select $ source
 		// !hasAggr:	Distinct $ Project $ Order $ Rename $ Select $ source
@@ -327,5 +328,19 @@ public class Util {
 		}
 		error("Timestamp from "+x+" failed!");
 		return null;
+	}
+
+	public static String getAttr(String x) {
+		return x.contains(".") ? x.substring(x.indexOf('.')) : x;
+	}
+	
+	public static <T> String deepToString(List<T> s){
+		StringBuffer ret = new StringBuffer();
+		ret.append("{");
+		for(T x:s){
+			ret.append(x.toString() + ", ");
+		}
+		ret.append("}");
+		return ret.toString();
 	}
 }

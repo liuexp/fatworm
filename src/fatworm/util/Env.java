@@ -38,12 +38,4 @@ public class Env {
 			res.put(x.schema.columnName.get(i), x.cols.get(i));
 		}
 	}
-	
-	public static Env appendFromRecord(Record x, Env y){
-		Env ret = y.clone();
-		for(int i=0;i<x.cols.size();i++){
-			ret.res.put(x.schema.columnName.get(i), x.cols.get(i));
-		}
-		return ret;
-	}
 }

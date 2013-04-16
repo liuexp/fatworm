@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -58,5 +59,10 @@ public class Distinct extends Plan {
 	@Override
 	public void reset() {
 		ptr = 0;
+	}
+
+	@Override
+	public Schema getSchema() {
+		return src.getSchema();
 	}
 }
