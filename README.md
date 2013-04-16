@@ -22,3 +22,4 @@ Reference
 
 [SQL-2003 BNF](http://savage.net.au/SQL/sql-2003-2.bnf.html)
 
+[MySQL Internals](https://dev.mysql.com/doc/internals/en/index.html)
