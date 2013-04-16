@@ -4,12 +4,14 @@ import java.util.List;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
 
 public class Project extends Plan {
 	
 	Plan src;
 	List<Expr> names;
+	Schema schema;
 
 	public Project(Plan src, List<Expr> names) {
 		super();
@@ -18,6 +20,7 @@ public class Project extends Plan {
 		src.parent = this;
 		myAggr.addAll(this.src.getAggr());
 		// NOTE that there shouldn't be any aggregate on names
+		// TODO build schema
 	}
 
 	@Override

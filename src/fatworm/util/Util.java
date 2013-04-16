@@ -3,6 +3,8 @@ package fatworm.util;
 import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -308,5 +310,22 @@ public class Util {
 			hash ^= x.hashCode();
 		}
 		return hash;
+	}
+	
+	public static java.sql.Timestamp parseTimestamp(String x){
+		try{
+			return new java.sql.Timestamp(Long.valueOf(x));
+		} catch (NumberFormatException e){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			try {
+				return new java.sql.Timestamp(format.parse(x).getTime());
+			} catch (ParseException ee) {
+				ee.printStackTrace();
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		error("Timestamp from "+x+" failed!");
+		return null;
 	}
 }

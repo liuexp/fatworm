@@ -24,7 +24,7 @@ public class QueryCall extends Expr {
 	public Field eval(Env env) {
 		src.eval(env);
 		if(src.hasNext())return src.next().cols.get(0);
-		else return new NULL();
+		else return NULL.getInstance();
 	}
 	@Override
 	public String toString() {

@@ -12,15 +12,15 @@ import fatworm.util.Util;
 public class Record {
 
 	public List<Field> cols = new ArrayList<Field>();
-	public Schema meta;
+	public Schema schema;
 	public Record() {
 		// TODO Auto-generated constructor stub
 	}
-	public Record(Schema meta2) {
-		meta = meta2;
+	public Record(Schema scm) {
+		schema = scm;
 	}
 	public Field getCol(String by) {
-		return cols.get(meta.findIndex(by));
+		return cols.get(schema.findIndex(by));
 	}
 	public void addCol(Field x){
 		cols.add(x);

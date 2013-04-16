@@ -25,7 +25,6 @@ public abstract class Expr {
 	//eval as an expression
 	public abstract Field eval(Env env);
 	
-	// FIXME: extract Aggr from every plan
 	public List<FuncCall> getAggr() {
 		return myAggr;
 	}

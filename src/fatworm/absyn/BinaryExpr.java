@@ -11,7 +11,9 @@ import fatworm.field.INT;
 import fatworm.field.NULL;
 import fatworm.util.Env;
 import fatworm.util.Util;
-import static java.sql.Types.*;
+import static java.sql.Types.INTEGER;
+import static java.sql.Types.DECIMAL;
+import static java.sql.Types.FLOAT;
 
 public class BinaryExpr extends Expr {
 	
@@ -82,7 +84,7 @@ public class BinaryExpr extends Expr {
 			// FIXME on exception, this should return a null field rather than an exception
 			e.printStackTrace();
 		}
-		return new NULL();
+		return NULL.getInstance();
 	}
 
 	private Field mymod(Field lval, Field rval) {
@@ -91,11 +93,11 @@ public class BinaryExpr extends Expr {
 			int b = ((INT)rval).v;
 			return new INT(a%b);
 		}
-		return new NULL();
+		return NULL.getInstance();
 	}
 
 	private Field mydiv(Field lval, Field rval) {
-		BigDecimal ret = lval.toDecimal().divide(rval.toDecimal(), 9, BigDecimal.ROUND_HALF_UP);
+		BigDecimal ret = lval.toDecimal().divide(rval.toDecimal(), 9, BigDecimal.ROUND_HALF_EVEN);
 		if(lval.type == INTEGER && rval.type == INTEGER)
 			return new INT(ret.intValue());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
@@ -103,7 +105,7 @@ public class BinaryExpr extends Expr {
 		if(lval.type == FLOAT || rval.type == FLOAT)
 			return new FLOAT(ret.floatValue());
 		error("missing type");
-		return new NULL();
+		return NULL.getInstance();
 	}
 
 	private Field mymult(Field lval, Field rval) {
@@ -115,7 +117,7 @@ public class BinaryExpr extends Expr {
 		if(lval.type == FLOAT || rval.type == FLOAT)
 			return new FLOAT(ret.floatValue());
 		error("missing type");
-		return new NULL();
+		return NULL.getInstance();
 	}
 
 	private Field myminus(Field lval, Field rval) {
@@ -127,7 +129,7 @@ public class BinaryExpr extends Expr {
 		if(lval.type == FLOAT || rval.type == FLOAT)
 			return new FLOAT(ret.floatValue());
 		error("missing type");
-		return new NULL();
+		return NULL.getInstance();
 	}
 
 	private Field myadd(Field lval, Field rval) {
@@ -139,6 +141,6 @@ public class BinaryExpr extends Expr {
 		if(lval.type == FLOAT || rval.type == FLOAT)
 			return new FLOAT(ret.floatValue());
 		error("missing type");
-		return new NULL();
+		return NULL.getInstance();
 	}
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.Util;
 
 public class INT extends Field {
 
@@ -23,7 +24,7 @@ public class INT extends Field {
 
 	public INT(String x) {
 		this();
-		v = Integer.valueOf(x);
+		v = Integer.valueOf(Util.trim(x));
 	}
 
 	public BigDecimal toDecimal() {
