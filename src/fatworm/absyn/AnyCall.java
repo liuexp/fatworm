@@ -44,7 +44,7 @@ public class AnyCall extends Expr {
 	}
 	@Override
 	public String toString() {
-		return expr.toString() + op.toString() + (isAll? "all ":"any") + src.toString();
+		return expr.toString() + op.toString() + (isAll? "all ":"any ") + src.toString();
 	}
 
 }

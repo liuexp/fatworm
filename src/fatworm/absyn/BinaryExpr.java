@@ -49,7 +49,12 @@ public class BinaryExpr extends Expr {
 	
 	@Override
 	public String toString(){
-		return "("+l.toString()+")" + op.toString() +"("+ r.toString()+")";
+		String ls = l.toString();
+		if(l.depth>1)ls = "(" + ls + ")";
+		String rs = r.toString();
+		if(r.depth>1)rs = "(" + rs + ")";
+		
+		return ls + op.toString() + rs;
 	}
 	@Override
 	public Field eval(Env env) {

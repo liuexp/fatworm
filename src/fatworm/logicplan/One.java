@@ -1,12 +1,16 @@
 package fatworm.logicplan;
 
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
 
 public class One extends Plan {
 
+	public Schema schema;
+	public Record record;
 	public One() {
 		super();
+		schema = new Schema("ONE_MEOW");
 	}
 
 	@Override
@@ -35,5 +39,10 @@ public class One extends Plan {
 	public void reset() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
 	}
 }

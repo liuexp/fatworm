@@ -8,6 +8,7 @@ import java.util.Map;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
+import fatworm.absyn.Expr;
 import fatworm.field.Field;
 import fatworm.parser.FatwormParser;
 import fatworm.util.Util;
@@ -107,6 +108,28 @@ public class Schema {
 				default:
 					Util.error("Schema undefined manipulation.");
 			}
+		}
+	}
+
+	public Schema(String t) {
+		this();
+		tableName = t;
+	}
+
+	public Schema() {
+		tableName = "MEOW";
+	}
+
+	// FIXME The type info of Columns are not filled. When do we need this type info anyway?
+	public void fromList(List<Expr> expr, Schema src) {
+		tableName = "ProjectFrom("+src.tableName+")";
+		for(int i=0;i<expr.size();i++){
+			Expr e = expr.get(i);
+			String colName = e.toString();
+			Column col = src.columnDef.get(colName);
+			if(col == null)
+				col = new Column(colName, java.sql.Types.NULL);
+			columnDef.put(colName, col);
 		}
 	}
 

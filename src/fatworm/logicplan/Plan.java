@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
 import fatworm.absyn.FuncCall;
 
@@ -38,4 +39,5 @@ public abstract class Plan {
 	public List<FuncCall> getAggr() {
 		return myAggr;
 	}
+	public Schema getSchema(){return null;}
 }
