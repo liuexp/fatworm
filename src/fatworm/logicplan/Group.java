@@ -37,7 +37,8 @@ public class Group extends Plan {
 		}
 		if(this.having != null)
 			myAggr.addAll(this.having.getAggr());
-		// TODO build schema
+		this.schema = new Schema();
+		this.schema.fromList(func, src.getSchema());
 	}
 
 	//TODO: Memory GroupBy and disk group by. 
