@@ -25,6 +25,10 @@ public class Env {
 		return res.get(a);
 	}
 	
+	public Field remove(String a){
+		return res.remove(a);
+	}
+	
 	public Env clone(){
 		return new Env(new HashMap<String, Field>(res));
 	}

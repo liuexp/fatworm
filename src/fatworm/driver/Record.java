@@ -25,18 +25,10 @@ public class Record {
 	public void addCol(Field x){
 		cols.add(x);
 	}
-	public void updateColWithAggr(Env env, List<Expr> func) {
+	public void fillCol(Env env, List<Expr> func) {
 		for(int i=0;i<func.size();i++){
 			Expr e = func.get(i);
-			if(e instanceof FuncCall)
-				cols.set(i, e.eval(env));
-		}
-	}
-	public void initCol(Env env, List<Expr> func) {
-		for(int i=0;i<func.size();i++){
-			Expr e = func.get(i);
-			if(!(e instanceof FuncCall))
-				cols.set(i, e.eval(env));
+			cols.set(i, e.eval(env));
 		}
 	}
 	@Override

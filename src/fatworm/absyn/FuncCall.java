@@ -13,6 +13,7 @@ import fatworm.util.*;
 public class FuncCall extends Expr {
 
 	int func;
+	boolean hasEvalCont;
 	// FIXME this might not be just a column name rather than an expression?
 	public String col;
 	public FuncCall(int func, String col) {
@@ -20,6 +21,7 @@ public class FuncCall extends Expr {
 		this.col = col;
 		this.func = func;
 		myAggr.add(this);
+		hasEvalCont = false;
 	}
 
 	@Override
@@ -29,15 +31,30 @@ public class FuncCall extends Expr {
 
 	@Override
 	public Field eval(Env env) {
+		if(!hasEvalCont)Util.error("Mie!!!You didn't give me anything to aggregate!!!");
 		Field f = env.get(this.toString());
 		if(f == null){
-			env.put(this.toString(), ContField.newContField(func));
-			return env.get(col);
-		} else if(f instanceof ContField){
-			((ContField) f).applyWithAggr(env.get(col));
+			f = ContField.newContField(func);
+			env.put(this.toString(), f);
+		}
+		if(f instanceof ContField){
 			return ((ContField) f).getFinalResults();
 		}
 		return f;
+	}
+	
+	public void evalCont(Env env) {
+		hasEvalCont = true;
+		Field f = env.get(this.toString());
+		if(f == null){
+			f = ContField.newContField(func);
+			env.put(this.toString(), f);
+		}
+		if(f instanceof ContField){
+			((ContField) f).applyWithAggr(env.get(col));
+		} else {
+			Util.error("Mie!!");
+		}
 	}
 	@Override
 	public String toString() {
