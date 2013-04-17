@@ -15,6 +15,9 @@ public class StringLiteral extends Expr {
 		this.isConst = true;
 		this.size=1;
 		this.value = new VARCHAR(s);
+		this.s = s;
+		this.isConst = true;
+		this.size=1;
 	}
 	
 	@Override

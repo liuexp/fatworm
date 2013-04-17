@@ -309,4 +309,25 @@ public class Util {
 		}
 		return hash;
 	}
+	
+	public static boolean findAggr(Tree t) {
+		switch(t.getType()){
+		case FatwormParser.AVG:
+		case FatwormParser.COUNT:
+		case FatwormParser.MAX:
+		case FatwormParser.MIN:
+		case FatwormParser.SUM:
+			return true;
+		}
+		if(t.getChildCount() == 0)return false;
+		for(Object v : ((BaseTree) t).getChildren()){
+			if(findAggr((Tree) v))return true;
+		}
+		return false;
+	}
+
+	public static Expr getExpr(Tree t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
