@@ -121,7 +121,7 @@ public class FuncCall extends Expr {
 		
 		public Field getFinalResults(){
 			return isNull? NULL.getInstance() : 
-				new DECIMAL(res.divide(new BigDecimal(cnt), 10, BigDecimal.ROUND_HALF_UP));
+				new DECIMAL(res.divide(new BigDecimal(cnt), 10, BigDecimal.ROUND_HALF_EVEN));
 		}
 	}
 	public static class CountContField extends ContField{

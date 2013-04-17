@@ -1,5 +1,4 @@
 package fatworm.field;
-import static java.sql.Types.*;
 
 import java.math.BigDecimal;
 
@@ -18,31 +17,31 @@ public abstract class Field {
 		return this.toString().equals(o.toString());
 	}
 	
-	/*public static Field fromString(int type, String x){
+	public static Field fromString(int type, String x){
 		switch(type){
-		case BOOLEAN:
+		case java.sql.Types.BOOLEAN:
 			return new BOOL(x);
-		case CHAR:
+		case java.sql.Types.CHAR:
 			return new CHAR(x);
-		case DATE:
+		case java.sql.Types.DATE:
 			return new DATE(x);
-		case DECIMAL:
+		case java.sql.Types.DECIMAL:
 			return new DECIMAL(x);
-		case FLOAT:
+		case java.sql.Types.FLOAT:
 			return new FLOAT(x);
-		case INTEGER:
+		case java.sql.Types.INTEGER:
 			return new INT(x);
-		case NULL:
-			return new NULL();
-		case TIMESTAMP:
+		case java.sql.Types.NULL:
+			return NULL.getInstance();
+		case java.sql.Types.TIMESTAMP:
 			return new TIMESTAMP(x);
-		case VARCHAR:
+		case java.sql.Types.VARCHAR:
 			return new VARCHAR(x);
 			
 			default:
 				return null;
 		}
-	}*/
+	}
 	
 	public static <T> boolean cmpHelper(BinaryOp op, Comparable<T> a, T b){
 		switch(op){

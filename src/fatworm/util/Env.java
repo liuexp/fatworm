@@ -35,14 +35,14 @@ public class Env {
 	
 	public void appendFromRecord(Record x){
 		for(int i=0;i<x.cols.size();i++){
-			res.put(x.meta.columnName.get(i), x.cols.get(i));
+			res.put(x.schema.columnName.get(i), x.cols.get(i));
 		}
 	}
 	
 	public static Env appendFromRecord(Record x, Env y){
 		Env ret = y.clone();
 		for(int i=0;i<x.cols.size();i++){
-			ret.res.put(x.meta.columnName.get(i), x.cols.get(i));
+			ret.res.put(x.schema.columnName.get(i), x.cols.get(i));
 		}
 		return ret;
 	}

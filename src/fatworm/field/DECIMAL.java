@@ -3,13 +3,14 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.Util;
 
 public class DECIMAL extends Field{
 
 	public BigDecimal v;
 	public DECIMAL(String x) {
-		// TODO Auto-generated constructor stub
 		this();
+		v = new BigDecimal(Util.trim(x)).setScale(10, BigDecimal.ROUND_HALF_EVEN);
 	}
 	public DECIMAL() {
 		type = java.sql.Types.DECIMAL;

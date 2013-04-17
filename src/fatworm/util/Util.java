@@ -3,6 +3,8 @@ package fatworm.util;
 import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -310,24 +312,20 @@ public class Util {
 		return hash;
 	}
 	
-	public static boolean findAggr(Tree t) {
-		switch(t.getType()){
-		case FatwormParser.AVG:
-		case FatwormParser.COUNT:
-		case FatwormParser.MAX:
-		case FatwormParser.MIN:
-		case FatwormParser.SUM:
-			return true;
+	public static java.sql.Timestamp parseTimestamp(String x){
+		try{
+			return new java.sql.Timestamp(Long.valueOf(x));
+		} catch (NumberFormatException e){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			try {
+				return new java.sql.Timestamp(format.parse(x).getTime());
+			} catch (ParseException ee) {
+				ee.printStackTrace();
+			}
+		} catch (Exception e){
+			e.printStackTrace();
 		}
-		if(t.getChildCount() == 0)return false;
-		for(Object v : ((BaseTree) t).getChildren()){
-			if(findAggr((Tree) v))return true;
-		}
-		return false;
-	}
-
-	public static Expr getExpr(Tree t) {
-		// TODO Auto-generated method stub
+		error("Timestamp from "+x+" failed!");
 		return null;
 	}
 }

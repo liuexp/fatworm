@@ -3,6 +3,7 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.Util;
 
 public class FLOAT extends Field {
 
@@ -13,8 +14,8 @@ public class FLOAT extends Field {
 	}
 
 	public FLOAT(String x) {
-		// TODO Auto-generated constructor stub
 		this();
+		v = Float.valueOf(Util.trim(x));
 	}
 	
 	public FLOAT(float x){
@@ -28,7 +29,7 @@ public class FLOAT extends Field {
 	}
 
 	public BigDecimal toDecimal() {
-		return new BigDecimal(v).setScale(10, BigDecimal.ROUND_HALF_UP);
+		return new BigDecimal(v).setScale(10, BigDecimal.ROUND_HALF_EVEN);
 	}
 	
 	@Override

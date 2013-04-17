@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.Util;
 
 public class TIMESTAMP extends Field {
 
@@ -10,7 +11,8 @@ public class TIMESTAMP extends Field {
 		type = java.sql.Types.TIMESTAMP;
 	}
 	public TIMESTAMP(String x) {
-		// TODO Auto-generated constructor stub
+		this();
+		v = Util.parseTimestamp(Util.trim(x));
 	}
 	@Override
 	public String toString() {

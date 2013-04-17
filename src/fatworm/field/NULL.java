@@ -12,7 +12,6 @@ public class NULL extends Field {
 
 	@Override
 	public boolean applyWithComp(BinaryOp op, Field x) {
-		// FIXME Not implemented
 		error("NULL.compWith missing type.");
 		return false;
 	}

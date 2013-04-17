@@ -35,7 +35,6 @@ public abstract class Plan {
 
 	public abstract void reset();
 
-	// FIXME: extract Aggr from every plan
 	public List<FuncCall> getAggr() {
 		return myAggr;
 	}
