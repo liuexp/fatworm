@@ -9,11 +9,12 @@ Warning
 
 TODO
 ====================
-* Rename Scan.(how to do it before Project)
-* Scan iterator doesnt look right.
-* Schema & Record metadata, and building schema in Group Scan & Product Scan.
+* Do we need project & rename when Group Plan is present?
+* Call src.eval(env) everytime before next().
 * FetchTable Scan.
 * Finish data manipulation language.
+* Before Order expand the table first.
+* If resolve alias simply by renaming, then those in having must also be renamed.
 
 Reference
 ====================

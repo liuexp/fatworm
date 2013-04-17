@@ -134,9 +134,11 @@ public class Util {
 		//			Rename must go after group
 		//			order must go after rename
 		//			rename must go after project
+		// FIXME	Here before Order we should expand the table first, then all expr rather than re-eval, just get results from env.
+		//			Consider SELECT (a+b) as c from x order by c;
 		// Plan order:
-		// hasAggr:		Distinct $ Project $ Order $ Rename $ Group $ Select $ source
-		// !hasAggr:	Distinct $ Project $ Order $ Rename $ Select $ source
+		// hasAggr:		Distinct $ Rename $ Project $ Order $ Group $ Select $ source
+		// !hasAggr:	Distinct $ Rename $ Project $ Order $ Select $ source
 		if(t.getType()!=FatwormParser.SELECT && t.getType()!=FatwormParser.SELECT_DISTINCT)
 			return null;
 		Plan ret=null,src=null;
@@ -179,14 +181,14 @@ public class Util {
 				break;
 			}
 		}
+		boolean hasAggr = groupBy != null;
+		if(having == null) hasAggr = false;
+		else hasAggr |= having.hasAggr();
 		
-		if(src == null)src = new One();
-		ret = src;
-		if(pred != null)ret = new Select(src, pred);
-		boolean hasAggr = !(groupBy == null&&having == null);
 		boolean hasRename = false;
 		
 		// next prepare projection and re-check global aggregation
+		// XXX here we simultaneously rename order by field if necessary
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		for(Object x : t.getChildren()){
@@ -199,9 +201,15 @@ public class Util {
 			if(y.getType() == FatwormParser.AS){
 				Expr tmp = getExpr(y.getChild(0));
 				expr.add(tmp);
-				alias.add(y.getChild(1).getText());
+				String as = y.getChild(1).getText();
+				alias.add(as);
 				hasRename = true;
 				hasAggr |= tmp.hasAggr();
+				// XXX here we simultaneously rename order by field if necessary
+				for(int i=0;i<orderField.size();i++){
+					if(orderField.get(i) == as)
+						orderField.set(i, tmp.toString());
+				}
 			}else{
 				Expr tmp = getExpr(y);
 				expr.add(tmp);
@@ -210,14 +218,24 @@ public class Util {
 			}
 		}
 		
+		// FIXME If resolve alias simply by renaming, then those in having must also be considered.
+		
+		if(src == null)src = new One();
+		ret = src;
+		if(!hasAggr && having != null){
+			pred = pred == null? having: new BinaryExpr(pred, BinaryOp.AND, having);
+		}
+		if(pred != null)ret = new Select(src, pred);
+		
 		if(hasAggr)
 			ret = new Group(ret, expr, groupBy, having);
-		if(hasRename)
-			ret = new Rename(ret, alias);
 		if(hasOrder)
 			ret = new Order(ret, orderField, orderType);
+		//FIXME do we need project and rename when Group Plan is present?
 		if(!expr.isEmpty()) //hasProject
 			ret = new Project(ret, expr);
+		if(hasRename)
+			ret = new Rename(ret, alias);
 		if(t.getType() == SELECT_DISTINCT) //hasDistinct
 			ret = new Distinct(ret);
 		

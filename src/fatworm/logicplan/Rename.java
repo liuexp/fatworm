@@ -22,10 +22,10 @@ public class Rename extends Plan {
 		//FIXME HOW to do this at all?
 		this.schema = new Schema(src.getSchema().tableName);
 		for(int i = 0; i < src.getSchema().columnName.size(); ++i){
-			String a = src.getSchema().columnName.get(i);
-			String b = schema.tableName + "." + Util.getAttr(a);
-			schema.columnName.add(b);
-			schema.columnDef.put(b, src.getSchema().columnDef.get(a));
+			String old = src.getSchema().columnName.get(i);
+			String now = as.get(i);
+			schema.columnDef.put(now, src.getSchema().columnDef.get(old));
+			schema.columnName.add(now);
 		}
 		schema.primaryKey = src.getSchema().primaryKey;
 	}
@@ -48,8 +48,10 @@ public class Rename extends Plan {
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		Record r = src.next();
+		Record ret = new Record(schema);
+		ret.cols.addAll(r.cols);
+		return ret;
 	}
 
 	@Override
