@@ -137,7 +137,7 @@ public class Util {
 		// FIXME	Here before Order we should expand the table first, then all expr rather than re-eval, just get results from env.
 		//			Consider SELECT (a+b) as c from x order by c;
 		// Plan order:
-		// hasAggr:		Distinct $ Rename $ Project $ Order $ Group $ Select $ source
+		// hasAggr:		Distinct $ Order $ Rename $ Group $ Select $ source
 		// !hasAggr:	Distinct $ Rename $ Project $ Order $ Select $ source
 		if(t.getType()!=FatwormParser.SELECT && t.getType()!=FatwormParser.SELECT_DISTINCT)
 			return null;
@@ -206,6 +206,7 @@ public class Util {
 				hasRename = true;
 				hasAggr |= tmp.hasAggr();
 				// XXX here we simultaneously rename order by field if necessary
+				
 				for(int i=0;i<orderField.size();i++){
 					if(orderField.get(i) == as)
 						orderField.set(i, tmp.toString());
@@ -232,7 +233,7 @@ public class Util {
 		if(hasOrder)
 			ret = new Order(ret, orderField, orderType);
 		//FIXME do we need project and rename when Group Plan is present?
-		if(!expr.isEmpty()) //hasProject
+		if(!expr.isEmpty() && !hasAggr) //hasProject
 			ret = new Project(ret, expr);
 		if(hasRename)
 			ret = new Rename(ret, alias);

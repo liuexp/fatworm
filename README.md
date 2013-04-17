@@ -9,7 +9,7 @@ Warning
 
 TODO
 ====================
-* Do we need project & rename when Group Plan is present?
+* Redesign Logic plan procedure.
 * Call src.eval(env) everytime before next().
 * FetchTable Scan.
 * Finish data manipulation language.
