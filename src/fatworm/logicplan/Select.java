@@ -10,6 +10,7 @@ public class Select extends Plan {
 
 	public Expr pred;
 	public Env env;
+	public Record current;
 	public Select(Plan src, Expr pred) {
 		super();
 		this.src = src;
@@ -28,25 +29,33 @@ public class Select extends Plan {
 		hasEval = true;
 		src.eval(env);
 		this.env = env;
+		fetchNext();
 	}
 
-	// FIXME while hasNext() == true, next() may get nothing at all!!
-	@Override
-	public boolean hasNext() {
-		return src.hasNext();
-	}
-
-	@Override
-	public Record next() {
+	private void fetchNext() {
+		Record ret = null;
 		while(src.hasNext()){
 			Record r = src.next();
 			Env localEnv = env.clone();
 			localEnv.appendFromRecord(r);
-			if(pred.evalPred(localEnv))
-				return r;
+			if(pred.evalPred(localEnv)){
+				ret = r;
+				break;
+			}
 		}
-		// FIXME return an empty ResultSet instead?
-		return null;
+		current = ret;
+	}
+
+	@Override
+	public boolean hasNext() {
+		return current == null;
+	}
+
+	@Override
+	public Record next() {
+		Record ret = current;
+		fetchNext();
+		return ret;
 	}
 
 	@Override
