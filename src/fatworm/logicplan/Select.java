@@ -27,6 +27,7 @@ public class Select extends Plan {
 	@Override
 	public void eval(Env env) {
 		hasEval = true;
+		current = null;
 		src.eval(env);
 		this.env = env;
 		fetchNext();
@@ -48,7 +49,7 @@ public class Select extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		return current == null;
+		return current != null;
 	}
 
 	@Override

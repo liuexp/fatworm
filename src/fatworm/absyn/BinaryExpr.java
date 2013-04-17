@@ -29,11 +29,15 @@ public class BinaryExpr extends Expr {
 		size=l.size+r.size+1;
 		depth=max(l.depth,r.depth)+1;
 		isConst=l.isConst&&r.isConst;
-		value=isConst ? eval(null) : null;
+		value=isConst ? eval() : null;
 		myAggr.addAll(l.getAggr());
 		myAggr.addAll(r.getAggr());
 	}
 	
+	private Field eval() {
+		return evalHelper(l.value, r.value);
+	}
+
 	public boolean evalPred(Env env){
 		Field x = eval(env);
 		return Util.toBoolean(x);
@@ -56,13 +60,7 @@ public class BinaryExpr extends Expr {
 		
 		return ls + op.toString() + rs;
 	}
-	@Override
-	public Field eval(Env env) {
-		//Note that value!=null shouldn't count for isConst
-		
-		if(isConst)return value;
-		Field lval = l.eval(env);
-		Field rval = r.eval(env);
+	public Field evalHelper(Field lval, Field rval) {
 		try {
 			switch(op){
 			case LESS:
@@ -90,6 +88,14 @@ public class BinaryExpr extends Expr {
 			e.printStackTrace();
 		}
 		return NULL.getInstance();
+	}
+	
+	@Override
+	public Field eval(Env env) {
+		if(isConst)return value;
+		Field lval = l.eval(env);
+		Field rval = r.eval(env);
+		return evalHelper(lval, rval);
 	}
 
 	private Field mymod(Field lval, Field rval) {

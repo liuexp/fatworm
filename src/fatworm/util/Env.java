@@ -25,8 +25,22 @@ public class Env {
 		return res.get(a);
 	}
 	
+	public Field get(String tbl, String col){
+		Field ret = get(col);
+		if(ret == null)ret = get(tbl + "." + Util.getAttr(col));
+		return ret;
+	}
+	
 	public Field remove(String a){
 		return res.remove(a);
+	}
+	
+	public Field remove(String tbl, String col){
+		Field ret = null;
+		String key = tbl + "." + Util.getAttr(col);
+		if(res.containsKey(col))ret = res.remove(col);
+		if(res.containsKey(key))ret = res.remove(key);
+		return ret;
 	}
 	
 	public Env clone(){
@@ -34,8 +48,11 @@ public class Env {
 	}
 	
 	public void appendFromRecord(Record x){
+		if(x == null)return;
 		for(int i=0;i<x.cols.size();i++){
 			res.put(x.schema.columnName.get(i), x.cols.get(i));
+			//FIXME how to resolve the name solely on canonical names?
+			res.put(Util.getAttr(x.schema.columnName.get(i)), x.cols.get(i));
 		}
 	}
 }

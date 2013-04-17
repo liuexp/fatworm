@@ -46,6 +46,7 @@ public class RenameTable extends Plan {
 		Record r = src.next();
 		Record ret = new Record(schema);
 		ret.cols.addAll(r.cols);
+		//System.out.println(ret.toString());
 		return ret;
 	}
 

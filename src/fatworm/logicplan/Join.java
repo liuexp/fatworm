@@ -29,6 +29,7 @@ public class Join extends Plan {
 	@Override
 	public void eval(Env envGlobal) {
 		hasEval = true;
+		curLeft = null;
 		Env env = envGlobal.clone();
 		left.eval(env);
 		right.eval(env);
@@ -53,7 +54,7 @@ public class Join extends Plan {
 		Record ret = new Record(schema);
 		ret.cols.addAll(curLeft.cols);
 		ret.cols.addAll(r.cols);
-		if(!right.hasNext()){
+		if(!right.hasNext()&&left.hasNext()){
 			right.reset();
 			curLeft = left.next();
 		}

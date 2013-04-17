@@ -26,6 +26,7 @@ import fatworm.absyn.*;
 import fatworm.logicplan.Plan;
 import fatworm.parser.FatwormLexer;
 import fatworm.parser.FatwormParser;
+import fatworm.util.Env;
 import fatworm.util.Traverse;
 import fatworm.util.Util;
 
@@ -42,7 +43,11 @@ public class DBEngine {
 		System.out.println(t.toStringTree());
 		Plan x = buildPlan(t);
 		System.out.println(x.toString());
-		x.eval(null);
+		x.eval(new Env());
+		if(x.hasNext())
+			System.out.println(x.next().toString());
+		else 
+			System.out.println("no results");
 		return new ResultSet(x);
 	}
 
