@@ -35,8 +35,7 @@ public class Connection implements java.sql.Connection {
 
 	@Override
 	public Statement createStatement() throws SQLException {
-		// TODO Auto-generated constructor stub
-		return null;
+		return new fatworm.driver.Statement();
 	}
 
 	@Override
@@ -76,8 +75,7 @@ public class Connection implements java.sql.Connection {
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		DBEngine.getInstance().close();
 	}
 
 	@Override

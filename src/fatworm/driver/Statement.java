@@ -8,6 +8,7 @@ import java.sql.SQLWarning;
 
 public class Statement implements java.sql.Statement {
 
+	public ResultSet rs;
 	public Statement() {
 
 	}
@@ -110,14 +111,17 @@ public class Statement implements java.sql.Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
-
-		return false;
+		try {
+			rs = DBEngine.getInstance().execute(sql);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {
-
-		return null;
+		return rs;
 	}
 
 	@Override

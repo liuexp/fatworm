@@ -1,6 +1,7 @@
 package fatworm.driver;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -9,28 +10,29 @@ import java.util.logging.Logger;
 
 
 public class Driver implements java.sql.Driver {
-
-	public Driver() {
-
+	static {
+		try {
+			DriverManager.registerDriver(new Driver());
+		} catch (SQLException e) {
+			throw new RuntimeException("Can't register driver!");
+		}
 	}
 
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
-
-		return null;
+		//TODO translate connection url
+		return new fatworm.driver.Connection();
 	}
 
 	@Override
 	public boolean acceptsURL(String url) throws SQLException {
-
-		return false;
+		return url.startsWith("jdbc:fatworm:");
 	}
 
 	@Override
 	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
 			throws SQLException {
-
-		return null;
+		return new DriverPropertyInfo[0];
 	}
 
 	@Override
