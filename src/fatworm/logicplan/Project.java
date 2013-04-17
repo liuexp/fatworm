@@ -10,43 +10,60 @@ import fatworm.util.Env;
 public class Project extends Plan {
 	
 	Plan src;
-	List<Expr> names;
+	List<Expr> expr;
+	List<String> names;
 	Schema schema;
+	Env env;
 
-	public Project(Plan src, List<Expr> names) {
+	// to tackle cases like select * from meow where a<=any (select 3+ab)
+	public Project(Plan src, List<Expr> expr) {
 		super();
 		this.src = src;
-		this.names = names;
-		src.parent = this;
-		myAggr.addAll(this.src.getAggr());
+		this.expr = expr;
+		this.src.parent = this;
+		this.myAggr.addAll(this.src.getAggr());
 		// NOTE that there shouldn't be any aggregate on names
-		// TODO build schema
+		this.schema = new Schema();
+		this.schema.fromList(expr, src.getSchema());
+		this.names = this.schema.columnName;
 	}
 
 	@Override
 	public void eval(Env env) {
-		// TODO Auto-generated method stub
+		hasEval = true;
+		src.eval(env);
+		this.env = env;
 	}
 	@Override
 	public String toString(){
-		return "Project (from="+src.toString()+")";
+		StringBuffer ns = new StringBuffer();
+		for(String x:names){
+			ns.append(x + ", ");
+		}
+		return "Project (from="+src.toString()+", names="+ns+")";
 	}
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		return src.hasNext();
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		Env localenv = env.clone();
+		localenv.appendFromRecord(src.next());
+		Record ret = new Record(schema);
+		ret.addColFromExpr(localenv, expr);
+		return ret;
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		src.reset();
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
 	}
 }

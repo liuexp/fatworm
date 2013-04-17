@@ -31,11 +31,12 @@ public class Group extends Plan {
 		this.func = func;
 		src.parent = this;
 		ptr = 0;
-		myAggr.addAll(this.src.getAggr());
+		// note that aggregate functions from source must be eval on source, not here.
 		for(int i=0;i<func.size();i++){
 			myAggr.addAll(func.get(i).getAggr());
 		}
-		myAggr.addAll(this.having.getAggr());
+		if(this.having != null)
+			myAggr.addAll(this.having.getAggr());
 		// TODO build schema
 	}
 
@@ -82,13 +83,13 @@ public class Group extends Plan {
 				env.appendFromRecord(r);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
-				pr.fillCol(env, func);
+				pr.addColFromExpr(env, func);
 			}
 		}
 
 		for(Record r : groupHelper.values()){
 			env.appendFromRecord(r);
-			if(having.evalPred(env)){
+			if(having==null||having.evalPred(env)){
 				results.add(r);
 			}
 		}
@@ -114,6 +115,11 @@ public class Group extends Plan {
 	@Override
 	public void reset() {
 		ptr = 0;
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
 	}
 
 }

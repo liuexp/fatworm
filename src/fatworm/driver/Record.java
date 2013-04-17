@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
-import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
@@ -25,10 +24,10 @@ public class Record {
 	public void addCol(Field x){
 		cols.add(x);
 	}
-	public void fillCol(Env env, List<Expr> func) {
+	public void addColFromExpr(Env env, List<Expr> func) {
 		for(int i=0;i<func.size();i++){
 			Expr e = func.get(i);
-			cols.set(i, e.eval(env));
+			cols.add(e.eval(env));
 		}
 	}
 	@Override
