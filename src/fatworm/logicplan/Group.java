@@ -13,6 +13,7 @@ import fatworm.field.Field;
 import fatworm.field.NULL;
 import fatworm.util.Env;
 import fatworm.util.Util;
+
 public class Group extends Plan {
 
 	public Plan src;
