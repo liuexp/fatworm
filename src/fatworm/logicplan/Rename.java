@@ -23,7 +23,8 @@ public class Rename extends Plan {
 		this.schema = new Schema(src.getSchema().tableName);
 		for(int i = 0; i < src.getSchema().columnName.size(); ++i){
 			String old = src.getSchema().columnName.get(i);
-			String now = as.get(i);
+			//Actually here according to grammar, asName shouldn't have a '.' in it.
+			String now = schema.tableName + "." + Util.getAttr(as.get(i));
 			schema.columnDef.put(now, src.getSchema().columnDef.get(old));
 			schema.columnName.add(now);
 		}
@@ -51,6 +52,7 @@ public class Rename extends Plan {
 		Record r = src.next();
 		Record ret = new Record(schema);
 		ret.cols.addAll(r.cols);
+		//System.out.println(ret.toString());
 		return ret;
 	}
 

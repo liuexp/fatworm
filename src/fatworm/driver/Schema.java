@@ -131,7 +131,11 @@ public class Schema {
 			if(col == null)
 				col = new Column(colName, java.sql.Types.NULL);
 			columnDef.put(colName, col);
+			columnName.add(colName);
 		}
 	}
-
+	@Override
+	public String toString(){
+		return "[" + tableName + "]" + Util.deepToString(columnName);
+	}
 }

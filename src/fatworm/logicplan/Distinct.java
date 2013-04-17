@@ -19,8 +19,7 @@ public class Distinct extends Plan {
 		super();
 		this.src = src;
 		src.parent = this;
-		results = new ArrayList<Record>();
-		ptr = 0;
+		
 		myAggr.addAll(this.src.getAggr());
 	}
 
@@ -28,6 +27,8 @@ public class Distinct extends Plan {
 	@Override
 	public void eval(Env envGlobal) {
 		hasEval = true;
+		results = new ArrayList<Record>();
+		ptr = 0;
 		Env env = envGlobal.clone();
 		src.eval(env);
 		Set<Record> set = new HashSet<Record>();

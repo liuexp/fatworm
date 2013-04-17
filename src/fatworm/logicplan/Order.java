@@ -29,14 +29,14 @@ public class Order extends Plan {
 		src.parent = this;
 		orderField = a;
 		orderType = b;
-		ptr = 0;
-		results = new ArrayList<Record>();
 		myAggr.addAll(this.src.getAggr());
 	}
 
 	@Override
 	public void eval(Env envGlobal) {
 		hasEval = true;
+		ptr = 0;
+		results = new ArrayList<Record>();
 		Env env = envGlobal.clone();
 		src.eval(env);
 		while(src.hasNext()){

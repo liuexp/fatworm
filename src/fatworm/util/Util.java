@@ -226,7 +226,14 @@ public class Util {
 		if(!hasAggr && having != null){
 			pred = pred == null? having: new BinaryExpr(pred, BinaryOp.AND, having);
 		}
-		if(pred != null)ret = new Select(src, pred);
+		if(pred != null){
+			if(!pred.isConst)
+				ret = new Select(src, pred);
+			else if(!pred.evalPred(new Env())){
+				//TODO does empty result set have schemas?
+				ret = new Select(src, pred);
+			}
+		}
 		
 		if(hasAggr)
 			ret = new Group(ret, expr, groupBy, having);
@@ -350,14 +357,14 @@ public class Util {
 	}
 
 	public static String getAttr(String x) {
-		return x.contains(".") ? x.substring(x.indexOf('.')) : x;
+		return x.contains(".") ? x.substring(x.indexOf('.')+1) : x;
 	}
 	
 	public static <T> String deepToString(List<T> s){
 		StringBuffer ret = new StringBuffer();
 		ret.append("{");
 		for(T x:s){
-			ret.append(x.toString() + ", ");
+			ret.append(x == null?"null":x.toString() + ", ");
 		}
 		ret.append("}");
 		return ret.toString();

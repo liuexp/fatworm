@@ -26,24 +26,33 @@ import fatworm.logicplan.Plan;
 
 public class ResultSet implements java.sql.ResultSet {
 
+	public Plan plan;
+	public Record current;
 	public ResultSet() {
+		current = null;
 	}
 
 	public ResultSet(Plan x) throws SQLException {
+		this();
 		if(!x.hasEval)throw new SQLException("not yet executed!");
-		// TODO Auto-generated method stub
+		plan = x;
 	}
 
 	@Override
 	public boolean next() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ret = plan.hasNext();
+		current = plan.next();
+		return ret;
+	}
+
+	@Override
+	public void beforeFirst() throws SQLException {
+		plan.reset();
 	}
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		plan.close();
 	}
 
 	@Override
@@ -52,25 +61,27 @@ public class ResultSet implements java.sql.ResultSet {
 		return null;
 	}
 
+
+	@Override
+	public Object getObject(int columnIndex) throws SQLException {
+		return current.cols.get(columnIndex);
+	}
+	
 	@Override
 	public boolean isBeforeFirst() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
+	@Override
+	public boolean wasNull() throws SQLException {
+		return false;
+	}
+	
 	@Override
 	public Object getObject(int columnIndex, Map<String, Class<?>> map)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public boolean wasNull() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 
@@ -295,11 +306,7 @@ public class ResultSet implements java.sql.ResultSet {
 		return null;
 	}
 
-	@Override
-	public Object getObject(int columnIndex) throws SQLException {
 
-		return null;
-	}
 
 	@Override
 	public Object getObject(String columnLabel) throws SQLException {
@@ -353,12 +360,6 @@ public class ResultSet implements java.sql.ResultSet {
 	public boolean isLast() throws SQLException {
 
 		return false;
-	}
-
-	@Override
-	public void beforeFirst() throws SQLException {
-
-		
 	}
 
 	@Override

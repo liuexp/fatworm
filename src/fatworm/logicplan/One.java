@@ -8,6 +8,7 @@ public class One extends Plan {
 
 	public Schema schema;
 	public Record record;
+	int ptr = 0;
 	public One() {
 		super();
 		schema = new Schema("ONE_MEOW");
@@ -15,8 +16,8 @@ public class One extends Plan {
 
 	@Override
 	public void eval(Env env) {
-		// TODO Auto-generated method stub
 		hasEval = true;
+		reset();
 	}
 	@Override
 	public String toString(){
@@ -25,20 +26,19 @@ public class One extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		return ptr == 0;
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		if(ptr > 0)return null;
+		ptr++;
+		return new Record(schema);
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		ptr = 0;
 	}
 
 	@Override

@@ -16,8 +16,6 @@ public class Project extends Plan {
 	Schema schema;
 	Env env;
 
-	// FIXME to tackle cases like select * from meow where a<=any (select 3+ab)
-	//		we might need to call src.eval(env) every time before next() 
 	public Project(Plan src, List<Expr> expr) {
 		super();
 		this.src = src;
@@ -52,6 +50,7 @@ public class Project extends Plan {
 		localenv.appendFromRecord(src.next());
 		Record ret = new Record(schema);
 		ret.addColFromExpr(localenv, expr);
+		//System.out.println(ret.toString());
 		return ret;
 	}
 

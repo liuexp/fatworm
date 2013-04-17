@@ -25,7 +25,7 @@ public abstract class Plan {
 		this.parent = parent;
 	}
 	
-	
+	// Eval is a signal that the global environment has changed, you might need to re-eval your results.
 	public abstract void eval(Env env);
 
 	public abstract String toString();
@@ -40,4 +40,8 @@ public abstract class Plan {
 		return myAggr;
 	}
 	public abstract Schema getSchema();
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
 }
