@@ -2,6 +2,7 @@ package fatworm.logicplan;
 
 import fatworm.driver.Record;
 import fatworm.driver.ResultSetMetaData;
+import fatworm.driver.Schema;
 import fatworm.util.Env;
 
 public class FetchTable extends Plan {
@@ -17,6 +18,7 @@ public class FetchTable extends Plan {
 	@Override
 	public void eval(Env env) {
 		// TODO Auto-generated method stub
+		hasEval = true;
 	}
 	@Override
 	public String toString(){
@@ -39,5 +41,10 @@ public class FetchTable extends Plan {
 	public void reset() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Schema getSchema() {
+		return new Schema(tableName);
 	}
 }

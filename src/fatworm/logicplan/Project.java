@@ -6,6 +6,7 @@ import fatworm.absyn.Expr;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class Project extends Plan {
 	
@@ -36,11 +37,7 @@ public class Project extends Plan {
 	}
 	@Override
 	public String toString(){
-		StringBuffer ns = new StringBuffer();
-		for(String x:names){
-			ns.append(x + ", ");
-		}
-		return "Project (from="+src.toString()+", names="+ns+")";
+		return "Project (from="+src.toString()+", names="+Util.deepToString(names)+")";
 	}
 
 	@Override

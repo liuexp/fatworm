@@ -120,7 +120,8 @@ public class Schema {
 		tableName = "MEOW";
 	}
 
-	// FIXME The type info of Columns are not filled. When do we need this type info anyway?
+	// FIXME The type info of Columns are not filled. 
+	// 		 on inserting values from subquery, this type info might be needed.
 	public void fromList(List<Expr> expr, Schema src) {
 		tableName = "ProjectFrom("+src.tableName+")";
 		for(int i=0;i<expr.size();i++){

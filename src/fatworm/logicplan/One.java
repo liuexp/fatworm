@@ -16,7 +16,7 @@ public class One extends Plan {
 	@Override
 	public void eval(Env env) {
 		// TODO Auto-generated method stub
-		
+		hasEval = true;
 	}
 	@Override
 	public String toString(){
