@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
+	Schema schema;
 	public ResultSetMetaData() {
 
 	}
