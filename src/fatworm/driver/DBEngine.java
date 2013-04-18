@@ -1,6 +1,9 @@
 package fatworm.driver;
 
 
+import java.sql.SQLException;
+import java.util.Map;
+
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -34,6 +37,8 @@ import fatworm.util.Util;
 // but a direct interpreter is much easier to write.
 public class DBEngine {
 
+	public String name;
+	public Map<String, Table> dbList;
 	public DBEngine() {
 		// TODO Auto-generated constructor stub
 	}
@@ -41,21 +46,21 @@ public class DBEngine {
 	public ResultSet execute(String sql) throws Exception {
 		CommonTree t = parse(sql);
 		System.out.println(t.toStringTree());
-		Plan x = buildPlan(t);
-		System.out.println(x.toString());
-		x.eval(new Env());
-		if(x.hasNext())
-			System.out.println(x.next().toString());
-		else 
-			System.out.println("no results");
-		return new ResultSet(x);
+		return execute(t);
 	}
 
-	private static Plan buildPlan(CommonTree t) {
+	private static ResultSet execute(CommonTree t) throws SQLException {
 		switch(t.getType()){
 		case SELECT:
 		case SELECT_DISTINCT:
-			return Util.transSelect(t);
+			Plan x = Util.transSelect(t);
+			System.out.println(x.toString());
+			x.eval(new Env());
+			if(x.hasNext())
+				System.out.println(x.next().toString());
+			else 
+				System.out.println("no results");
+			return new ResultSet(x);
 		default:
 				throw new RuntimeException("not implemented.");
 		}
