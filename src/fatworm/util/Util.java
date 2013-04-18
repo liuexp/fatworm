@@ -142,7 +142,7 @@ public class Util {
 		// FIXME	Here before Order we should expand the table first, then all expr rather than re-eval, just get results from env.
 		//			Consider SELECT (a+b) as c from x order by c;
 		// Current Plan order:
-		// hasAggr:		Distinct $ Rename $ Order $ Group $ Select $ source
+		// hasAggr:		Distinct $ Rename $ Project $ Order $ Group $ Select $ source
 		// !hasAggr:	Distinct $ Rename $ Project $ Order $ Select $ source
 		if(t.getType()!=FatwormParser.SELECT && t.getType()!=FatwormParser.SELECT_DISTINCT)
 			return null;
@@ -212,8 +212,11 @@ public class Util {
 				// XXX here we simultaneously rename order by field if necessary
 				
 				for(int i=0;i<orderField.size();i++){
-					if(orderField.get(i) == as)
+					if(orderField.get(i).equalsIgnoreCase(as))
 						orderField.set(i, tmp.toString());
+				// FIXME Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
+				if(groupBy.equalsIgnoreCase(as))
+					groupBy = tmp.toString();
 				}
 			}else{
 				Expr tmp = getExpr(y);
@@ -242,9 +245,8 @@ public class Util {
 		if(hasAggr)
 			ret = new Group(ret, expr, groupBy, having);
 		if(hasOrder)
-			ret = new Order(ret, orderField, orderType);
-		//FIXME do we need project and rename when Group Plan is present?
-		if(!expr.isEmpty() && !hasAggr) //hasProject
+			ret = new Order(ret, expr, orderField, orderType);
+		if(!expr.isEmpty()) //hasProject
 			ret = new Project(ret, expr);
 		if(hasRename)
 			ret = new Rename(ret, alias);
