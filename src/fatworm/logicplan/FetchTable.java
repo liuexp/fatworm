@@ -49,6 +49,6 @@ public class FetchTable extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		return new Schema(tableName);
+		return table.schema;
 	}
 }
