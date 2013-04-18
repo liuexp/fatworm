@@ -48,12 +48,12 @@ public class Table {
 		return ret;
 	}
 
-	public int insert(Tree tree) {
+	public int insert(Tree t) {
 		int ret = 0;
 		Record r = new Record(schema);
 		r.autoFill();
-		for(int i=0;i<tree.getChildCount();i++){
-			Tree c = tree.getChild(i);
+		for(int i=0;i<t.getChildCount();i++){
+			Tree c = t.getChild(i);
 			String colName = schema.columnName.get(i);
 			r.setField(colName, Util.getField(schema.columnDef.get(colName), c));
 		}
@@ -61,4 +61,18 @@ public class Table {
 		ret++;
 		return ret;
 	}
+
+	public int insert(CommonTree t, Tree v) {
+		int ret = 0;
+		Record r = new Record(schema);
+		r.autoFill();
+		for(int i=0;i<v.getChildCount();i++){
+			String colName = t.getChild(i+1).getText();
+			r.setField(colName, Util.getField(schema.columnDef.get(colName), v.getChild(i)));
+		}
+		records.add(r);
+		ret++;
+		return ret;
+	}
+	
 }

@@ -6,6 +6,7 @@ import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import fatworm.field.DATE;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
-import fatworm.field.NULL;
 import fatworm.field.TIMESTAMP;
 import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
@@ -384,9 +384,9 @@ public class Util {
 			}
 			error("meow@GetField");
 		} else if(column.type == java.sql.Types.DATE){
-			return new DATE(new java.sql.Timestamp(System.currentTimeMillis()));
+			return new DATE(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
 		} else if(column.type == java.sql.Types.TIMESTAMP){
-			return new TIMESTAMP(new java.sql.Timestamp(System.currentTimeMillis()));
+			return new TIMESTAMP(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
 		}
 		return Field.fromString(column.type, getExpr(c).eval(new Env()).toString());
 	}

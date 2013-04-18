@@ -11,6 +11,7 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.BaseTree;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
@@ -65,10 +66,12 @@ public class DBEngine {
 		Expr e = null;
 		List<String> colName = new ArrayList<String>();
 		List<Expr> expr = new ArrayList<Expr>();
+		Table table = null;
+		Plan plan;
 		switch(t.getType()){
 		case SELECT:
 		case SELECT_DISTINCT:
-			Plan plan = Util.transSelect(t);
+			plan = Util.transSelect(t);
 			System.out.println(plan.toString());
 			plan.eval(new Env());
 			return new ResultSet(plan);
@@ -116,8 +119,19 @@ public class DBEngine {
 			db.getTable(name).insert(t.getChild(1));
 			return new ResultSet(None.getInstance());
 		case INSERT_COLUMNS:
+			name = t.getChild(0).getText();
+			db.getTable(name).insert(t, t.getChild(t.getChildCount()-1));
+			return new ResultSet(None.getInstance());
 		case INSERT_SUBQUERY:
-
+			name = t.getChild(0).getText();
+			table = db.getTable(name);
+			plan = Util.transSelect((BaseTree) t.getChild(1));
+			plan.eval(new Env());
+			while(plan.hasNext()){
+				table.records.add(plan.next());
+			}
+			plan.close();
+			return new ResultSet(None.getInstance());
 		case CREATE_INDEX:
 		case CREATE_UNIQUE_INDEX:
 		case DROP_INDEX:
