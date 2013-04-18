@@ -22,6 +22,7 @@ Testing
 ======================
 * select a,b from (select 1+2 as a, 2+3 as b, 3+4 as c) as d,(select 1+2 as e, 2+3 as f, 3+4 as g) as h
 * select a from (select 1+2 as a) as b
+* select a from (select 1+2 as a) as b where a = all(select (a+3)/2) order by a
 
 Reference
 ====================

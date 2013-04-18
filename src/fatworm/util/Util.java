@@ -25,9 +25,11 @@ import fatworm.absyn.StringLiteral;
 import fatworm.absyn.ExistCall;
 import fatworm.absyn.AnyCall;
 import fatworm.driver.Column;
+import fatworm.field.DATE;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
+import fatworm.field.TIMESTAMP;
 import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
 import fatworm.logicplan.Group;
@@ -372,7 +374,21 @@ public class Util {
 	}
 
 	public static Field getField(Column column, Tree c) {
-		//FIXME
-		return Field.fromString(column.type, c.getText());
+		if(c == null || c.getText().equalsIgnoreCase("default")){
+			if(column.getDefault() != null){
+				return column.getDefault();
+			} else if(column.isAutoInc()){
+				//FIXME will there be any conflicts?
+				return new INT(column.getAutoInc());
+			}
+			error("meow@GetField");
+		} else if(column.type == java.sql.Types.DATE){
+			return new DATE(new java.sql.Timestamp(System.currentTimeMillis()));
+		} else if(column.type == java.sql.Types.TIMESTAMP){
+			return new TIMESTAMP(new java.sql.Timestamp(System.currentTimeMillis()));
+		}
+		//TODO build from expression!!!
+		String str = c.getText();
+		return Field.fromString(column.type, str);
 	}
 }
