@@ -59,6 +59,7 @@ public class Group extends Plan {
 		results = new ArrayList<Record>();
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
+		Map<Field, Env> avgHelper = new HashMap<Field, Env>();
 		Env env = envGlobal.clone();
 		
 		src.eval(env);
@@ -69,10 +70,15 @@ public class Group extends Plan {
 		// First propagate for aggregation by evalCont().
 		while(src.hasNext()){
 			Record r = src.next();
-			env.appendFromRecord(r);
+			Field f = by==null? NULL.getInstance(): r.getCol(by);
+			Env tmpEnv = avgHelper.get(f);
+			if(tmpEnv == null)
+				tmpEnv = env.clone();
+			tmpEnv.appendFromRecord(r);
 			for(FuncCall a : myAggr){
-				a.evalCont(env);
+				a.evalCont(tmpEnv);
 			}
+			avgHelper.put(f, tmpEnv);
 		}
 		src.reset();
 
@@ -81,16 +87,23 @@ public class Group extends Plan {
 			Record r = src.next();
 			Field f = by==null? NULL.getInstance(): r.getCol(by);
 			Record pr = groupHelper.get(f);
+
 			if(pr == null){
+				Env tmpEnv = avgHelper.get(f);
 				env.appendFromRecord(r);
+				env.appendFrom(tmpEnv);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
 				pr.addColFromExpr(env, func);
 			}
 		}
 
-		for(Record r : groupHelper.values()){
+		for(Field f : groupHelper.keySet()){
+			System.out.println("meow");
+			Record r = groupHelper.get(f);
+			Env tmpEnv = avgHelper.get(f);
 			env.appendFromRecord(r);
+			env.appendFrom(tmpEnv);
 			if(having==null||having.evalPred(env)){
 				results.add(r);
 			}

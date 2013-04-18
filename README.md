@@ -23,7 +23,15 @@ Testing
 * select a,b from (select 1+2 as a, 2+3 as b, 3+4 as c) as d,(select 1+2 as e, 2+3 as f, 3+4 as g) as h
 * select a from (select 1+2 as a) as b
 * select a from (select 1+2 as a) as b where a = all(select (a+3)/2) order by a
+        
 
+        create database meow
+        use meow
+        create table a(a int, b int default 0)
+        insert into a values(1)
+        insert into a values(0)
+        insert into a values(1,2)
+        insert into a values(2,2)
 Reference
 ====================
 

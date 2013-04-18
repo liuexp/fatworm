@@ -57,6 +57,8 @@ public class Table {
 			String colName = schema.columnName.get(i);
 			r.setField(colName, Util.getField(schema.columnDef.get(colName), c));
 		}
+		records.add(r);
+		ret++;
 		return ret;
 	}
 }

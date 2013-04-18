@@ -18,6 +18,7 @@ public class None extends Plan {
 	public None() {
 		super();
 		schema = new Schema("MEOW_NONE");
+		hasEval = true;
 	}
 
 	public None(Plan parent) {

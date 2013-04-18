@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import fatworm.driver.DBEngine;
 import fatworm.field.DATE;
+import fatworm.logicplan.Plan;
 
 public class Main {
 
@@ -17,7 +18,7 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		DBEngine db = new DBEngine();
+		DBEngine db = DBEngine.getInstance();
 		Scanner in = new Scanner(System.in);
 		//DATE zz = new DATE("2013-4-16 19:42:30");
 		//System.out.println(zz.toString());
@@ -27,7 +28,13 @@ public class Main {
 				try {
 					String tmp = in.nextLine();
 					@SuppressWarnings("unused")
-					ResultSet result = db.execute(tmp);
+					fatworm.driver.ResultSet result = db.execute(tmp);
+					Plan plan = result.plan;
+					if(!plan.hasNext()) 
+						System.out.println("no results");
+					while(plan.hasNext()){
+						System.out.println(plan.next().toString());
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
