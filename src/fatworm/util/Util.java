@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.tree.BaseTree;
 import org.antlr.runtime.tree.Tree;
@@ -388,5 +389,15 @@ public class Util {
 			return new TIMESTAMP(new java.sql.Timestamp(System.currentTimeMillis()));
 		}
 		return Field.fromString(column.type, getExpr(c).eval(new Env()).toString());
+	}
+
+	public static <K,V> String deepToString(Map<K, V> res) {
+		StringBuffer ret = new StringBuffer();
+		ret.append("{");
+		for(K x:res.keySet()){
+			ret.append(x == null?"null":x.toString() + "="+ res.get(x).toString()+" , ");
+		}
+		ret.append("}");
+		return ret.toString();
 	}
 }

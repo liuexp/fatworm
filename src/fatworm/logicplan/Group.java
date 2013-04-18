@@ -59,7 +59,7 @@ public class Group extends Plan {
 		results = new ArrayList<Record>();
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
-		Map<Field, Env> avgHelper = new HashMap<Field, Env>();
+		Map<Field, Env> aggrHelper = new HashMap<Field, Env>();
 		Env env = envGlobal.clone();
 		
 		src.eval(env);
@@ -71,14 +71,15 @@ public class Group extends Plan {
 		while(src.hasNext()){
 			Record r = src.next();
 			Field f = by==null? NULL.getInstance(): r.getCol(by);
-			Env tmpEnv = avgHelper.get(f);
+			Env tmpEnv = aggrHelper.get(f);
 			if(tmpEnv == null)
 				tmpEnv = env.clone();
 			tmpEnv.appendFromRecord(r);
 			for(FuncCall a : myAggr){
-				a.evalCont(tmpEnv);
+				if(a.canEvalOn(schema))
+					a.evalCont(tmpEnv);
 			}
-			avgHelper.put(f, tmpEnv);
+			aggrHelper.put(f, tmpEnv);
 		}
 		src.reset();
 
@@ -89,7 +90,7 @@ public class Group extends Plan {
 			Record pr = groupHelper.get(f);
 
 			if(pr == null){
-				Env tmpEnv = avgHelper.get(f);
+				Env tmpEnv = aggrHelper.get(f);
 				env.appendFrom(tmpEnv);
 				env.appendFromRecord(r);
 				pr = new Record(schema);
@@ -101,10 +102,12 @@ public class Group extends Plan {
 		for(Field f : groupHelper.keySet()){
 			//System.out.println("meow");
 			Record r = groupHelper.get(f);
-			Env tmpEnv = avgHelper.get(f);
+			Env tmpEnv = aggrHelper.get(f);
 			env.appendFromRecord(r);
 			env.appendFrom(tmpEnv);
+			//System.out.println(Util.deepToString(env.res));
 			if(having==null||having.evalPred(env)){
+				//System.out.println(Util.deepToString(env.res));
 				results.add(r);
 			}
 		}
@@ -112,7 +115,7 @@ public class Group extends Plan {
 	
 	@Override
 	public String toString(){
-		return "Group (from="+src.toString()+", by=" + by + ", having=" + (having == null? "null": having.toString())+", expr="+Util.deepToString(func)+")";
+		return "Group (from="+src.toString()+", by=" + by + ", having=" + (having == null? "null": having.toString())+", expr="+Util.deepToString(func)+", myAggr="+Util.deepToString(myAggr)+")";
 	}
 
 	@Override

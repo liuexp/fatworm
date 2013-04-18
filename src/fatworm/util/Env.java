@@ -28,6 +28,7 @@ public class Env {
 	public Field get(String tbl, String col){
 		Field ret = get(col);
 		if(ret == null)ret = get(tbl + "." + Util.getAttr(col));
+		if(ret == null)ret = NULL.getInstance();
 		return ret;
 	}
 	
