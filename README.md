@@ -11,10 +11,9 @@ TODO
 ====================
 * Be careful with alias in Env.
 * Finish data manipulation language.
-* Redesign Logic plan Group procedure, must expand the table first and do Project in 2 stages.
+* Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
 * select (a + b) as t, max(c) from A group by t;  // this makes sense
 * select max(a + b) as t from A group by t; // Error: can not group on 't'
-* Before Order expand the table first.
 * If resolve alias simply by renaming, then those in having must also be renamed.
 
 Testing
@@ -50,9 +49,18 @@ Testing
         insert into t3 values (9,9)
         select * from t1 group by b having exists(select * from t3 group by c having sum(a) = 6)
         select * from t1 group by b having exists(select * from t2 group by b having sum(a) = 9)
+        select a+b as c from t1 order by c
+        select a+b as c from t1 order by a
         drop table t1
         drop table t2
         drop table t3
+
+        create table x(a int, b int)
+        insert into x values (1,2)
+        insert into x values (2,3)
+        insert into x values (3,3)
+        select distinct b from x having b = count(b)-1
+        drop table x
 
 Reference
 ====================

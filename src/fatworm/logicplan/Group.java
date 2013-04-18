@@ -22,6 +22,7 @@ public class Group extends Plan {
 	public List<Expr> func;
 	public int ptr;
 	public List<Record> results;
+	public List<String> expandedCols = new ArrayList<String>();
 	public Schema schema;
 	
 	public Group(Plan src, List<Expr> func, String by, Expr having) {
@@ -40,6 +41,17 @@ public class Group extends Plan {
 			myAggr.addAll(this.having.getAggr());
 		this.schema = new Schema();
 		this.schema.fromList(func, src.getSchema());
+		// Expand the table for now.
+		Schema scm = src.getSchema();
+		for(String colName : scm.columnName){
+			String ocol = colName;
+			colName = Util.getAttr(colName);
+			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(this.schema.tableName+"."+colName))
+				continue;
+			this.schema.columnDef.put(colName, scm.columnDef.get(ocol));
+			this.schema.columnName.add(colName);
+			this.expandedCols.add(colName);
+		}
 	}
 
 	//TODO: Memory GroupBy and disk group by. 
@@ -96,6 +108,9 @@ public class Group extends Plan {
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
 				pr.addColFromExpr(env, func);
+				for(int i=0;i<expandedCols.size();i++){
+					pr.addCol(env.get(expandedCols.get(i)));
+				}
 			}
 		}
 		//System.out.println("mie");
@@ -103,11 +118,12 @@ public class Group extends Plan {
 			//System.out.println("meow");
 			Record r = groupHelper.get(f);
 			Env tmpEnv = aggrHelper.get(f);
-			env.appendFromRecord(r);
 			env.appendFrom(tmpEnv);
-			System.out.println(Util.deepToString(env.res));
+			env.appendFromRecord(r);
+			//System.out.println(r.toString());
+			//System.out.println(Util.deepToString(env.res));
 			if(having==null||having.evalPred(env)){
-				System.out.println(Util.deepToString(env.res));
+				//System.out.println(Util.deepToString(env.res));
 				results.add(r);
 			}
 		}
