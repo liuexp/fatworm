@@ -1,10 +1,11 @@
 package fatworm.driver;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
 	public String name;
-	public Map<String, Table> tableList;
+	public Map<String, Table> tableList = new HashMap<String, Table>();
 	public Database(String name){
 		this.name = name;
 	}

@@ -1,17 +1,22 @@
 package fatworm.logicplan;
 
+import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
+import fatworm.driver.Table;
 
 public class FetchTable extends Plan {
 
-	//public ResultSetMetaData table;
+	//FIXME for now we use temporary database in memory 
 	public String tableName;
+	public Table table;
+	public int ptr = 0;
 	public FetchTable(String table) {
 		super();
 		tableName = table;
+		this.table = DBEngine.getInstance().getTable(table);
 	}
 
 	// TODO Range Fetch?
@@ -19,6 +24,7 @@ public class FetchTable extends Plan {
 	public void eval(Env env) {
 		// TODO Auto-generated method stub
 		hasEval = true;
+		ptr = 0;
 	}
 	@Override
 	public String toString(){
@@ -28,19 +34,17 @@ public class FetchTable extends Plan {
 	@Override
 	public boolean hasNext() {
 		// TODO Auto-generated method stub
-		return false;
+		return ptr < table.records.size();
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		return table.records.get(ptr++);
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		ptr = 0;
 	}
 
 	@Override

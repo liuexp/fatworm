@@ -30,7 +30,7 @@ public class Schema {
 				return i;
 			if(!y.contains("."))continue;
 			// FIXME hack for table name mismatch
-			if(x.equalsIgnoreCase(y.substring(y.indexOf('.')+1)))
+			if(Util.getAttr(x).equals(Util.getAttr(y)))
 				return i;
 		}
 		return -1;
