@@ -9,7 +9,9 @@ Warning
 
 TODO
 ====================
-* Redesign Logic plan procedure.
+* Redesign Logic plan Group procedure.
+* select (a + b) as t, max(c) from A group by t;  // this makes sense
+* select max(a + b) as t from A group by t; // Error: can not group on 't'
 * Call src.eval(env) everytime before next().
 * FetchTable Scan.
 * Finish data manipulation language.

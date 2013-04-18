@@ -188,7 +188,7 @@ public class Util {
 		boolean hasRename = false;
 		
 		// next prepare projection and re-check global aggregation
-		// XXX here we simultaneously rename order by field if necessary
+		// TODO here we simultaneously rename order by field if necessary
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		for(Object x : t.getChildren()){
@@ -205,12 +205,6 @@ public class Util {
 				alias.add(as);
 				hasRename = true;
 				hasAggr |= tmp.hasAggr();
-				// XXX here we simultaneously rename order by field if necessary
-				
-				for(int i=0;i<orderField.size();i++){
-					if(orderField.get(i) == as)
-						orderField.set(i, tmp.toString());
-				}
 			}else{
 				Expr tmp = getExpr(y);
 				expr.add(tmp);
