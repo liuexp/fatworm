@@ -156,4 +156,10 @@ public class Group extends Plan {
 		return schema;
 	}
 
+	@Override
+	public void close() {
+		src.close();
+		results = new ArrayList<Record>();
+	}
+
 }

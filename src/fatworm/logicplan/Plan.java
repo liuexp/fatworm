@@ -40,8 +40,5 @@ public abstract class Plan {
 		return myAggr;
 	}
 	public abstract Schema getSchema();
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void close();
 }

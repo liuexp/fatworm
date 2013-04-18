@@ -63,4 +63,9 @@ public class Project extends Plan {
 	public Schema getSchema() {
 		return schema;
 	}
+
+	@Override
+	public void close() {
+		src.close();
+	}
 }

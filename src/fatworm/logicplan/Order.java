@@ -114,4 +114,10 @@ public class Order extends Plan {
 	public Schema getSchema() {
 		return src.getSchema();
 	}
+
+	@Override
+	public void close() {
+		src.close();
+		results = new ArrayList<Record>();
+	}
 }
