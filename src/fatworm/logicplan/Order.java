@@ -21,7 +21,6 @@ public class Order extends Plan {
 	public List<Integer> orderType;
 	public List<Record> results;
 	public int ptr;
-	public Schema schema;
 	
 	public Order(Plan src, List<String> a, List<Integer> b) {
 		super();
@@ -87,6 +86,6 @@ public class Order extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		return schema;
+		return src.getSchema();
 	}
 }

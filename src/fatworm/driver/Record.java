@@ -49,8 +49,14 @@ public class Record {
 		return "[\r\n" + schema.toString() + "\r\n]" + Util.deepToString(cols);
 	}
 	public void autoFill() {
-		// TODO Auto-generated method stub
-		
+		for(int i=0;i<schema.columnName.size();i++){
+			String colName = schema.columnName.get(i);
+			Column col = schema.columnDef.get(colName);
+			if(col.getDefault()!=null || col.type == java.sql.Types.TIMESTAMP || col.type == java.sql.Types.DATE){
+				cols.add(Util.getField(col, null));
+			} else 
+				cols.add(null);
+		}
 	}
 	public void setField(String colName, Field field) {
 		cols.set(schema.findIndex(colName), field);
