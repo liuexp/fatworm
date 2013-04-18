@@ -5,8 +5,8 @@ import java.sql.SQLException;
 public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
 	Schema schema;
-	public ResultSetMetaData() {
-
+	public ResultSetMetaData(Schema schema) {
+		this.schema = schema;
 	}
 
 	@Override
@@ -23,8 +23,7 @@ public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
 	@Override
 	public int getColumnCount() throws SQLException {
-
-		return 0;
+		return schema.columnName.size();
 	}
 
 	@Override
@@ -113,8 +112,7 @@ public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
 	@Override
 	public int getColumnType(int column) throws SQLException {
-
-		return 0;
+		return schema.columnDef.get(schema.columnName.get(column-1)).type;
 	}
 
 	@Override
