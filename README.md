@@ -32,6 +32,13 @@ Testing
         insert into a values(0)
         insert into a values(1,2)
         insert into a values(2,2)
+        SELECT * FROM a WHERE a < ALL(SELECT b)
+        create table p(c int)
+        insert into p values(1)
+        insert into p values(2)
+        select * from p having max(c)=2
+        drop table p
+        drop table a
 Reference
 ====================
 
