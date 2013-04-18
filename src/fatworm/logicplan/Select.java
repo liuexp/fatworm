@@ -69,4 +69,9 @@ public class Select extends Plan {
 		return src.getSchema();
 	}
 
+	@Override
+	public void close() {
+		src.close();
+	}
+
 }

@@ -45,4 +45,9 @@ public class One extends Plan {
 	public Schema getSchema() {
 		return schema;
 	}
+
+	@Override
+	public void close() {
+		ptr = 1;
+	}
 }

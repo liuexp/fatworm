@@ -51,4 +51,10 @@ public class FetchTable extends Plan {
 	public Schema getSchema() {
 		return table.schema;
 	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
 }

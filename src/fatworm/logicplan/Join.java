@@ -72,4 +72,10 @@ public class Join extends Plan {
 	public Schema getSchema() {
 		return schema;
 	}
+
+	@Override
+	public void close() {
+		left.close();
+		right.close();
+	}
 }

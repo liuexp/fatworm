@@ -66,4 +66,9 @@ public class Rename extends Plan {
 		return schema;
 	}
 
+	@Override
+	public void close() {
+		src.close();
+	}
+
 }

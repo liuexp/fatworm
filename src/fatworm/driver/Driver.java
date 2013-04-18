@@ -11,11 +11,11 @@ import java.util.logging.Logger;
 
 public class Driver implements java.sql.Driver {
 	static {
-		try {
-			DriverManager.registerDriver(new Driver());
-		} catch (SQLException e) {
-			throw new RuntimeException("Can't register driver!");
-		}
+			try {
+				DriverManager.registerDriver(new Driver());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override

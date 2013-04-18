@@ -56,4 +56,10 @@ public class None extends Plan {
 		return schema;
 	}
 
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
