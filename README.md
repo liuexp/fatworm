@@ -10,7 +10,6 @@ Warning
 TODO
 ====================
 * Be careful with alias in Env.
-* FetchTable Scan.
 * Finish data manipulation language.
 * Redesign Logic plan Group procedure, must expand the table first and do Project in 2 stages.
 * select (a + b) as t, max(c) from A group by t;  // this makes sense

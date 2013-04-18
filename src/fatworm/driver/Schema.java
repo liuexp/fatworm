@@ -9,7 +9,6 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
-import fatworm.field.Field;
 import fatworm.parser.FatwormParser;
 import fatworm.util.Util;
 
@@ -103,7 +102,6 @@ public class Schema {
 				break;
 			case FatwormParser.PRIMARY_KEY:
 				//Meow, this has to be postponed...
-				
 				break;
 				default:
 					Util.error("Schema undefined manipulation.");
