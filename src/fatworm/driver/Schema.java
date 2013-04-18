@@ -102,12 +102,25 @@ public class Schema {
 				}
 				break;
 			case FatwormParser.PRIMARY_KEY:
-				primaryKey = columnDef.get(colName);
-				primaryKey.primaryKey = true;
+				//Meow, this has to be postponed...
+				
 				break;
 				default:
 					Util.error("Schema undefined manipulation.");
 			}
+		}
+		for(int i=1;i<t.getChildCount();i++){
+			Tree c = t.getChild(i);
+			String colName = c.getChild(0).getText();
+			switch(c.getType()){
+			case FatwormParser.CREATE_DEFINITION:
+				break;
+			case FatwormParser.PRIMARY_KEY:
+				primaryKey = columnDef.get(colName);
+				primaryKey.primaryKey = true;
+				break;
+			}
+			
 		}
 	}
 
@@ -125,7 +138,7 @@ public class Schema {
 	public void fromList(List<Expr> expr, Schema src) {
 		tableName = "ProjectFrom("+src.tableName+")";
 		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
-			System.out.println("meow");
+			//System.out.println("meow");
 			columnName.addAll(src.columnName);
 			columnDef.putAll(src.columnDef);
 		}else {
