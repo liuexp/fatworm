@@ -136,8 +136,8 @@ public class Util {
 		//			rename must go after project
 		// FIXME	Here before Order we should expand the table first, then all expr rather than re-eval, just get results from env.
 		//			Consider SELECT (a+b) as c from x order by c;
-		// Plan order:
-		// hasAggr:		Distinct $ Order $ Rename $ Group $ Select $ source
+		// Current Plan order:
+		// hasAggr:		Distinct $ Rename $ Order $ Group $ Select $ source
 		// !hasAggr:	Distinct $ Rename $ Project $ Order $ Select $ source
 		if(t.getType()!=FatwormParser.SELECT && t.getType()!=FatwormParser.SELECT_DISTINCT)
 			return null;
@@ -188,7 +188,7 @@ public class Util {
 		boolean hasRename = false;
 		
 		// next prepare projection and re-check global aggregation
-		// TODO here we simultaneously rename order by field if necessary
+		// XXX here we simultaneously rename order by field if necessary
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		for(Object x : t.getChildren()){
@@ -205,6 +205,12 @@ public class Util {
 				alias.add(as);
 				hasRename = true;
 				hasAggr |= tmp.hasAggr();
+				// XXX here we simultaneously rename order by field if necessary
+				
+				for(int i=0;i<orderField.size();i++){
+					if(orderField.get(i) == as)
+						orderField.set(i, tmp.toString());
+				}
 			}else{
 				Expr tmp = getExpr(y);
 				expr.add(tmp);
