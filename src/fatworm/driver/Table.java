@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 // FIXME temporary table in memory.
 public class Table {
@@ -23,7 +25,7 @@ public class Table {
 			Record r = itr.next();
 			Env env = new Env();
 			env.appendFromRecord(r);
-			if(!e.evalPred(env))continue;
+			if(e!=null&&!e.evalPred(env))continue;
 			itr.remove();
 			ret++;
 			
@@ -42,6 +44,18 @@ public class Table {
 				r.cols.set(r.schema.findIndex(colName.get(i)), expr.get(i).eval(localEnv));
 			}
 			ret++;
+		}
+		return ret;
+	}
+
+	public int insert(Tree tree) {
+		int ret = 0;
+		Record r = new Record(schema);
+		r.autoFill();
+		for(int i=0;i<tree.getChildCount();i++){
+			Tree c = tree.getChild(i);
+			String colName = schema.columnName.get(i);
+			r.setField(colName, Util.getField(schema.columnDef.get(colName), c));
 		}
 		return ret;
 	}

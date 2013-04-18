@@ -18,6 +18,7 @@ public abstract class Field {
 	}
 	
 	public static Field fromString(int type, String x){
+		if(x.equalsIgnoreCase("null"))return NULL.getInstance();
 		switch(type){
 		case java.sql.Types.BOOLEAN:
 			return new BOOL(x);

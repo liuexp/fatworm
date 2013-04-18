@@ -24,6 +24,7 @@ import fatworm.absyn.QueryCall;
 import fatworm.absyn.StringLiteral;
 import fatworm.absyn.ExistCall;
 import fatworm.absyn.AnyCall;
+import fatworm.driver.Column;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
@@ -368,5 +369,10 @@ public class Util {
 		}
 		ret.append("}");
 		return ret.toString();
+	}
+
+	public static Field getField(Column column, Tree c) {
+		//FIXME
+		return Field.fromString(column.type, c.getText());
 	}
 }

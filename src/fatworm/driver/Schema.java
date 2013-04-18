@@ -93,7 +93,7 @@ public class Schema {
 						col.autoIncrement = true;
 						break;
 					case FatwormParser.DEFAULT:
-						col.defaultValue = Field.fromString(col.type, opt.getChild(0).getText());
+						col.defaultValue = Util.getField(col, opt.getChild(0));
 						break;
 					case FatwormParser.NULL:
 						col.notNull = opt.getChildCount() != 0;
