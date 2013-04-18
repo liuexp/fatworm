@@ -90,16 +90,16 @@ public class Group extends Plan {
 
 			if(pr == null){
 				Env tmpEnv = avgHelper.get(f);
-				env.appendFromRecord(r);
 				env.appendFrom(tmpEnv);
+				env.appendFromRecord(r);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
 				pr.addColFromExpr(env, func);
 			}
 		}
-
+		//System.out.println("mie");
 		for(Field f : groupHelper.keySet()){
-			System.out.println("meow");
+			//System.out.println("meow");
 			Record r = groupHelper.get(f);
 			Env tmpEnv = avgHelper.get(f);
 			env.appendFromRecord(r);
@@ -112,7 +112,7 @@ public class Group extends Plan {
 	
 	@Override
 	public String toString(){
-		return "Group (from="+src.toString()+", by=" + by + ", having=" + (having == null? "null": having.toString())+")";
+		return "Group (from="+src.toString()+", by=" + by + ", having=" + (having == null? "null": having.toString())+", expr="+Util.deepToString(func)+")";
 	}
 
 	@Override

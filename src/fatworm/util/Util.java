@@ -186,8 +186,7 @@ public class Util {
 			}
 		}
 		boolean hasAggr = groupBy != null;
-		if(having == null) hasAggr = false;
-		else hasAggr |= having.hasAggr();
+		if(having != null) hasAggr |= having.hasAggr();
 		
 		boolean hasRename = false;
 		
