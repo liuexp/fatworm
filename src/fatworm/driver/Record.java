@@ -25,9 +25,16 @@ public class Record {
 		cols.add(x);
 	}
 	public void addColFromExpr(Env env, List<Expr> func) {
-		for(int i=0;i<func.size();i++){
-			Expr e = func.get(i);
-			cols.add(e.eval(env));
+		if(func.size()==0||Util.trim(func.get(0).toString()).equals("*")){
+			for(int i=0;i<schema.columnName.size();i++){
+				String col = schema.columnName.get(i);
+				cols.add(env.get(col));
+			}
+		}else{
+			for(int i=0;i<func.size();i++){
+				Expr e = func.get(i);
+				cols.add(e.eval(env));
+			}
 		}
 	}
 	@Override

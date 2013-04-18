@@ -124,14 +124,20 @@ public class Schema {
 	// 		 on inserting values from subquery, this type info might be needed.
 	public void fromList(List<Expr> expr, Schema src) {
 		tableName = "ProjectFrom("+src.tableName+")";
-		for(int i=0;i<expr.size();i++){
-			Expr e = expr.get(i);
-			String colName = e.toString();
-			Column col = src.columnDef.get(colName);
-			if(col == null)
-				col = new Column(colName, java.sql.Types.NULL);
-			columnDef.put(colName, col);
-			columnName.add(colName);
+		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
+			System.out.println("meow");
+			columnName.addAll(src.columnName);
+			columnDef.putAll(src.columnDef);
+		}else {
+			for(int i=0;i<expr.size();i++){
+				Expr e = expr.get(i);
+				String colName = e.toString();
+				Column col = src.columnDef.get(colName);
+				if(col == null)
+					col = new Column(colName, java.sql.Types.NULL);
+				columnDef.put(colName, col);
+				columnName.add(colName);
+			}
 		}
 	}
 	@Override
