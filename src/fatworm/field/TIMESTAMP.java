@@ -1,5 +1,7 @@
 package fatworm.field;
 
+import java.sql.Timestamp;
+
 import fatworm.absyn.BinaryOp;
 import fatworm.util.Util;
 
@@ -13,6 +15,9 @@ public class TIMESTAMP extends Field {
 	public TIMESTAMP(String x) {
 		this();
 		v = Util.parseTimestamp(Util.trim(x));
+	}
+	public TIMESTAMP(Timestamp timestamp) {
+		v = timestamp;
 	}
 	@Override
 	public String toString() {
