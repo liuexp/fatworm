@@ -3,6 +3,7 @@ package fatworm.driver;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ import fatworm.util.Util;
 // but a direct interpreter is much easier to write.
 public class DBEngine {
 
-	public Map<String, Database> dbList;
+	public Map<String, Database> dbList = new HashMap<String, Database>();
 	private static DBEngine instance;
 	private Database db;
 
@@ -70,10 +71,6 @@ public class DBEngine {
 			Plan plan = Util.transSelect(t);
 			System.out.println(plan.toString());
 			plan.eval(new Env());
-			if(plan.hasNext())
-				System.out.println(plan.next().toString());
-			else 
-				System.out.println("no results");
 			return new ResultSet(plan);
 		case USE_DATABASE:
 			name = t.getChild(0).getText();
@@ -143,4 +140,7 @@ public class DBEngine {
 		
 	}
 
+	public Table getTable(String tbl){
+		return db.getTable(tbl);
+	}
 }

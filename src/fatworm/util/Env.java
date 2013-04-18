@@ -55,4 +55,8 @@ public class Env {
 			res.put(Util.getAttr(x.schema.columnName.get(i)), x.cols.get(i));
 		}
 	}
+	public void appendFrom(Env x){
+		if(x == null)return;
+		res.putAll(x.res);
+	}
 }

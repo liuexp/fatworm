@@ -80,6 +80,10 @@ public class BinaryExpr extends Expr {
 				return mydiv(lval, rval);
 			case MODULO:
 				return mymod(lval, rval);
+			case AND:
+				return new BOOL(Util.toBoolean(lval)&&Util.toBoolean(rval));
+			case OR:
+				return new BOOL(Util.toBoolean(lval)||Util.toBoolean(rval));
 			default:
 				error("Missing ops");
 			}

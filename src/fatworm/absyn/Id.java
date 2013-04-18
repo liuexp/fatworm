@@ -1,6 +1,7 @@
 package fatworm.absyn;
 
 import fatworm.field.Field;
+import fatworm.field.NULL;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -27,6 +28,10 @@ public class Id extends Expr {
 
 	@Override
 	public Field eval(Env env) {
-		return env.get(name);
+		if(name.equalsIgnoreCase("null"))return NULL.getInstance();
+		Field ret=env.get(name);
+		if(ret == null)
+			ret = env.get(Util.getAttr(name));
+		return ret;
 	}
 }

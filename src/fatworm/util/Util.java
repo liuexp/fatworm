@@ -29,6 +29,7 @@ import fatworm.field.DATE;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
+import fatworm.field.NULL;
 import fatworm.field.TIMESTAMP;
 import fatworm.logicplan.Distinct;
 import fatworm.logicplan.FetchTable;
@@ -378,7 +379,7 @@ public class Util {
 			if(column.getDefault() != null){
 				return column.getDefault();
 			} else if(column.isAutoInc()){
-				//FIXME will there be any conflicts?
+				//FIXME will there be any conflicts due to type in-compatibility?
 				return new INT(column.getAutoInc());
 			}
 			error("meow@GetField");
@@ -387,8 +388,6 @@ public class Util {
 		} else if(column.type == java.sql.Types.TIMESTAMP){
 			return new TIMESTAMP(new java.sql.Timestamp(System.currentTimeMillis()));
 		}
-		//TODO build from expression!!!
-		String str = c.getText();
-		return Field.fromString(column.type, str);
+		return Field.fromString(column.type, getExpr(c).eval(new Env()).toString());
 	}
 }
