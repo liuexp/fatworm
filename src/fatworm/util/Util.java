@@ -215,7 +215,7 @@ public class Util {
 					if(orderField.get(i).equalsIgnoreCase(as))
 						orderField.set(i, tmp.toString());
 				// FIXME Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
-				if(groupBy.equalsIgnoreCase(as))
+				if(groupBy!=null&&groupBy.equalsIgnoreCase(as))
 					groupBy = tmp.toString();
 				}
 			}else{
