@@ -105,9 +105,9 @@ public class Group extends Plan {
 			Env tmpEnv = aggrHelper.get(f);
 			env.appendFromRecord(r);
 			env.appendFrom(tmpEnv);
-			//System.out.println(Util.deepToString(env.res));
+			System.out.println(Util.deepToString(env.res));
 			if(having==null||having.evalPred(env)){
-				//System.out.println(Util.deepToString(env.res));
+				System.out.println(Util.deepToString(env.res));
 				results.add(r);
 			}
 		}
