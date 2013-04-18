@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import fatworm.logicplan.None;
 import fatworm.logicplan.Plan;
 
 
@@ -33,6 +34,7 @@ public class ResultSet implements java.sql.ResultSet {
 
 	public ResultSet(Plan x) throws SQLException {
 		this();
+		if(x == null)x = None.getInstance();
 		if(!x.hasEval)throw new SQLException("not yet executed!");
 		plan = x;
 	}
@@ -40,13 +42,15 @@ public class ResultSet implements java.sql.ResultSet {
 	@Override
 	public boolean next() throws SQLException {
 		boolean ret = plan.hasNext();
-		current = plan.next();
+		if(ret)
+			current = plan.next();
 		return ret;
 	}
 
 	@Override
 	public void beforeFirst() throws SQLException {
 		plan.reset();
+		current = null;
 	}
 
 	@Override
