@@ -9,14 +9,19 @@ Warning
 
 TODO
 ====================
-* Redesign Logic plan Group procedure.
-* select (a + b) as t, max(c) from A group by t;  // this makes sense
-* select max(a + b) as t from A group by t; // Error: can not group on 't'
-* Call src.eval(env) everytime before next().
+* Be careful with alias in Env.
 * FetchTable Scan.
 * Finish data manipulation language.
+* Redesign Logic plan Group procedure, must expand the table first and do Project in 2 stages.
+* select (a + b) as t, max(c) from A group by t;  // this makes sense
+* select max(a + b) as t from A group by t; // Error: can not group on 't'
 * Before Order expand the table first.
 * If resolve alias simply by renaming, then those in having must also be renamed.
+
+Testing
+======================
+* select a,b from (select 1+2 as a, 2+3 as b, 3+4 as c) as d,(select 1+2 as e, 2+3 as f, 3+4 as g) as h
+* select a from (select 1+2 as a) as b
 
 Reference
 ====================

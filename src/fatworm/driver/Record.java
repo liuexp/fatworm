@@ -44,4 +44,8 @@ public class Record {
 	public int hashCode() {
 		return Util.deepHashCode(cols);
 	}
+	@Override
+	public String toString(){
+		return "[\r\n" + schema.toString() + "\r\n]" + Util.deepToString(cols);
+	}
 }
