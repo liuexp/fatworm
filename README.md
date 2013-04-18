@@ -39,6 +39,22 @@ Testing
         select * from p having max(c)=2
         drop table p
         drop table a
+        
+
+        create table t1(a int, b int)
+        create table t2(a int, b int)
+        create table t3(c int, d int)
+        insert into t1 values (1,2)
+        insert into t1 values (2,2)
+        insert into t1 values (3,2)
+        insert into t2 values (9,9)
+        insert into t3 values (9,9)
+        select * from t1 group by b having exists(select * from t3 group by c having sum(a) = 6)
+        select * from t1 group by b having exists(select * from t2 group by b having sum(a) = 9)
+        drop table t1
+        drop table t2
+        drop table t3
+
 Reference
 ====================
 

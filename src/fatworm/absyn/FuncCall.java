@@ -98,6 +98,11 @@ public class FuncCall extends Expr {
 				return null;
 			}
 		}
+		
+		@Override
+		public String toString(){
+			return getFinalResults().toString();
+		}
 	}
 	
 	public static class AvgContField extends ContField{
