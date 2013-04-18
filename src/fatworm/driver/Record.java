@@ -48,4 +48,11 @@ public class Record {
 	public String toString(){
 		return "[\r\n" + schema.toString() + "\r\n]" + Util.deepToString(cols);
 	}
+	public void autoFill() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setField(String colName, Field field) {
+		cols.set(schema.findIndex(colName), field);
+	}
 }
