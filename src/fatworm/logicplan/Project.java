@@ -49,6 +49,7 @@ public class Project extends Plan {
 		Env localenv = env.clone();
 		localenv.appendFromRecord(src.next());
 		Record ret = new Record(schema);
+		//System.out.println(localenv.toString());
 		ret.addColFromExpr(localenv, expr);
 		//System.out.println(ret.toString());
 		return ret;

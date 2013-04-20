@@ -34,10 +34,10 @@ public class Distinct extends Plan {
 		Set<Record> set = new HashSet<Record>();
 		while(src.hasNext()){
 			Record r = src.next();
-			if(!set.contains(r))
+			if(!set.contains(r)){
 				results.add(r);
-			else
 				set.add(r);
+			}
 		}
 	}
 	@Override

@@ -1,6 +1,7 @@
 package fatworm.absyn;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 
 import fatworm.driver.Schema;
 import fatworm.field.DECIMAL;
@@ -22,6 +23,11 @@ public class FuncCall extends Expr {
 		this.func = func;
 		myAggr.add(this);
 		hasEvalCont = false;
+		type = java.sql.Types.NULL;
+		if(func == FatwormParser.AVG || func == FatwormParser.SUM)
+			type = java.sql.Types.DECIMAL;
+		if(func == FatwormParser.COUNT)
+			type = java.sql.Types.INTEGER;
 	}
 
 	@Override
@@ -215,5 +221,12 @@ public class FuncCall extends Expr {
 			return isNull? NULL.getInstance() : 
 				new DECIMAL(res);
 		}
+	}
+	@Override
+	public int getType(Schema schema) {
+		if(type == java.sql.Types.NULL){
+			type = schema.getColumn(col).type;
+		}
+		return type;
 	}
 }

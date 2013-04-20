@@ -15,6 +15,7 @@ public class StringLiteral extends Expr {
 		this.isConst = true;
 		this.size=1;
 		this.value = new VARCHAR(s);
+		type = java.sql.Types.VARCHAR;
 	}
 	
 	@Override

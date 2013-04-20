@@ -6,6 +6,7 @@ import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -258,11 +259,12 @@ public class Util {
 
 	public static Plan transFrom(BaseTree t) {
 		Plan ret = null;
-		String as = null;
+		
 		for(Object x : t.getChildren()){
 			Tree y = (Tree) x;
 			String table = null;
 			Plan src = null;
+			String as = null;
 			if(y.getType() == FatwormParser.AS){
 				if(y.getChild(0).getType() == SELECT || y.getChild(0).getType() == SELECT_DISTINCT){
 					src = transSelect((BaseTree) y.getChild(0));
@@ -366,7 +368,7 @@ public class Util {
 		return x.contains(".") ? x.substring(x.indexOf('.')+1) : x;
 	}
 	
-	public static <T> String deepToString(List<T> s){
+	public static <T> String deepToString(Collection<T> s){
 		StringBuffer ret = new StringBuffer();
 		ret.append("{");
 		for(T x:s){
@@ -383,13 +385,13 @@ public class Util {
 			} else if(column.isAutoInc()){
 				//FIXME will there be any conflicts due to type in-compatibility?
 				return new INT(column.getAutoInc());
+			} else if(column.type == java.sql.Types.DATE){
+				return new DATE(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
+			} else if(column.type == java.sql.Types.TIMESTAMP){
+				return new TIMESTAMP(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
 			}
 			error("meow@GetField");
-		} else if(column.type == java.sql.Types.DATE){
-			return new DATE(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
-		} else if(column.type == java.sql.Types.TIMESTAMP){
-			return new TIMESTAMP(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
-		}
+		} 
 		return Field.fromString(column.type, getExpr(c).eval(new Env()).toString());
 	}
 

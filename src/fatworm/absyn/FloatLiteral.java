@@ -14,6 +14,7 @@ public class FloatLiteral extends Expr {
 		this.size=1;
 		this.i = new FLOAT(v);
 		value = this.i;
+		type = java.sql.Types.FLOAT;
 	}
 
 	@Override

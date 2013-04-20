@@ -5,6 +5,7 @@ import fatworm.driver.Record;
 import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
+import fatworm.util.Util;
 import fatworm.driver.Table;
 
 public class FetchTable extends Plan {
@@ -17,6 +18,7 @@ public class FetchTable extends Plan {
 		super();
 		tableName = table;
 		this.table = DBEngine.getInstance().getTable(table);
+		if(table==null)Util.error("meow");
 	}
 
 	// TODO Range Fetch?

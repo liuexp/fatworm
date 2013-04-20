@@ -17,6 +17,7 @@ public class InCall extends Expr {
 		this.not = not;
 		myAggr.addAll(this.src.getAggr());
 		myAggr.addAll(this.expr.getAggr());
+		type = java.sql.Types.BOOLEAN;
 	}
 
 	@Override

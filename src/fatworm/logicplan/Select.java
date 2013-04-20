@@ -45,6 +45,7 @@ public class Select extends Plan {
 			}
 		}
 		current = ret;
+//		System.out.println("got "+(current == null? "null": current.toString()));
 	}
 
 	@Override
@@ -62,6 +63,8 @@ public class Select extends Plan {
 	@Override
 	public void reset() {
 		src.reset();
+		current = null;
+		fetchNext();
 	}
 
 	@Override

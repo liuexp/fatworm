@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import fatworm.field.Field;
 import fatworm.logicplan.None;
 import fatworm.logicplan.Plan;
 
@@ -66,7 +67,7 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public Object getObject(int columnIndex) throws SQLException {
-		return current.cols.get(columnIndex);
+		return Field.getObject(current.cols.get(columnIndex-1));
 	}
 	
 	@Override

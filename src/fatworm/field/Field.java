@@ -1,8 +1,10 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.absyn.FuncCall;
 
 public abstract class Field {
 
@@ -91,5 +93,36 @@ public abstract class Field {
 	public BigDecimal toDecimal(){
 		return null;
 	}
-	
+	public static Object getObject(Field f){
+		if(f instanceof FuncCall.ContField)f = ((FuncCall.ContField) f).getFinalResults();
+		int type = f.type;
+		switch(type){
+		case java.sql.Types.BOOLEAN:
+			return new Boolean(((BOOL)f).v);
+		case java.sql.Types.CHAR:
+			return new String(((CHAR)f).v);
+		case java.sql.Types.DATE:
+			return new java.sql.Date(((DATE)f).v.getTime());
+		case java.sql.Types.DECIMAL:
+			return ((DECIMAL)f).toDecimal();
+		case java.sql.Types.FLOAT:
+			return new Float(((FLOAT)f).v);
+		case java.sql.Types.INTEGER:
+			return new Integer(((INT)f).v);
+		case java.sql.Types.TIMESTAMP:
+			return new java.sql.Timestamp(((TIMESTAMP)f).v.getTime());
+		case java.sql.Types.VARCHAR:
+			return new String(((VARCHAR)f).v);
+			default:
+				System.out.println("Meow!!"+f.toString());
+				return new String(f.toString());
+		}
+	}
+	/*@Override
+	public boolean equals(Object x){
+		if(!(o instanceof Field))
+			return false;
+		Field r = (Field) x;
+		return this.applyWithComp(BinaryOp.EQ, r);
+	}*/
 }

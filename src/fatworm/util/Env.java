@@ -60,4 +60,9 @@ public class Env {
 		if(x == null)return;
 		res.putAll(x.res);
 	}
+	
+	@Override
+	public String toString(){
+		return Util.deepToString(res);
+	}
 }

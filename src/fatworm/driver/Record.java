@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
@@ -33,7 +34,9 @@ public class Record {
 		}else{
 			for(int i=0;i<func.size();i++){
 				Expr e = func.get(i);
-				cols.add(e.eval(env));
+				Field f = env.get(e.toString());
+				if(f == null||f instanceof FuncCall.ContField) f= e.eval(env);
+				cols.add(f);
 			}
 		}
 	}

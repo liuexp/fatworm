@@ -2,6 +2,7 @@ package fatworm.absyn;
 import java.util.ArrayList;
 import java.util.List;
 
+import fatworm.driver.Schema;
 import fatworm.field.Field;
 import fatworm.util.Env;
 
@@ -11,6 +12,7 @@ public abstract class Expr {
 	public Field value;
 	public boolean isConst;
 	public List<FuncCall> myAggr;
+	public int type;
 
 	public Expr() {
 		size=1;
@@ -30,5 +32,11 @@ public abstract class Expr {
 	}
 	public boolean hasAggr() {
 		return !myAggr.isEmpty();
+	}
+	public int getType(Schema schema){
+		return type;
+	}
+	public int getType(){
+		return type;
 	}
 }

@@ -42,5 +42,8 @@ public class DECIMAL extends Field{
 	public String toString() {
 		return "'" + v.toString() + "'";
 	}
-
+	@Override
+	public BigDecimal toDecimal(){
+		return v;
+	}
 }
