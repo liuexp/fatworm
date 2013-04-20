@@ -3,6 +3,7 @@ package fatworm.absyn;
 import java.math.BigDecimal;
 
 import fatworm.absyn.Expr;
+import fatworm.driver.Schema;
 import fatworm.field.BOOL;
 import fatworm.field.DECIMAL;
 import fatworm.field.FLOAT;
@@ -32,6 +33,7 @@ public class BinaryExpr extends Expr {
 		value=isConst ? eval() : null;
 		myAggr.addAll(l.getAggr());
 		myAggr.addAll(r.getAggr());
+		type = evalType(null);
 	}
 	
 	private Field eval() {
@@ -114,7 +116,7 @@ public class BinaryExpr extends Expr {
 	private Field mydiv(Field lval, Field rval) {
 		BigDecimal ret = lval.toDecimal().divide(rval.toDecimal(), 9, BigDecimal.ROUND_HALF_EVEN);
 		if(lval.type == INTEGER && rval.type == INTEGER)
-			return new INT(ret.intValue());
+			return new FLOAT(ret.intValue());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
 			return new DECIMAL(ret);
 		if(lval.type == FLOAT || rval.type == FLOAT)
@@ -157,5 +159,52 @@ public class BinaryExpr extends Expr {
 			return new FLOAT(ret.floatValue());
 		error("missing type");
 		return NULL.getInstance();
+	}
+	
+	public int evalType(Schema src){
+		int ltype,rtype;
+		ltype = src ==null?l.getType():l.getType(src);
+		rtype = src == null?r.getType():r.getType(src);
+		switch(op){
+		case LESS:
+		case GREATER:
+		case LESS_EQ:
+		case GREATER_EQ:
+		case EQ:
+		case NEQ:
+		case AND:
+		case OR:
+			return java.sql.Types.BOOLEAN;
+		case PLUS:
+		case MINUS:
+		case MULTIPLY:
+			if(ltype==INTEGER&&rtype==INTEGER)
+				return INTEGER;
+			if(ltype == DECIMAL || rtype== DECIMAL)
+				return DECIMAL;
+			if(ltype == FLOAT || rtype== FLOAT)
+				return FLOAT;
+			return java.sql.Types.NULL;
+		case DIVIDE:
+			if(ltype==INTEGER&&rtype == INTEGER)
+				return FLOAT;
+			if(ltype== DECIMAL || rtype == DECIMAL)
+				return DECIMAL;
+			if(ltype== FLOAT || rtype == FLOAT)
+				return FLOAT;
+			return java.sql.Types.NULL;
+		case MODULO:
+			return INTEGER;
+		default:
+			error("Missing ops");
+		}
+		return java.sql.Types.NULL;
+	}
+
+	@Override
+	public int getType(Schema schema) {
+		if(type == java.sql.Types.NULL)
+			return evalType(schema);
+		return type;
 	}
 }

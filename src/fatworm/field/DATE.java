@@ -7,7 +7,7 @@ public class DATE extends Field {
 
 	public java.sql.Timestamp v;
 	public DATE(){
-		type = java.sql.Types.TIMESTAMP;
+		type = java.sql.Types.DATE;
 	}
 	public DATE(String x) {
 		this();

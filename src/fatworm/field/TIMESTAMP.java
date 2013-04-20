@@ -17,6 +17,7 @@ public class TIMESTAMP extends Field {
 		v = Util.parseTimestamp(Util.trim(x));
 	}
 	public TIMESTAMP(Timestamp timestamp) {
+		this();
 		v = timestamp;
 	}
 	@Override

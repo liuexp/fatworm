@@ -67,6 +67,7 @@ public class Order extends Plan {
 			//System.out.println(pr.toString());
 			results.add(pr);
 		}
+		// FIXME looks like ordering has sth. wrong.
 		Collections.sort(results, new Comparator<Record>(){
 			public int compare(Record a, Record b){
 				for(int i=0;i<orderField.size();i++){
@@ -90,7 +91,7 @@ public class Order extends Plan {
 	}
 	@Override
 	public String toString(){
-		return "order (from="+src.toString()+")";
+		return "order (from="+src.toString()+", field="+Util.deepToString(orderField)+", type="+Util.deepToString(orderType)+")";
 	}
 
 	@Override

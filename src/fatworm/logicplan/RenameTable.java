@@ -20,6 +20,7 @@ public class RenameTable extends Plan {
 		for(int i = 0; i < src.getSchema().columnName.size(); ++i){
 			String a = src.getSchema().columnName.get(i);
 			String b = schema.tableName + "." + Util.getAttr(a);
+			
 			schema.columnName.add(b);
 			schema.columnDef.put(b, src.getSchema().columnDef.get(a));
 		}

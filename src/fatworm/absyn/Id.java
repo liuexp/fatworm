@@ -1,5 +1,7 @@
 package fatworm.absyn;
 
+import fatworm.driver.Column;
+import fatworm.driver.Schema;
 import fatworm.field.Field;
 import fatworm.field.NULL;
 import fatworm.util.Env;
@@ -33,5 +35,15 @@ public class Id extends Expr {
 		if(ret == null)
 			ret = env.get(Util.getAttr(name));
 		return ret;
+	}
+
+	@Override
+	public int getType(Schema schema) {
+//		System.out.println(schema.toString());
+//		System.out.println(name);
+//		System.out.println(Util.deepToString(schema.columnDef));
+		Column c = schema.getColumn(name);
+		if(c!=null)return schema.getColumn(name).type;
+		return java.sql.Types.NULL;
 	}
 }

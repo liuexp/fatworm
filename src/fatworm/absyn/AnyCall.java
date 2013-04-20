@@ -1,5 +1,6 @@
 package fatworm.absyn;
 
+import fatworm.driver.Schema;
 import fatworm.field.BOOL;
 import fatworm.field.Field;
 import fatworm.logicplan.Plan;
@@ -19,15 +20,20 @@ public class AnyCall extends Expr {
 		this.isAll = isAll;
 		myAggr.addAll(this.expr.getAggr());
 		myAggr.addAll(this.src.getAggr());
+		type = java.sql.Types.BOOLEAN;
 	}
 
 	@Override
 	public boolean evalPred(Env env) {
+//		System.out.println(env.toString());
 		Field l = expr.eval(env);
 		src.eval(env);
+//		System.out.println(env.toString());
 		if(isAll){
 			while(src.hasNext()){
-				if(!l.applyWithComp(op, src.next().cols.get(0)))return false;
+				Field r = src.next().cols.get(0);
+				//System.out.println("l="+l.toString()+",r="+r.toString()+",res="+l.applyWithComp(op, r));
+				if(!l.applyWithComp(op, r))return false;
 			}
 			return true;
 		} else {
@@ -45,6 +51,11 @@ public class AnyCall extends Expr {
 	@Override
 	public String toString() {
 		return expr.toString() + op.toString() + (isAll? "all ":"any ") + src.toString();
+	}
+
+	@Override
+	public int getType(Schema schema) {
+		return type;
 	}
 
 }

@@ -14,6 +14,7 @@ public class IntLiteral extends Expr {
 		this.size=1;
 		this.i = new INT(i);
 		value = this.i;
+		type = java.sql.Types.INTEGER;
 	}
 	
 	@Override

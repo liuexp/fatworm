@@ -14,6 +14,7 @@ public class ExistCall extends Expr {
 		this.src = src;
 		this.not = not;
 		myAggr.addAll(this.src.getAggr());
+		type = java.sql.Types.BOOLEAN;
 	}
 
 	@Override

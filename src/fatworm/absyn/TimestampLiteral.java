@@ -14,6 +14,7 @@ public class TimestampLiteral extends Expr {
 		this.size=1;
 		this.i = new DATE(v);
 		value = this.i;
+		type = java.sql.Types.TIMESTAMP;
 	}
 
 	@Override

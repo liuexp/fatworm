@@ -76,33 +76,33 @@ public class DBEngine {
 			plan.eval(new Env());
 			return new ResultSet(plan);
 		case USE_DATABASE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			db = dbList.get(name);
 			return new ResultSet(None.getInstance());
 		case CREATE_DATABASE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			dbList.put(name, new Database(name));
 			return new ResultSet(None.getInstance());
 		case DROP_DATABASE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			dbList.remove(name);
 			//TODO what if db.name.equals(name)
 			return new ResultSet(None.getInstance());
 		case CREATE_TABLE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			db.addTable(name, new Table(t));
 			return new ResultSet(None.getInstance());
 		case DROP_TABLE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			db.delTable(name);
 			return new ResultSet(None.getInstance());
 		case DELETE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			e = t.getChildCount() == 1 ? null : Util.getExpr(t.getChild(0).getChild(1));
 			db.getTable(name).delete(e);
 			return new ResultSet(None.getInstance());
 		case UPDATE:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			for(int i=1;i<t.getChildCount();i++){
 				Tree c = t.getChild(i);
 				if(c.getType() == FatwormParser.UPDATE_PAIR){
@@ -115,15 +115,15 @@ public class DBEngine {
 			db.getTable(name).update(colName, expr, e);
 			return new ResultSet(None.getInstance());
 		case INSERT_VALUES:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			db.getTable(name).insert(t.getChild(1));
 			return new ResultSet(None.getInstance());
 		case INSERT_COLUMNS:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			db.getTable(name).insert(t, t.getChild(t.getChildCount()-1));
 			return new ResultSet(None.getInstance());
 		case INSERT_SUBQUERY:
-			name = t.getChild(0).getText();
+			name = t.getChild(0).getText().toLowerCase();
 			table = db.getTable(name);
 			plan = Util.transSelect((BaseTree) t.getChild(1));
 			plan.eval(new Env());

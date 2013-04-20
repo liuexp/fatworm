@@ -1,5 +1,6 @@
 package fatworm.absyn;
 
+import fatworm.driver.Schema;
 import fatworm.field.BOOL;
 import fatworm.field.Field;
 import fatworm.util.Env;
@@ -13,6 +14,7 @@ public class BoolLiteral extends Expr {
 		this.size=1;
 		this.i = new BOOL(v);
 		value = this.i;
+		type = java.sql.Types.BOOLEAN;
 	}
 	@Override
 	public String toString() {
@@ -27,6 +29,10 @@ public class BoolLiteral extends Expr {
 	@Override
 	public Field eval(Env env) {
 		return i;
+	}
+	@Override
+	public int getType(Schema schema) {
+		return type;
 	}
 
 

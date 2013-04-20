@@ -13,6 +13,7 @@ public class QueryCall extends Expr {
 		super();
 		this.src = src;
 		myAggr.addAll(this.src.getAggr());
+		type = src.getSchema().getColumn(0).type;
 	}
 
 	@Override

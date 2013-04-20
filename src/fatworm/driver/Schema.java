@@ -131,8 +131,6 @@ public class Schema {
 		tableName = "MEOW";
 	}
 
-	// FIXME The type info of Columns are not filled. 
-	// 		 on inserting values from subquery, this type info might be needed.
 	public void fromList(List<Expr> expr, Schema src) {
 		tableName = "ProjectFrom("+src.tableName+")";
 		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
@@ -145,7 +143,7 @@ public class Schema {
 				String colName = e.toString();
 				Column col = src.columnDef.get(colName);
 				if(col == null)
-					col = new Column(colName, java.sql.Types.NULL);
+					col = new Column(colName, e.getType(src));
 				columnDef.put(colName, col);
 				columnName.add(colName);
 			}
@@ -154,5 +152,18 @@ public class Schema {
 	@Override
 	public String toString(){
 		return "[" + tableName + "]" + Util.deepToString(columnName);
+	}
+	
+	public Column getColumn(String col){
+		if(columnDef.containsKey(col))return columnDef.get(col);
+		String attr = Util.getAttr(col);
+		if(columnDef.containsKey(attr))return columnDef.get(attr);
+		String col2 = tableName + "." + attr;
+		if(columnDef.containsKey(col2))return columnDef.get(col2);
+		return null;
+	}
+
+	public Column getColumn(int i) {
+		return getColumn(columnName.get(i));
 	}
 }
