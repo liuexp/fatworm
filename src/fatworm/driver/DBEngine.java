@@ -163,6 +163,6 @@ public class DBEngine {
 	}
 
 	public Table getTable(String tbl){
-		return db.getTable(tbl);
+		return db.getTable(tbl.toLowerCase());
 	}
 }

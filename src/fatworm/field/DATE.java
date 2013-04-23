@@ -29,7 +29,7 @@ public class DATE extends Field {
 		case java.sql.Types.VARCHAR:
 			return Field.cmpHelper(op, v, java.sql.Timestamp.valueOf(((VARCHAR)x).v));
 		}
-		error("DATE.compWith missing type");
+		error2("DATE.compWith missing type");
 		return false;
 	}
 	@Override

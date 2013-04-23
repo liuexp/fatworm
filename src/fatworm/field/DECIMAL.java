@@ -30,7 +30,7 @@ public class DECIMAL extends Field{
 		case java.sql.Types.FLOAT:
 			return Field.cmpHelper(op, v, ((FLOAT)x).toDecimal());
 		}
-		error("DECIMAL.compWith missing type");
+		error2("DECIMAL.compWith missing type");
 		return false;
 	}
 

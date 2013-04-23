@@ -52,7 +52,7 @@ public class FLOAT extends Field {
 		case java.sql.Types.FLOAT:
 			return Field.cmpHelper(op, value, ((FLOAT)x).toDecimal());
 		}
-		error("FLOAT.compWith missing type");
+		error2("FLOAT.compWith missing type");
 		return false;
 	}
 

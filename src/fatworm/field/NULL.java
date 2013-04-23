@@ -12,7 +12,7 @@ public class NULL extends Field {
 
 	@Override
 	public boolean applyWithComp(BinaryOp op, Field x) {
-		error("NULL.compWith missing type.");
+		error2("NULL.compWith missing type!!!");
 		return false;
 	}
 

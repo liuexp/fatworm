@@ -40,7 +40,7 @@ public class TIMESTAMP extends Field {
 		case java.sql.Types.VARCHAR:
 			return Field.cmpHelper(op, v, java.sql.Timestamp.valueOf(((VARCHAR)x).v));
 		}
-		error("TIMESTAMP.compWith missing type");
+		error2("TIMESTAMP.compWith missing type");
 		return false;
 	}
 }

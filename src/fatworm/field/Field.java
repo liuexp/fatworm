@@ -61,8 +61,9 @@ public abstract class Field {
 		case GREATER_EQ:
 			return a.compareTo(b)>=0;
 			default:
-				throw new RuntimeException("cmpString missing op!");
+				error2("cmpString missing op!");
 		}
+		return false;
 	}
 	
 	public static boolean cmpString(BinaryOp op, String a, String b){
@@ -80,12 +81,17 @@ public abstract class Field {
 		case GREATER_EQ:
 			return a.compareToIgnoreCase(b)>=0;
 			default:
-				throw new RuntimeException("cmpString missing op!");
+				error2("cmpString missing op!");
 		}
+		return false;
 	}
 	
 	public static void error(String e){
 		throw new RuntimeException(e);
+	}
+	
+	public static void error2(String e){
+		System.err.println(e);
 	}
 	
 	public abstract boolean applyWithComp(BinaryOp op, Field x);
@@ -113,8 +119,11 @@ public abstract class Field {
 			return new java.sql.Timestamp(((TIMESTAMP)f).v.getTime());
 		case java.sql.Types.VARCHAR:
 			return new String(((VARCHAR)f).v);
+		case java.sql.Types.NULL:
+			return null;
+			//return new String(f.toString());
 			default:
-				System.out.println("Meow!!"+f.toString());
+				error2("Meow!!"+f.toString());
 				return new String(f.toString());
 		}
 	}

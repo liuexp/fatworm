@@ -10,6 +10,9 @@ Warning
 TODO
 ====================
 * comparisons with Mysql
+* comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
+                select * from InfraTest where k <= 2 or 2 <= k
+
 * Btree
 * Finish data manipulation language.
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER

@@ -25,7 +25,8 @@ public class BOOL extends Field {
 		case java.sql.Types.FLOAT:
 			return Field.cmpHelper(op, toDecimal(), x.toDecimal());
 		}
-		throw new RuntimeException("applyWithComp missing types!");
+		error2("applyWithComp missing types!");
+		return false;
 	}
 	@Override
 	public String toString() {
