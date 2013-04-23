@@ -10,6 +10,7 @@ Warning
 TODO
 ====================
 * comparisons with Mysql
+* Btree
 * Finish data manipulation language.
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
 * select (a + b) as t, max(c) from A group by t;  // this makes sense
