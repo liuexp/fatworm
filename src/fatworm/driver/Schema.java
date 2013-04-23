@@ -28,8 +28,8 @@ public class Schema {
 			if(x.equalsIgnoreCase(y) || x.equalsIgnoreCase(this.tableName + "." + y))
 				return i;
 			if(!y.contains("."))continue;
-			// FIXME hack for table name mismatch
-			if(Util.getAttr(x).equals(Util.getAttr(y)))
+			// FIXME hack for table name mismatch due to Join
+			if(Util.getAttr(x).equalsIgnoreCase(Util.getAttr(y)))
 				return i;
 		}
 		return -1;
@@ -39,9 +39,8 @@ public class Schema {
 	public int findStrictIndex(String x) {
 		for(int i=0;i<columnName.size();i++){
 			String y = columnName.get(i);
-			if(x.equalsIgnoreCase(y) || x.equalsIgnoreCase(this.tableName + "." + y))
+			if(x.equalsIgnoreCase(y) || Util.getAttr(x).equalsIgnoreCase(y) || x.equalsIgnoreCase(Util.getAttr(y)))
 				return i;
-			if(!y.contains("."))continue;
 		}
 		return -1;
 	}
@@ -114,7 +113,7 @@ public class Schema {
 			case FatwormParser.CREATE_DEFINITION:
 				break;
 			case FatwormParser.PRIMARY_KEY:
-				primaryKey = columnDef.get(colName);
+				primaryKey = getColumn(colName);
 				primaryKey.primaryKey = true;
 				break;
 			}
@@ -141,7 +140,7 @@ public class Schema {
 			for(int i=0;i<expr.size();i++){
 				Expr e = expr.get(i);
 				String colName = e.toString();
-				Column col = src.columnDef.get(colName);
+				Column col = src.getColumn(colName);
 				if(col == null)
 					col = new Column(colName, e.getType(src));
 				columnDef.put(colName, col);
@@ -160,7 +159,12 @@ public class Schema {
 		if(columnDef.containsKey(attr))return columnDef.get(attr);
 		String col2 = tableName + "." + attr;
 		if(columnDef.containsKey(col2))return columnDef.get(col2);
-		return null;
+		// FIXME hack for table name mismatch due to Join
+		int i = findIndex(col);
+		if(i<0)return null;
+		String col3 = columnName.get(i);
+		return columnDef.get(col3);
+		//return null;
 	}
 
 	public Column getColumn(int i) {

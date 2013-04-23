@@ -8,6 +8,9 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
+import fatworm.field.Field;
+import fatworm.field.INT;
+import fatworm.field.NULL;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -40,8 +43,11 @@ public class Table {
 			env.appendFromRecord(r);
 			if(e!=null && !e.evalPred(env))continue;
 			for(int i=0;i<expr.size();i++){
-				Env localEnv = env.clone();
-				r.cols.set(r.schema.findIndex(colName.get(i)), expr.get(i).eval(localEnv));
+				//Env localEnv = env.clone();
+				//localEnv.appendFromRecord(r);
+				Field res = expr.get(i).eval(env);
+				r.cols.set(r.schema.findIndex(colName.get(i)), res);
+				env.put(colName.get(i), res);
 			}
 			ret++;
 		}
@@ -55,7 +61,7 @@ public class Table {
 		for(int i=0;i<t.getChildCount();i++){
 			Tree c = t.getChild(i);
 			String colName = schema.columnName.get(i);
-			r.setField(colName, Util.getField(schema.columnDef.get(colName), c));
+			r.setField(colName, Util.getField(schema.getColumn(colName), c));
 		}
 		records.add(r);
 		ret++;
@@ -68,11 +74,24 @@ public class Table {
 		r.autoFill();
 		for(int i=0;i<v.getChildCount();i++){
 			String colName = t.getChild(i+1).getText();
-			r.setField(colName, Util.getField(schema.columnDef.get(colName), v.getChild(i)));
+			r.setField(colName, Util.getField(schema.getColumn(colName), v.getChild(i)));
+		}
+		for(int i=0;i<r.cols.size();i++){
+			if(r.cols.get(i) != null)continue;
+			Column c = r.schema.getColumn(i);
+			if(c.notNull){
+				r.cols.set(i, new INT(c.getAutoInc()));
+			} else {
+				r.cols.set(i, NULL.getInstance());
+			}
 		}
 		records.add(r);
 		ret++;
 		return ret;
+	}
+
+	public Schema getSchema() {
+		return schema;
 	}
 	
 }

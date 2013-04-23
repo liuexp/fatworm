@@ -29,7 +29,9 @@ public class Record {
 		if(func.size()==0||Util.trim(func.get(0).toString()).equals("*")){
 			for(int i=0;i<schema.columnName.size();i++){
 				String col = schema.columnName.get(i);
-				cols.add(env.get(col));
+				Field f = env.get(col);
+				if(f==null)f = env.get(Util.getAttr(col));
+				cols.add(f);
 			}
 		}else{
 			for(int i=0;i<func.size();i++){
@@ -61,7 +63,7 @@ public class Record {
 	public void autoFill() {
 		for(int i=0;i<schema.columnName.size();i++){
 			String colName = schema.columnName.get(i);
-			Column col = schema.columnDef.get(colName);
+			Column col = schema.getColumn(colName);
 			if(col.getDefault()!=null || col.type == java.sql.Types.TIMESTAMP || col.type == java.sql.Types.DATE){
 				cols.add(Util.getField(col, null));
 			} else 

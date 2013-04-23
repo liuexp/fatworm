@@ -15,7 +15,7 @@ public class CHAR extends Field {
 	}
 	@Override
 	public boolean applyWithComp(BinaryOp op, Field x) {
-		return Field.cmpString(op, v.toString(), x.toString());
+		return Field.cmpString(op, this.toString(), x.toString());
 	}
 	@Override
 	public String toString() {
