@@ -134,6 +134,11 @@ public class FuncCall extends Expr {
 			return isNull? NULL.getInstance() : 
 				new DECIMAL(res.divide(new BigDecimal(cnt), 10, BigDecimal.ROUND_HALF_EVEN));
 		}
+
+		@Override
+		public void pushByte(ByteBuilder b) {
+			Util.error("should never reach here");
+		}
 	}
 	public static class CountContField extends ContField{
 
@@ -149,6 +154,11 @@ public class FuncCall extends Expr {
 		
 		public Field getFinalResults(){
 			return new INT(cnt);
+		}
+
+		@Override
+		public void pushByte(ByteBuilder b) {
+			Util.error("should never reach here");
 		}
 	}
 	public static class MaxContField extends ContField{
@@ -175,6 +185,11 @@ public class FuncCall extends Expr {
 		public Field getFinalResults(){
 			return isNull? NULL.getInstance(): res;
 		}
+
+		@Override
+		public void pushByte(ByteBuilder b) {
+			Util.error("should never reach here");
+		}
 	}
 	public static class MinContField extends ContField{
 
@@ -200,6 +215,11 @@ public class FuncCall extends Expr {
 		public Field getFinalResults(){
 			return isNull? NULL.getInstance(): res;
 		}
+
+		@Override
+		public void pushByte(ByteBuilder b) {
+			Util.error("should never reach here");
+		}
 	}
 	public static class SumContField extends ContField{
 
@@ -220,6 +240,11 @@ public class FuncCall extends Expr {
 		public Field getFinalResults(){
 			return isNull? NULL.getInstance() : 
 				new DECIMAL(res);
+		}
+
+		@Override
+		public void pushByte(ByteBuilder b) {
+			Util.error("should never reach here");
 		}
 	}
 	@Override

@@ -9,6 +9,7 @@ Warning
 
 TODO
 ====================
+* BigDecimal: reconstruction from string, what about the scale?
 * comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
 

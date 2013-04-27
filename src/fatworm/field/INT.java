@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class INT extends Field {
@@ -53,6 +54,10 @@ public class INT extends Field {
 		}
 		error2("INT.compWith missing type");
 		return false;
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putInt(v);
 	}
 
 }
