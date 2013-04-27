@@ -1,5 +1,6 @@
 package fatworm.driver;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,17 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
+import fatworm.field.Field;
 import fatworm.parser.FatwormParser;
 import fatworm.util.Util;
 
 
-public class Schema {
+public class Schema implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5020903733380345943L;
 
 	public String tableName;
 	
@@ -91,7 +98,7 @@ public class Schema {
 						col.autoIncrement = true;
 						break;
 					case FatwormParser.DEFAULT:
-						col.defaultValue = Util.getField(col, opt.getChild(0));
+						col.defaultValue = Field.getObject(Util.getField(col, opt.getChild(0)));
 						break;
 					case FatwormParser.NULL:
 						col.notNull = opt.getChildCount() != 0;

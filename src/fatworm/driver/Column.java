@@ -16,7 +16,8 @@ public class Column implements Serializable {
 	public int type;
 	public boolean notNull, autoIncrement, primaryKey;
 	public int ai;
-	public Field defaultValue;
+	//Watch this defaultValue shouldn't be instanceof Field, cause Field is not serializable
+	public Object defaultValue;
 	public int A, B;
 	
 	/*public static enum Type {
@@ -41,6 +42,6 @@ public class Column implements Serializable {
 		return ai++;
 	}
 	public Field getDefault(){
-		return defaultValue;
+		return Field.fromObject(defaultValue);
 	}
 }

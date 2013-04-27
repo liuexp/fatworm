@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.FuncCall;
@@ -126,6 +125,27 @@ public abstract class Field {
 				error2("Meow!!"+f.toString());
 				return new String(f.toString());
 		}
+	}
+	public static Field fromObject(Object f){
+		if(f instanceof Field) return (Field) f;
+		if(f instanceof Boolean)
+			return new BOOL(((Boolean)f));
+		else if(f instanceof String && ((String)f).length() == 1)
+			return new CHAR((String)f);
+		else if(f instanceof java.sql.Date)
+			return new DATE(new java.sql.Timestamp(((java.sql.Date)f).getTime()));
+		else if(f instanceof BigDecimal)
+			return new DECIMAL((BigDecimal)f);
+		else if(f instanceof Float)
+			return new FLOAT((Float)f);
+		else if(f instanceof Integer)
+			return new INT((Integer)f);
+		else if(f instanceof java.sql.Timestamp)
+			return new TIMESTAMP((java.sql.Timestamp)f);
+		else if(f instanceof String)
+			return new VARCHAR((String)f);
+		else
+			return NULL.getInstance();
 	}
 	/*@Override
 	public boolean equals(Object x){

@@ -4,21 +4,22 @@ import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Schema;
+import fatworm.driver.Table;
 import fatworm.util.Env;
 import fatworm.util.Util;
-import fatworm.driver.Table;
+import fatworm.driver.MemTable;
 
 public class FetchTable extends Plan {
 
 	//FIXME for now we use temporary database in memory 
 	public String tableName;
-	public Table table;
+	public MemTable table;
 	public int ptr = 0;
 	Schema schema;
 	public FetchTable(String table) {
 		super();
 		tableName = table;
-		this.table = DBEngine.getInstance().getTable(table);
+		this.table = (MemTable) DBEngine.getInstance().getTable(table);
 		if(table==null)Util.error("meow");
 		this.schema = new Schema(this.table.getSchema().tableName);
 		for(String old:this.table.getSchema().columnName){

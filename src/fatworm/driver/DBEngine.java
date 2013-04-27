@@ -1,6 +1,14 @@
 package fatworm.driver;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +54,7 @@ public class DBEngine {
 	public Map<String, Database> dbList = new HashMap<String, Database>();
 	private static DBEngine instance;
 	private Database db;
+	private String metaFile;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
@@ -54,6 +63,19 @@ public class DBEngine {
 	}
 	public DBEngine() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void open(String file) throws IOException, ClassNotFoundException {
+		// TODO Auto-generated constructor stub
+		metaFile = Util.getMetaFile(file);
+		try {
+			ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(metaFile)));
+			dbList = (HashMap<String, Database>)in.readObject();
+			in.close();
+		} catch (FileNotFoundException e) {
+			dbList = new HashMap<String, Database>();
+		}
 	}
 	
 	public ResultSet execute(String sql) throws Exception {
@@ -92,7 +114,7 @@ public class DBEngine {
 			return new ResultSet(None.getInstance());
 		case CREATE_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
-			db.addTable(name, new Table(t));
+			db.addTable(name, new MemTable(t));
 			return new ResultSet(None.getInstance());
 		case DROP_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
@@ -136,7 +158,7 @@ public class DBEngine {
 				tmpTable.add(r);
 			}
 			for(Record r:tmpTable){
-				table.records.add(r);
+				table.addRecord(r);
 			}
 			plan.close();
 			return new ResultSet(None.getInstance());
@@ -157,9 +179,10 @@ public class DBEngine {
 		FatwormParser.statement_return r = parser.statement();
 		return (CommonTree) r.getTree();
 	}
-	public void close() {
-		// TODO Auto-generated method stub
-		
+	public void close() throws FileNotFoundException, IOException {
+		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
+		out.writeObject(dbList);
+		out.close();
 	}
 
 	public Table getTable(String tbl){

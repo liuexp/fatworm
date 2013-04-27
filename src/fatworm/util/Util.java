@@ -404,4 +404,8 @@ public class Util {
 		ret.append("}");
 		return ret.toString();
 	}
+
+	public static String getMetaFile(String file) {
+		return file + ".meta";
+	}
 }
