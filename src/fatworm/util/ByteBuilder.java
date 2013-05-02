@@ -18,7 +18,7 @@ public class ByteBuilder {
 	}
 	
 	private void updateSize() {
-		size = Util.max(buf.position(),size);
+		size = Math.max(buf.position(),size);
 	}
 
 	public void putChar(char v){
@@ -45,7 +45,10 @@ public class ByteBuilder {
 	}
 
 	public void putString(String v) {
-		byte[] b = v.getBytes();
+		putBytes(v.getBytes());
+	}
+
+	public void putBytes(byte[] b) {
 		putInt(b.length);
 		putBytes(b, 0, b.length);
 	}

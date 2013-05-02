@@ -49,7 +49,8 @@ public class DECIMAL extends Field{
 	}
 	@Override
 	public void pushByte(ByteBuilder b) {
-		//FIXME watch this, how will it look like when reconstructing from string?
-		b.putString(v.toPlainString());
+		//b.putString(v.toPlainString());
+		b.putInt(v.scale());
+		b.putBytes(v.unscaledValue().toByteArray());
 	}
 }

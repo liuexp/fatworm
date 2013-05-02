@@ -9,7 +9,6 @@ Warning
 
 TODO
 ====================
-* BigDecimal: reconstruction from string, what about the scale?
 * comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
 
@@ -18,8 +17,6 @@ TODO
 * Btree
 * Finish data manipulation language.
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
-* select (a + b) as t, max(c) from A group by t;  // this makes sense
-* select max(a + b) as t from A group by t; // Error: can not group on 't'
 * If resolve alias simply by renaming, then those in having must also be renamed.
 
 Testing
