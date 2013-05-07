@@ -11,7 +11,7 @@ import fatworm.util.Util;
 
 public class Project extends Plan {
 	
-	Plan src;
+	public Plan src;
 	List<Expr> expr;
 	List<String> names;
 	Schema schema;

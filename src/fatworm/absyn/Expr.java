@@ -1,5 +1,6 @@
 package fatworm.absyn;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import fatworm.driver.Schema;
@@ -40,4 +41,15 @@ public abstract class Expr {
 		return type;
 	}
 	public abstract List<String> getRequestedColumns();
+	public boolean isAnd(){
+		return this instanceof BinaryExpr && ((BinaryExpr)this).op == BinaryOp.AND;
+	}
+	public void collectCond(Collection<Expr> c){
+		if(!isAnd()){
+			c.add(this);
+		}else{
+			((BinaryExpr)this).l.collectCond(c);
+			((BinaryExpr)this).r.collectCond(c);
+		}
+	}
 }

@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
+import fatworm.absyn.BinaryExpr;
 import fatworm.absyn.BinaryOp;
+import fatworm.absyn.Id;
 import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
@@ -43,9 +45,10 @@ public class Main {
 //		meow.add(ra);
 //		meow.add(rb);
 //		System.out.println(Util.deepToString(meow));
-		TIMESTAMP x = new TIMESTAMP("2013-04-20 14:50:27.108");
-		TIMESTAMP y = new TIMESTAMP("2013-04-20 14:50:28.118");
-		System.out.println(x.applyWithComp(BinaryOp.LESS, y));
+//		TIMESTAMP x = new TIMESTAMP("2013-04-20 14:50:27.108");
+//		TIMESTAMP y = new TIMESTAMP("2013-04-20 14:50:28.118");
+//		System.out.println(x.applyWithComp(BinaryOp.LESS, y));
+//		System.out.println(new BinaryExpr(new Id("a"), BinaryOp.AND, new Id("b")).isAnd());
 		System.out.print(">");
 		db.open("/tmp/meow");
 		while (in.hasNextLine()) {
