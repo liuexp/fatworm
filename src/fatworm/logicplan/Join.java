@@ -1,5 +1,8 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
@@ -77,5 +80,19 @@ public class Join extends Plan {
 	public void close() {
 		left.close();
 		right.close();
+	}
+
+	@Override
+	public List<String> getColumns() {
+		List<String> z = new LinkedList<String> (left.getColumns());
+		z.addAll(right.getColumns());
+		return z;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = new LinkedList<String> (left.getRequestedColumns());
+		z.addAll(right.getRequestedColumns());
+		return z;
 	}
 }

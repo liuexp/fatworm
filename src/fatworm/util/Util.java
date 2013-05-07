@@ -8,8 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.runtime.tree.BaseTree;
 import org.antlr.runtime.tree.Tree;
@@ -407,5 +409,31 @@ public class Util {
 
 	public static String getMetaFile(String file) {
 		return file + ".meta";
+	}
+	
+	// XXX this method should only be used for getRequestedColumns from subquery
+	public static void removeAllCol(Collection<String> a, Collection<String> b){
+		Set<String> tmp = new HashSet<String> ();
+		for (String x:a){
+			for (String y:b){
+				// when subquery already has that name, don't request for the outer.
+				if(x.toLowerCase().endsWith(y.toLowerCase()) || y.toLowerCase().endsWith(x.toLowerCase()))
+					tmp.add(x);
+			}
+		}
+		a.removeAll(tmp);
+	}
+	
+	public static void addAllCol(Collection<String> a, Collection<String> b){
+		for(String y:b){
+			boolean flag = false;
+			for(String x:a){
+				// better more than sorry
+				if(x.equalsIgnoreCase(y))
+					flag = true;
+			}
+			if(!flag)
+				a.add(y);
+		}
 	}
 }

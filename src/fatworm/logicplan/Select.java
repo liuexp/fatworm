@@ -1,9 +1,13 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.absyn.Expr;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class Select extends Plan {
 	public Plan src;
@@ -75,6 +79,19 @@ public class Select extends Plan {
 	@Override
 	public void close() {
 		src.close();
+	}
+
+	@Override
+	public List<String> getColumns() {
+		return new LinkedList<String> (src.getColumns());
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = src.getRequestedColumns();
+		z.removeAll(src.getColumns());
+		Util.addAllCol(z, pred.getRequestedColumns());
+		return z;
 	}
 
 }

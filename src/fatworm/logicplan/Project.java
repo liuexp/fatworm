@@ -1,5 +1,6 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
@@ -68,5 +69,17 @@ public class Project extends Plan {
 	@Override
 	public void close() {
 		src.close();
+	}
+
+	@Override
+	public List<String> getColumns() {
+		return new LinkedList<String>(schema.columnName);
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List <String> z = new LinkedList<String>(src.getRequestedColumns());
+		Util.removeAllCol(z, src.getColumns());
+		return z;
 	}
 }

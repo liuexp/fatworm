@@ -120,4 +120,16 @@ public class Order extends Plan {
 		src.close();
 		results = new ArrayList<Record>();
 	}
+
+	@Override
+	public List<String> getColumns() {
+		return src.getColumns();
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = src.getRequestedColumns();
+		Util.removeAllCol(z, src.getColumns());
+		return z;
+	}
 }

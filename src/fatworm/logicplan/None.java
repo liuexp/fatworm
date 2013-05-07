@@ -1,5 +1,8 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
@@ -60,6 +63,16 @@ public class None extends Plan {
 	public void close() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<String> getColumns() {
+		return new LinkedList<String> ();
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String> ();
 	}
 
 }

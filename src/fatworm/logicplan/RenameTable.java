@@ -1,5 +1,7 @@
 package fatworm.logicplan;
 
+import java.util.List;
+
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
@@ -64,6 +66,18 @@ public class RenameTable extends Plan {
 	@Override
 	public void close() {
 		src.close();
+	}
+
+	@Override
+	public List<String> getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

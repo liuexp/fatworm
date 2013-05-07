@@ -41,4 +41,7 @@ public abstract class Plan {
 	}
 	public abstract Schema getSchema();
 	public abstract void close();
+	public abstract List<String> getColumns();
+	// for propagation of outer values into inner subquery-expression
+	public abstract List<String> getRequestedColumns();
 }

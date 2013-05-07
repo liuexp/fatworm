@@ -71,4 +71,16 @@ public class Rename extends Plan {
 		src.close();
 	}
 
+	@Override
+	public List<String> getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

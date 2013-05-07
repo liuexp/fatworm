@@ -2,6 +2,7 @@ package fatworm.logicplan;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -160,6 +161,19 @@ public class Group extends Plan {
 	public void close() {
 		src.close();
 		results = new ArrayList<Record>();
+	}
+
+	@Override
+	public List<String> getColumns() {
+		return new LinkedList<String> (schema.columnName);
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = src.getRequestedColumns();
+		Util.removeAllCol(z, src.getColumns());
+		Util.addAllCol(z, having.getRequestedColumns());
+		return z;
 	}
 
 }

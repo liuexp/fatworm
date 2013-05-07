@@ -1,5 +1,8 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
@@ -14,6 +17,7 @@ public class FetchTable extends Plan {
 	public MemTable table;
 	public int ptr = 0;
 	Schema schema;
+	// FIXME why don't we just use table.schema, even for database on disk
 	public FetchTable(String table) {
 		super();
 		tableName = table;
@@ -65,5 +69,16 @@ public class FetchTable extends Plan {
 	public void close() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<String> getColumns() {
+		List<String> z = new LinkedList<String> (schema.columnName);
+		return z;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
 }
