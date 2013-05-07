@@ -9,15 +9,17 @@ Warning
 
 TODO
 ====================
+* Btree, every node fills up a page.
+* Finish data manipulation language(index).
+* buffer manager
 * comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
 
                 select * from InfraTest where k <= 2 or 2 <= k
 
-* Btree
-* Finish data manipulation language.
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
 * If resolve alias simply by renaming, then those in having must also be renamed.
+* Figure out general expressions renaming so that Select plan can be pushed beyond Rename.
 
 Testing
 ======================

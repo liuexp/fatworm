@@ -46,6 +46,7 @@ import fatworm.logicplan.Project;
 import fatworm.logicplan.Rename;
 import fatworm.logicplan.RenameTable;
 import fatworm.logicplan.Select;
+import fatworm.opt.Optimize;
 import fatworm.parser.FatwormParser;
 
 public class Util {
@@ -256,7 +257,7 @@ public class Util {
 		if(t.getType() == SELECT_DISTINCT) //hasDistinct
 			ret = new Distinct(ret);
 		
-		return ret;
+		return Optimize.optimize(ret);
 	}
 
 	public static Plan transFrom(BaseTree t) {

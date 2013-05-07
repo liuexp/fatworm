@@ -16,6 +16,7 @@ public class Select extends Plan {
 	public Expr pred;
 	public Env env;
 	public Record current;
+	public boolean hasPushed;
 	public Select(Plan src, Expr pred) {
 		super();
 		this.src = src;
@@ -26,6 +27,7 @@ public class Select extends Plan {
 		}
 		src.parent = this;
 		myAggr.addAll(this.src.getAggr());
+		hasPushed = false;
 	}
 	
 	@Override
