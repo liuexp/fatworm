@@ -56,7 +56,7 @@ public class INT extends Field {
 		return false;
 	}
 	@Override
-	public void pushByte(ByteBuilder b) {
+	public void pushByte(ByteBuilder b, int A, int B) {
 		b.putInt(v);
 	}
 

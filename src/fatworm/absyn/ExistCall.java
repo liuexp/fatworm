@@ -1,5 +1,7 @@
 package fatworm.absyn;
 
+import java.util.List;
+
 import fatworm.field.BOOL;
 import fatworm.field.Field;
 import fatworm.logicplan.Plan;
@@ -30,5 +32,10 @@ public class ExistCall extends Expr {
 	@Override
 	public String toString() {
 		return (not? "not ":"") + "exist " + src.toString();
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return src.getRequestedColumns();
 	}
 }

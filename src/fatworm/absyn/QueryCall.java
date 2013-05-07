@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.field.Field;
 import fatworm.field.NULL;
 import fatworm.logicplan.Plan;
@@ -30,6 +33,11 @@ public class QueryCall extends Expr {
 	@Override
 	public String toString() {
 		return "@subquery("+src.toString() +")";
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
  
 }

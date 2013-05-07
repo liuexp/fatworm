@@ -58,7 +58,7 @@ public class FLOAT extends Field {
 	}
 
 	@Override
-	public void pushByte(ByteBuilder b) {
+	public void pushByte(ByteBuilder b, int A, int B) {
 		b.putDouble(v);
 	}
 

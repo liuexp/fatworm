@@ -42,7 +42,7 @@ public class BOOL extends Field {
 		return new BigDecimal(v?1:0).setScale(10);
 	}
 	@Override
-	public void pushByte(ByteBuilder b) {
+	public void pushByte(ByteBuilder b, int A, int B) {
 		b.putBool(v);
 	}
 }

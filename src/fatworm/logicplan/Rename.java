@@ -1,5 +1,6 @@
 package fatworm.logicplan;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.driver.Record;
@@ -73,14 +74,14 @@ public class Rename extends Plan {
 
 	@Override
 	public List<String> getColumns() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LinkedList<String> (as);
 	}
 
 	@Override
 	public List<String> getRequestedColumns() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> z = src.getRequestedColumns();
+		Util.removeAllCol(z, src.getColumns());
+		return z;
 	}
 
 }

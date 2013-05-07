@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.driver.Column;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
@@ -45,5 +48,12 @@ public class Id extends Expr {
 		Column c = schema.getColumn(name);
 		if(c!=null)return schema.getColumn(name).type;
 		return java.sql.Types.NULL;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = new LinkedList<String>();
+		z.add(name);
+		return z;
 	}
 }

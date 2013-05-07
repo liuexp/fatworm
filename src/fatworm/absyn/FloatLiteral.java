@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.util.Env;
@@ -30,6 +33,11 @@ public class FloatLiteral extends Expr {
 	@Override
 	public Field eval(Env env) {
 		return i;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
 
 }

@@ -1,6 +1,7 @@
 package fatworm.absyn;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Schema;
@@ -206,5 +207,39 @@ public class BinaryExpr extends Expr {
 		if(type == java.sql.Types.NULL)
 			return evalType(schema);
 		return type;
+	}
+	
+	public BinaryExpr toCNF(){
+		// TODO what about a AndList?
+		Expr left = (l instanceof BinaryExpr)?((BinaryExpr)l).toCNF() : l;
+		Expr right = (r instanceof BinaryExpr)?((BinaryExpr)r).toCNF() : r;
+		BinaryExpr ret = null;
+		if(this.op == BinaryOp.OR){
+			if(left instanceof BinaryExpr && ((BinaryExpr)left).op == BinaryOp.AND){
+				ret = new BinaryExpr(
+						new BinaryExpr(((BinaryExpr)left).l, BinaryOp.OR, right),
+						BinaryOp.AND,
+						new BinaryExpr(((BinaryExpr)left).r, BinaryOp.OR, right)
+						);
+			} else if(right instanceof BinaryExpr && ((BinaryExpr)right).op == BinaryOp.AND){
+				ret = new BinaryExpr(
+						new BinaryExpr(left, BinaryOp.OR, ((BinaryExpr)right).l),
+						BinaryOp.AND,
+						new BinaryExpr(left, BinaryOp.OR, ((BinaryExpr)right).r)
+						);
+			}
+		}
+		this.l = left;
+		this.r = right;
+		if(ret == null) ret = this;
+		else ret = ret.toCNF();
+		return ret;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = l.getRequestedColumns();
+		Util.addAllCol(z, r.getRequestedColumns());
+		return z;
 	}
 }
