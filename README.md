@@ -1,8 +1,6 @@
 Fatworm
 =======================
 
-meow
-
 Warning
 =====================
 * Always push to git before git rebase trunk and git svn dcommit
@@ -66,6 +64,13 @@ Testing
         insert into x values (3,3)
         select distinct b from x having b = count(b)-1
         drop table x
+
+some meows and eees
+=========
+* It would be so much nicer to rewrite the parser in antlr4, so that logic plan is simultaneously generated.
+* Translate to binary codes is much better than just leaving it with plan/scan trees, there could be so much more low-level optimizations for binary codes.
+* For variable length records, it would be much better to use different page structure for variable length records and fixed length records, anyway I just treat almost everything as variable length.
+
 
 Reference
 ====================
