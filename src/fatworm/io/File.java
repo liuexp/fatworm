@@ -16,7 +16,7 @@ public class File {
 	// header: #records, offsetTable(specifically for variable length record, remember to ensure space by moving records & updating table before writing out)
 	// for each record:
 	// first the nullmap, then go for each field according to metadata.
-	// footer for page: next pageid, -1 for end of table/relation.
+	// footer for page: next pageid, -1 for end of table/relation. do we need prev pageid as well?
 	
 	public File(String fileName) throws IOException{
 		load(fileName);
