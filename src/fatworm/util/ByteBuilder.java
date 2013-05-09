@@ -71,5 +71,9 @@ public class ByteBuilder {
 		updateSize();
 	}
 	
+	public byte[] getByteArray(int size){
+		buf.limit(size);
+		return buf.array();
+	}
 
 }

@@ -15,6 +15,9 @@ public abstract class Table implements Serializable {
 	 */
 	private static final long serialVersionUID = 5595620741840746862L;
 	public Schema schema;
+	//public List<Integer> pageIDs;
+	public Integer firstPageID; // so that dynamically splitting the page becomes possible
+	//public List<Integer> freePageList;
 	public abstract int delete(Expr e) ;
 	public abstract int update(List<String> colName, List<Expr> expr, Expr e);
 	public abstract int insert(Tree child);

@@ -75,6 +75,9 @@ public class DBEngine {
 			in.close();
 		} catch (FileNotFoundException e) {
 			dbList = new HashMap<String, Database>();
+			ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
+			out.writeObject(dbList);
+			out.close();
 		}
 	}
 	
@@ -179,10 +182,16 @@ public class DBEngine {
 		FatwormParser.statement_return r = parser.statement();
 		return (CommonTree) r.getTree();
 	}
+	
 	public void close() throws FileNotFoundException, IOException {
 		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
 		out.writeObject(dbList);
 		out.close();
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		close();
 	}
 
 	public Table getTable(String tbl){

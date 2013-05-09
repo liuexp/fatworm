@@ -182,6 +182,7 @@ public abstract class Field {
 		case java.sql.Types.INTEGER:
 			return new INT(buf.getInt());
 		case java.sql.Types.NULL:
+			// Note that NULL doesn't consume any byte at all.
 			return NULL.getInstance();
 		case java.sql.Types.TIMESTAMP:
 			return new TIMESTAMP(buf.getLong());
