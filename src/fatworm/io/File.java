@@ -11,7 +11,6 @@ public class File {
 	
 	//TODO organization of the file: fatworm.data, fatworm.data.free, fatworm.btree, fatworm.btree.free
 	
-	
 	public File(String fileName) throws IOException{
 		load(fileName);
 	}

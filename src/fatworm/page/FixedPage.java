@@ -1,17 +1,14 @@
 package fatworm.page;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 import fatworm.io.File;
 
-/**
- * @author liuexp
- * Variable length data/key page, features offsetTable.
- */
-public abstract class VarPage implements Page {
-	
-	public LinkedList<Integer> offsetTable = new LinkedList<Integer>();
+public abstract class FixedPage implements Page {
+
+	public FixedPage() {
+		// TODO Auto-generated constructor stub
+	}
 
 	protected Integer pageID;
 	public Integer nextPageID;
@@ -19,6 +16,7 @@ public abstract class VarPage implements Page {
 	public boolean dirty = false;
 	protected File dataFile;
 	protected Long lastTime;
+	public int size;
 	
 	@Override
 	public void flush() throws IOException {
@@ -40,7 +38,7 @@ public abstract class VarPage implements Page {
 	}
 	@Override
 	public boolean isPartial() {
-		return offsetTable.peekLast() == -1;
+		return false;
 	}
 	@Override
 	public int headerSize() {
@@ -48,13 +46,12 @@ public abstract class VarPage implements Page {
 	}
 	@Override
 	public int remainingSize() {
-		return isPartial() ? 0 : offsetTable.peekLast() - headerSize();
+		return File.pageSize - size;
 	}
 	@Override
 	public void markFree() {
-		offsetTable = new LinkedList<Integer>();
 		dirty = false;
 	}
 
-
 }
+
