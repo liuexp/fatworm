@@ -79,5 +79,10 @@ public class ByteBuilder {
 		buf.limit(size);
 		return buf.array();
 	}
+	public void putFloat(float v) {
+		ensureCapacity(4);
+		buf.putFloat(v);
+		updateSize();
+	}
 
 }

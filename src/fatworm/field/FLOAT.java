@@ -8,7 +8,7 @@ import fatworm.util.Util;
 
 public class FLOAT extends Field {
 
-	public double v;
+	public float v;
 
 	public FLOAT() {
 		type = java.sql.Types.FLOAT;
@@ -26,7 +26,7 @@ public class FLOAT extends Field {
 
 	public FLOAT(double x) {
 		this();
-		v = x;
+		v = (float) x;
 	}
 
 	public BigDecimal toDecimal() {
@@ -59,7 +59,7 @@ public class FLOAT extends Field {
 
 	@Override
 	public void pushByte(ByteBuilder b, int A, int B) {
-		b.putDouble(v);
+		b.putFloat(v);
 	}
 
 }
