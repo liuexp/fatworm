@@ -9,6 +9,7 @@ import java.util.Comparator;
 import fatworm.page.BTreePage;
 import fatworm.page.DataPage;
 import fatworm.page.Page;
+import fatworm.page.RawPage;
 
 public class BufferManager {
 	private static final long maxPages = 1024 * 1024 / 4; 	//maximum #pages a buffer manager can hold
@@ -54,6 +55,15 @@ public class BufferManager {
 		return p;
 	}
 	
+	public RawPage getRawPage(int pageid, boolean create) throws IOException{
+		Page ret2 = getPageHelper(pageid);
+		if(ret2 != null)return (RawPage) ret2;
+		RawPage p = new RawPage(dataFile, pageid, create);
+		pages.put(pageid, p);
+		victimQueue.add(p);
+		return p;
+	}
+	
 	private Page getPageHelper(int pageid) throws IOException {
 		if(pages.containsKey(pageid))
 			return pages.get(pageid);
@@ -72,5 +82,15 @@ public class BufferManager {
 		}
 		dataFile.close();
 		FreeList.write(fileName, freeList);
+	}
+	
+	public void releasePage(Integer pageID){
+		freeList.add(pageID);
+		Page z = pages.get(pageID);
+		if(z != null){
+			z.markFree();
+			victimQueue.remove(z);
+		}
+		//TODO
 	}
 }
