@@ -6,7 +6,7 @@ import fatworm.util.Util;
 
 public class CHAR extends Field {
 
-	String v;
+	public String v;
 	public CHAR(){
 		type = java.sql.Types.CHAR;
 	}

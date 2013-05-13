@@ -27,6 +27,7 @@ public class DataPage extends VarPage {
 	// this is a reverted buffer
 	private byte[] buffer;
 	private int cntRecord=0;
+	// FIXME page may need to be pinned
 	
 	public DataPage(File f, Integer id, boolean create) throws IOException{
 		lastTime = System.currentTimeMillis();

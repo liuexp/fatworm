@@ -3,6 +3,7 @@ package fatworm.util;
 import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -442,4 +443,16 @@ public class Util {
 		}
 	}
 
+	public static byte[] intToByte(int k) {
+		byte[] ret = new byte[Integer.SIZE / Byte.SIZE];
+		ByteBuffer buf = ByteBuffer.wrap(ret);
+		buf.putInt(k);
+		return buf.array();
+	}
+	public static byte[] longToByte(long k) {
+		byte[] ret = new byte[Long.SIZE / Byte.SIZE];
+		ByteBuffer buf = ByteBuffer.wrap(ret);
+		buf.putLong(k);
+		return buf.array();
+	}
 }
