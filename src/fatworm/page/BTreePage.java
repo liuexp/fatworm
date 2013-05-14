@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+
+import fatworm.io.BKey;
 import fatworm.io.File;
 import fatworm.util.Util;
 
@@ -14,36 +17,44 @@ public class BTreePage extends RawPage {
 	private static final byte ROOTNODE = 1;
 	private static final byte INTERNALNODE = 2;
 	private static final byte LEAFNODE = 3;
+	public static final int LongSize = Long.SIZE / Byte.SIZE;
+	public static final int IntSize = Integer.SIZE / Byte.SIZE;
 	// Page structure:
-	// Page/Node type: 0 for string data, ROOTNODE for root node, etc.
-	// for string data, size, every segment is an int for the length, and then the string.
+	// Page/Node type: ROOTNODE for root node, etc.
+	// for string data, size, cnt, every segment is an int for the length, and then the string.
 	// (deprecated)for root, #children, children list, key list.
 	// (deprecated)for internal node, parent, #children, children list, key list.
 	// now for EVERY (INT-key) node, parent, prev, next, #children, 510 x children list, 509 x key list.
 	
-	public byte type;
+	public byte nodeType;
 	public Integer parentPageID;
-	public Integer cntChild;
+	public Integer cntChild = 0;
 	public List<Integer> children;
-	public List<Integer> key;
-	public BTreePage(File f, int pageid, boolean create) throws IOException {
+	public List<BKey> key;
+	public int keyType;
+	public BTreePage(File f, int pageid, int keyType, boolean create) throws IOException {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
 		pageID = pageid;
 		byte [] tmp = new byte[File.pageSize];
+		this.keyType = keyType;
 		if(!create){
 			dataFile.read(tmp, pageID);
 			fromBytes(tmp);
 		}else{
 			nextPageID = -1;
 			prevPageID = -1;
+			parentPageID = -1;
+			cntChild = 0;
+			children = new LinkedList<Integer>();
+			key = new LinkedList<BKey>();
 		}
 	}
 
 	@Override
 	public void fromBytes(byte[] b) {
 		ByteBuffer buf = ByteBuffer.wrap(b);
-		type = buf.get();
+		nodeType = buf.get();
 		parentPageID = buf.getInt();
 		prevPageID = buf.getInt();
 		nextPageID = buf.getInt();
@@ -53,21 +64,24 @@ public class BTreePage extends RawPage {
 			children.add(buf.getInt());
 		}
 		for(int i=0;i<cntChild-1;i++){
-			key.add(buf.getInt());
+			if(keySize(keyType) == IntSize)
+				key.add(buf.getInt());
+			else
+				key.add(buf.getLong());
 		}
 		this.buf = buf;
 	}
 	
 	public boolean isLeaf(){
-		return type == LEAFNODE;
+		return nodeType == LEAFNODE;
 	}
 	public boolean isRoot(){
-		return type == ROOTNODE;
+		return nodeType == ROOTNODE;
 	}
 	public boolean isInternal(){
-		return type == INTERNALNODE;
+		return nodeType == INTERNALNODE;
 	}
-	public int keySize(int type){
+	public static int keySize(int type){
 		switch(type){
 		case java.sql.Types.BOOLEAN:
 		case java.sql.Types.INTEGER:
@@ -83,5 +97,10 @@ public class BTreePage extends RawPage {
 				Util.error("meow@BTreePage");
 		}
 		return 4;
+	}
+	
+	@Override
+	public int headerSize(){
+		return 5 * Byte.SIZE;
 	}
 }
