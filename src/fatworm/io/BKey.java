@@ -7,5 +7,5 @@ abstract class BKey implements Comparable<BKey>{
 	public int keySize(){
 		return Integer.SIZE / Byte.SIZE;
 	}
-	public abstract byte[] toByte();
+	public abstract byte[] toByte() throws Throwable;
 }
