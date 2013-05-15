@@ -41,10 +41,6 @@ public class BTree {
 		root = bm.getBTreePage(this, bm.newPage(), type, true);
 	}
 	
-	private class BCursor {
-		
-	}
-	
 	private static class IntKey extends BKey{
 
 		public int k;

@@ -134,13 +134,12 @@ public class BTreePage extends RawPage {
 		return 5 * Byte.SIZE;
 	}
 	
-
 	public synchronized void add(Integer idx, BKey k, int val) {
 		key.add(idx, k);
-		children.add(idx, val);
+		children.add(idx+1, val);
 		dirty = true;
 	}
-
+	
 	public synchronized void insert(Integer idx, BKey k, int val) throws Throwable {
 		dirty = true;
 		if(!isFull())add(idx, k, val);
@@ -162,16 +161,18 @@ public class BTreePage extends RawPage {
 			newPage.dirty = true;
 			dirty = true;
 			
-			int mid = key.size() >> 1;
+			int mid = (int) Math.ceil(key.size()/2.0);
+			int tmpidx = indexOf(k);
+			key.add(tmpidx, k);
 			List<BKey> newlist1 = new ArrayList<BKey> ();
 			List<BKey> newlist2 = new ArrayList<BKey> ();
 			for(int i=0;i<mid;i++)
 				newlist1.add(key.get(i));
-			for(int i=mid;i<key.size();i++)
+			for(int i=mid+1;i<key.size();i++)
 				newlist2.add(key.get(i));
 			key = newlist1;
 			newPage.key = newlist2;
-			BKey toParent = key.get(mid - 1);
+			BKey toParent = key.get(mid);
 			
 			List<Integer> newchild1 = new ArrayList<Integer> ();
 			List<Integer> newchild2 = new ArrayList<Integer> ();
@@ -202,15 +203,15 @@ public class BTreePage extends RawPage {
 			commit();
 		}
 	}
-	
-	public BTreePage parent() throws Throwable {
-		return getPage(parentPageID);
-	}
 
-	public BCursor lookup(BKey k) throws Throwable{
+	public int indexOf(BKey k){
 		int idx = 0;
 		while((key.get(idx) == null || k.compareTo(key.get(idx)) > 0) && idx < key.size()) idx++;
-		return isLeaf()? new BCursor(idx) : getPage(children.get(idx)).lookup(k);
+		return idx;
+	}
+	public BCursor lookup(BKey k) throws Throwable{
+		int idx = indexOf(k);
+		return isLeaf()? new BCursor(idx) : getPage(children.get(idx == key.size() ? idx : idx+1)).lookup(k);
 	}
 
 	public synchronized void remove(Integer idx) throws Throwable {
@@ -228,7 +229,7 @@ public class BTreePage extends RawPage {
 	public boolean hasPrev() {
 		return prevPageID != -1;
 	}
-	
+
 	public synchronized BCursor head() throws Throwable {
 		if(isLeaf())
 			return new BCursor(0);
@@ -237,7 +238,7 @@ public class BTreePage extends RawPage {
 
 	public synchronized BCursor last() throws Throwable {
 		if(isLeaf())
-			return new BCursor(key.size());
+			return new BCursor(key.size()-1);	//NOTE that empty pages should have been GCed.
 		return getPage(children.get(key.size())).last();
 	}
 	
@@ -252,7 +253,14 @@ public class BTreePage extends RawPage {
 	public synchronized BTreePage prev() throws Throwable {
 		return getPage(prevPageID);
 	}
+	
+	public synchronized BTreePage parent() throws Throwable {
+		return getPage(parentPageID);
+	}
 
+	// Index for key: 0<= idx < key.size()
+	// idx < 0 or idx >= key.size() indicate notFound
+	// to get the children/value of that key, it's associated with children[idx+1]
 	private final class BCursor {
 		private final Integer idx;
 		
@@ -261,6 +269,7 @@ public class BTreePage extends RawPage {
 		}
 		
 		public BKey getKey(){
+			assert valid();
 			return key.get(idx);
 		}
 		
@@ -270,7 +279,8 @@ public class BTreePage extends RawPage {
 		}
 		
 		public int getValue() {
-			return children.get(idx);
+			assert valid();
+			return children.get(idx+1);
 		}
 		
 		public boolean hasNext(){
@@ -278,6 +288,7 @@ public class BTreePage extends RawPage {
 		}
 		
 		public BCursor next() throws Throwable{
+			assert valid();
 			if(idx + 1 < key.size())
 				return new BCursor(idx+1);
 			else return BTreePage.this.next().head();
@@ -288,21 +299,28 @@ public class BTreePage extends RawPage {
 		}
 		
 		public BCursor prev() throws Throwable{
+			assert valid();
 			if(idx > 0)
 				return new BCursor(idx-1);
-			else return BTreePage.this.prev().last().prev();	//NOTE that empty pages should have been GCed.
+			else return BTreePage.this.prev().last();
 		}
 		
 		public void insert(BKey k, int val) throws Throwable{
+			assert valid();
 			BTreePage.this.beginTransaction();
 			BTreePage.this.insert(idx, k, val);
 			BTreePage.this.commit();
 		}
 		
 		public void remove() throws Throwable{
+			assert valid();
 			BTreePage.this.beginTransaction();
 			BTreePage.this.remove(idx);
 			BTreePage.this.commit();
+		}
+		
+		public boolean valid(){
+			return idx >=0 && idx < key.size();
 		}
 	}
 }
