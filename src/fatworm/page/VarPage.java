@@ -21,7 +21,7 @@ public abstract class VarPage implements Page {
 	protected Long lastTime;
 	
 	@Override
-	public void flush() throws IOException {
+	public void flush() throws Throwable {
 		if(!dirty) return;
 		dirty = false;
 		dataFile.write(toBytes(), pageID);

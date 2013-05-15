@@ -43,11 +43,11 @@ public class FreeList implements java.io.Serializable {
 		
 	}
 	
-	public void add(int pid){
+	public synchronized void add(int pid){
 		freeList.add(pid);
 	}
 	
-	public int poll(){
+	public synchronized int poll(){
 		return freeList.isEmpty()?nextPageNumber++:freeList.poll();
 	}
 }

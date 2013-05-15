@@ -33,19 +33,19 @@ public class BTree {
 	public BTreePage root;
 	public BufferManager bm;
 
-	public BTree(BufferManager bm, int type) throws IOException {
+	public BTree(BufferManager bm, int type) throws Throwable {
 		this.bm = bm;
 		this.type = type;
 		int keysize = BTreePage.keySize(type);
 		//fanout = (File.pageSize - 5*Byte.SIZE) / (IntSize + keysize);
-		root = bm.getBTreePage(bm.newPage(), type, true);
+		root = bm.getBTreePage(this, bm.newPage(), type, true);
 	}
 	
 	private class BCursor {
 		
 	}
 	
-	private class IntKey extends BKey{
+	private static class IntKey extends BKey{
 
 		public int k;
 		public IntKey(int z){
@@ -78,7 +78,7 @@ public class BTree {
 		}
 	}
 	
-	private class FloatKey extends BKey{
+	private static class FloatKey extends BKey{
 
 		public float k;
 		public FloatKey(float k){
@@ -142,6 +142,7 @@ public class BTree {
 		
 		private void toPage() throws Throwable {
 			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
+			rp.beginTransaction();
 			pageID = rp.getID();
 			int slotOffset = encodedOffset % MODOFFSET;
 			int curOffset = 8;
@@ -150,17 +151,20 @@ public class BTree {
 			}
 			int length = rp.putDecimal(curOffset + 4, k);
 			rp.putInt(curOffset, length);
+			rp.commit();
 		}
 		@Override
 		public void delete() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
 			int curOffset = 4;
 			int cnt = rp.getInt(curOffset)-1;
+			rp.beginTransaction();
 			rp.putInt(curOffset, cnt);
 			if(cnt <= 0)
 				bm.releasePage(pageID);
+			else
+				rp.commit();
 		}
-
 		@Override
 		public int compareTo(BKey o) {
 			BigDecimal z = ((DecimalKey)o).k;
@@ -186,7 +190,7 @@ public class BTree {
 		}
 	}
 	
-	private class TimestampKey extends BKey{
+	private static class TimestampKey extends BKey{
 
 		public Timestamp k;
 		public TimestampKey(Timestamp v) {
@@ -253,6 +257,7 @@ public class BTree {
 		
 		private void toPage() throws Throwable {
 			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
+			rp.beginTransaction();
 			pageID = rp.getID();
 			int slotOffset = encodedOffset % MODOFFSET;
 			int curOffset = 8;
@@ -260,6 +265,7 @@ public class BTree {
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
 			rp.putString(curOffset, k);
+			rp.commit();
 		}
 		
 		@Override
@@ -267,9 +273,12 @@ public class BTree {
 			RawPage rp = bm.getRawPage(pageID, false);
 			int curOffset = 4;
 			int cnt = rp.getInt(curOffset)-1;
+			rp.beginTransaction();
 			rp.putInt(curOffset, cnt);
 			if(cnt <= 0)
 				bm.releasePage(pageID);
+			else
+				rp.commit();
 		}
 
 		@Override
@@ -315,7 +324,36 @@ public class BTree {
 		case java.sql.Types.TIMESTAMP:
 			return new TimestampKey(((TIMESTAMP)f).v);
 			default:
-				Util.error("meow@BTreePage");
+				Util.error("meow@BTree");
+		}
+		return null;
+	}
+	
+	public BKey getBKey(int n, int type) throws Throwable{
+		switch(type){
+		case java.sql.Types.BOOLEAN:
+		case java.sql.Types.INTEGER:
+			return new IntKey(n);
+		case java.sql.Types.FLOAT:
+			return new FloatKey(n);
+		case java.sql.Types.CHAR:
+		case java.sql.Types.VARCHAR:
+			return new StringKey(n);
+		case java.sql.Types.DECIMAL:
+			return new DecimalKey(n);
+			default:
+				Util.error("meow@BTree");
+		}
+		return null;
+	}
+	
+	public BKey getBKey(long n, int type){
+		switch(type){
+		case java.sql.Types.DATE:
+		case java.sql.Types.TIMESTAMP:
+			return new TimestampKey(n);
+			default:
+				Util.error("meow@BTree");
 		}
 		return null;
 	}

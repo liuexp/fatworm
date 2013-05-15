@@ -2,21 +2,24 @@ package fatworm.page;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.io.BKey;
+import fatworm.io.BTree;
 import fatworm.io.File;
 import fatworm.util.Util;
 
 // 4096 = 4 * 5 + 4 * 510 + 4 * 509 (INT key)
 // 4096 > 4 * 5 + 4 * 340 + 8 * 339 (Long key)
+// FIXME Everytime anything of this page is modified, remember to set dirty = true....
 public class BTreePage extends RawPage {
-	private static final byte ROOTNODE = 1;
-	private static final byte INTERNALNODE = 2;
-	private static final byte LEAFNODE = 3;
+	private static final int ROOTNODE = 1;
+	private static final int INTERNALNODE = 2;
+	private static final int LEAFNODE = 3;
 	public static final int LongSize = Long.SIZE / Byte.SIZE;
 	public static final int IntSize = Integer.SIZE / Byte.SIZE;
 	// Page structure:
@@ -26,18 +29,25 @@ public class BTreePage extends RawPage {
 	// (deprecated)for internal node, parent, #children, children list, key list.
 	// now for EVERY (INT-key) node, parent, prev, next, #children, 510 x children list, 509 x key list.
 	
-	public byte nodeType;
-	public Integer parentPageID;
-	public Integer cntChild = 0;
+	// for duplicate keys without bucketing:
+	// null key to indicate you should just skip this key while searching(from left to right) as this is just a duplicate of the previous entries.
+	// FIXME to allow this, I should change the index from a<x<=b to be a<=x<b
+	// of course another way is to use bucket
+	private Integer nodeType;
+	private Integer parentPageID;
 	public List<Integer> children;
 	public List<BKey> key;
 	public int keyType;
-	public BTreePage(File f, int pageid, int keyType, boolean create) throws IOException {
+	public BTree btree;
+	public int fanout;
+	public BTreePage(BTree btree, File f, int pageid, int keyType, boolean create) throws Throwable {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
 		pageID = pageid;
 		byte [] tmp = new byte[File.pageSize];
 		this.keyType = keyType;
+		this.btree = btree;
+		fanout = keySize(keyType) == LongSize ? 340 : 510;
 		if(!create){
 			dataFile.read(tmp, pageID);
 			fromBytes(tmp);
@@ -45,31 +55,47 @@ public class BTreePage extends RawPage {
 			nextPageID = -1;
 			prevPageID = -1;
 			parentPageID = -1;
-			cntChild = 0;
-			children = new LinkedList<Integer>();
-			key = new LinkedList<BKey>();
+			children = new ArrayList<Integer>();
+			key = new ArrayList<BKey>();
+			dirty = true;
 		}
 	}
 
 	@Override
-	public void fromBytes(byte[] b) {
+	public void fromBytes(byte[] b) throws Throwable {
 		ByteBuffer buf = ByteBuffer.wrap(b);
-		nodeType = buf.get();
+		nodeType = buf.getInt();
 		parentPageID = buf.getInt();
 		prevPageID = buf.getInt();
 		nextPageID = buf.getInt();
-		cntChild = buf.getInt();
-		nextPageID = buf.getInt();
+		int cntChild = buf.getInt();
 		for(int i=0;i<cntChild;i++){
 			children.add(buf.getInt());
 		}
 		for(int i=0;i<cntChild-1;i++){
 			if(keySize(keyType) == IntSize)
-				key.add(buf.getInt());
+				key.add(btree.getBKey(buf.getInt(), keyType));
 			else
-				key.add(buf.getLong());
+				key.add(btree.getBKey(buf.getLong(), keyType));
 		}
 		this.buf = buf;
+	}
+	
+	@Override
+	public byte[] toBytes() throws Throwable {
+		buf.position(0);
+		buf.putInt(nodeType);
+		buf.putInt(parentPageID);
+		buf.putInt(prevPageID);
+		buf.putInt(nextPageID);
+		buf.putInt(children.size());
+		for(int i=0;i<children.size();i++){
+			buf.putInt(children.get(i));
+		}
+		for(int i=0;i<key.size();i++){
+			buf.put(key.get(i).toByte());
+		}
+		return buf.array();
 	}
 	
 	public boolean isLeaf(){
@@ -80,6 +106,10 @@ public class BTreePage extends RawPage {
 	}
 	public boolean isInternal(){
 		return nodeType == INTERNALNODE;
+	}
+	public boolean isFull(){
+		assert fanout >= children.size();
+		return fanout == children.size();
 	}
 	public static int keySize(int type){
 		switch(type){
@@ -102,5 +132,177 @@ public class BTreePage extends RawPage {
 	@Override
 	public int headerSize(){
 		return 5 * Byte.SIZE;
+	}
+	
+
+	public synchronized void add(Integer idx, BKey k, int val) {
+		key.add(idx, k);
+		children.add(idx, val);
+		dirty = true;
+	}
+
+	public synchronized void insert(Integer idx, BKey k, int val) throws Throwable {
+		dirty = true;
+		if(!isFull())add(idx, k, val);
+		else {
+			beginTransaction();
+			BTreePage newPage = btree.bm.getBTreePage(btree, btree.bm.newPage(), keyType, true);
+			newPage.beginTransaction();
+			newPage.nodeType = nodeType = isLeaf() ? LEAFNODE : INTERNALNODE;
+			newPage.parentPageID = parentPageID;
+			newPage.nextPageID = nextPageID;
+			newPage.prevPageID = pageID;
+			if(hasNext()){
+				BTreePage p = next();
+				p.prevPageID = newPage.getID();
+				p.dirty = true;
+				p = null;
+			}
+			nextPageID = newPage.pageID;
+			newPage.dirty = true;
+			dirty = true;
+			
+			int mid = key.size() >> 1;
+			List<BKey> newlist1 = new ArrayList<BKey> ();
+			List<BKey> newlist2 = new ArrayList<BKey> ();
+			for(int i=0;i<mid;i++)
+				newlist1.add(key.get(i));
+			for(int i=mid;i<key.size();i++)
+				newlist2.add(key.get(i));
+			key = newlist1;
+			newPage.key = newlist2;
+			BKey toParent = key.get(mid - 1);
+			
+			List<Integer> newchild1 = new ArrayList<Integer> ();
+			List<Integer> newchild2 = new ArrayList<Integer> ();
+			for(int i=0;i<mid;i++)
+				newchild1.add(children.get(i));
+			for(int i=mid;i<children.size();i++)
+				newchild2.add(children.get(i));
+			children = newchild1;
+			newPage.children = newchild2;
+
+			if(isLeaf())
+				children.add(-1);
+			else
+				key.remove(mid-1);
+			
+			if(!isRoot()){
+				int pidx = -1;
+				BTreePage parent = parent();
+				for(int i=0;i<parent.children.size();i++){
+					if(pageID.equals(parent.children.get(i))){
+						pidx = i;
+						break;
+					}
+				}
+				
+			}
+			newPage.commit();
+			commit();
+		}
+	}
+	
+	public BTreePage parent() throws Throwable {
+		return getPage(parentPageID);
+	}
+
+	public BCursor lookup(BKey k) throws Throwable{
+		int idx = 0;
+		while((key.get(idx) == null || k.compareTo(key.get(idx)) > 0) && idx < key.size()) idx++;
+		return isLeaf()? new BCursor(idx) : getPage(children.get(idx)).lookup(k);
+	}
+
+	public synchronized void remove(Integer idx) throws Throwable {
+		beginTransaction();
+		dirty = true;
+		key.remove(idx);
+		children.remove(idx);
+		commit();
+	}
+
+	public boolean hasNext() {
+		return nextPageID != -1;
+	}
+	
+	public boolean hasPrev() {
+		return prevPageID != -1;
+	}
+	
+	public synchronized BCursor head() throws Throwable {
+		if(isLeaf())
+			return new BCursor(0);
+		return getPage(children.get(0)).head();
+	}
+
+	public synchronized BCursor last() throws Throwable {
+		if(isLeaf())
+			return new BCursor(key.size());
+		return getPage(children.get(key.size())).last();
+	}
+	
+	public synchronized BTreePage getPage(Integer pid) throws Throwable {
+		return btree.bm.getBTreePage(btree, pid, keyType, false);
+	}
+
+	public synchronized BTreePage next() throws Throwable {
+		return getPage(nextPageID);
+	}
+	
+	public synchronized BTreePage prev() throws Throwable {
+		return getPage(prevPageID);
+	}
+
+	private final class BCursor {
+		private final Integer idx;
+		
+		public BCursor(int idx){
+			this.idx = idx;
+		}
+		
+		public BKey getKey(){
+			return key.get(idx);
+		}
+		
+		@Override
+		public BCursor clone(){
+			return new BCursor(idx);
+		}
+		
+		public int getValue() {
+			return children.get(idx);
+		}
+		
+		public boolean hasNext(){
+			return idx + 1 < key.size() || BTreePage.this.hasNext();
+		}
+		
+		public BCursor next() throws Throwable{
+			if(idx + 1 < key.size())
+				return new BCursor(idx+1);
+			else return BTreePage.this.next().head();
+		}
+		
+		public boolean hasPrev(){
+			return idx > 0 || BTreePage.this.hasPrev();
+		}
+		
+		public BCursor prev() throws Throwable{
+			if(idx > 0)
+				return new BCursor(idx-1);
+			else return BTreePage.this.prev().last().prev();	//NOTE that empty pages should have been GCed.
+		}
+		
+		public void insert(BKey k, int val) throws Throwable{
+			BTreePage.this.beginTransaction();
+			BTreePage.this.insert(idx, k, val);
+			BTreePage.this.commit();
+		}
+		
+		public void remove() throws Throwable{
+			BTreePage.this.beginTransaction();
+			BTreePage.this.remove(idx);
+			BTreePage.this.commit();
+		}
 	}
 }

@@ -19,7 +19,7 @@ public abstract class FixedPage implements Page {
 	public int size;
 	
 	@Override
-	public void flush() throws IOException {
+	public void flush() throws Throwable {
 		if(!dirty) return;
 		dirty = false;
 		dataFile.write(toBytes(), pageID);

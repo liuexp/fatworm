@@ -36,7 +36,7 @@ public class RawPage implements Page {
 		}
 	}
 	public RawPage(){}
-	public RawPage(File f, int pageid, boolean create) {
+	public RawPage(File f, int pageid, boolean create) throws Throwable {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
 		pageID = pageid;
@@ -46,7 +46,9 @@ public class RawPage implements Page {
 			nextPageID = -1;
 			prevPageID = -1;
 			size = 4;
-			pool.add(new rpEntry(remainingSize(), pageID));
+			synchronized (pool){
+				pool.add(new rpEntry(remainingSize(), pageID));
+			}
 		}
 	}
 
@@ -59,9 +61,12 @@ public class RawPage implements Page {
 	public int size;
 	public ByteBuffer buf = ByteBuffer.allocateDirect(File.pageSize);
 	public int cnt = 1;
+	public boolean hasFlushed = false;
+	public boolean inTransaction = false;
 	
 	@Override
-	public synchronized void flush() throws IOException {
+	public synchronized void flush() throws Throwable {
+		hasFlushed = true;
 		write();
 	}
 	@Override
@@ -93,13 +98,15 @@ public class RawPage implements Page {
 		dirty = false;
 	}
 
-	public synchronized void loadPage() {
+	public synchronized void loadPage() throws Throwable {
 		dataFile.read(buf, pageID);
 		fromBytes(buf.array());
 	}
 
-	public synchronized void write() {
+	public synchronized void write() throws Throwable {
 		if(!dirty) return;
+		toBytes();
+		hasFlushed = true;
 		dataFile.write(buf, pageID);
 		dirty = false;
 	}
@@ -164,6 +171,14 @@ public class RawPage implements Page {
 		return byteval.length + Integer.SIZE / Byte.SIZE;
 	}
 	
+	public synchronized int putByteArray(int offset, byte[] byteval) {
+		buf.position(offset);
+		buf.put(byteval);
+		dirty = true;
+		updateSize(buf.position());
+		return byteval.length;
+	}
+	
 	public synchronized BigDecimal getDecimal(int offset) {
 		int scale = getInt(offset);
 		offset += 4;
@@ -191,7 +206,7 @@ public class RawPage implements Page {
 	}
 
 	@Override
-	public void fromBytes(byte[] b) {
+	public void fromBytes(byte[] b) throws Throwable {
 		buf = ByteBuffer.wrap(b);
 		buf.rewind();
 		size = buf.getInt();
@@ -199,16 +214,19 @@ public class RawPage implements Page {
 		buf.rewind();
 	}
 	@Override
-	public byte[] toBytes() {
+	public byte[] toBytes() throws Throwable {
 		buf.position(0);
 		buf.putInt(size);
 		buf.putInt(cnt);
 		return buf.array();
 	}
 	
-	public void updateSize(int o){
+	public synchronized void updateSize(int o){
 		pool.remove(new rpEntry(remainingSize(), pageID));
-		size = Math.max(size, o);
+		if(size < o){
+			dirty = true;
+			size = o;
+		}
 		pool.add(new rpEntry(remainingSize(), pageID));
 	}
 	
@@ -233,5 +251,21 @@ public class RawPage implements Page {
 	public void newEntry() {
 		cnt ++;
 		dirty = true;
+	}
+	@Override
+	public void beginTransaction() {
+		inTransaction=true;
+		//dirty = true;
+	}
+	@Override
+	public synchronized void commit() throws Throwable {
+		inTransaction=false;
+		if(hasFlushed){
+			write();
+		}
+	}
+	@Override
+	public boolean isInTransaction() {
+		return inTransaction;
 	}
 }
