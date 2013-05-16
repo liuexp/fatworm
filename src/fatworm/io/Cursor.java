@@ -15,4 +15,6 @@ public interface Cursor {
 	public void delete() throws Throwable;
 	
 	public void close();
+
+	public boolean hasNext();
 }

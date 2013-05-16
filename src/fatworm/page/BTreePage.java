@@ -214,6 +214,8 @@ public class BTreePage extends RawPage {
 			children = newchild1;
 			newPage.children = newchild2;
 			if(!isRoot()){
+				commit();
+				newPage.commit();
 				int pidx = -1;
 				BTreePage parent = parent();
 				for(int i=0;i<parent.children.size();i++){
@@ -225,11 +227,22 @@ public class BTreePage extends RawPage {
 				parent.beginTransaction();
 				parent.children.set(pidx, newPage.pageID);
 				parent.insert(pidx, toParent, pageID);
+				parent.commit();
 			} else {
-				//TODO new root
+				BTreePage newRoot = btree.bm.getBTreePage(btree, btree.bm.newPage(), keyType, true);
+				parentPageID = newRoot.pageID;
+				commit();
+				newPage.parentPageID = newRoot.pageID;
+				newPage.commit();
+				newRoot.beginTransaction();
+				newRoot.nodeType = ROOTNODE;
+				newRoot.key.add(toParent);
+				newRoot.children.add(pageID);
+				newRoot.children.add(newPage.pageID);
+				btree.root = newRoot;
+				newRoot.dirty = true;
+				newRoot.commit();
 			}
-			newPage.commit();
-			commit();
 		}
 	}
 
