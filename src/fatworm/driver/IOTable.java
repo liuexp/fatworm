@@ -1,48 +1,43 @@
 package fatworm.driver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
+import fatworm.driver.Database.Index;
 import fatworm.field.INT;
 import fatworm.field.NULL;
 import fatworm.io.Cursor;
+import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
 public class IOTable extends Table {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7673588089635019327L;
+	public static final Integer MODOOFFSET = 512;
+
 	public IOTable() {
-		// TODO Auto-generated constructor stub
 	}
 	public IOTable(CommonTree t) {
 		this();
 		schema = new Schema(t);
-	}
-	@Override
-	public int delete(Expr e) {
-		// TODO Auto-generated method stub
-		int ret = 0;
-		Cursor c = open();
-		while(c.hasNext()){
-			
-			Record r = null;
-			Env env = new Env();
-			env.appendFromRecord(r);
-			if(e!=null&&!e.evalPred(env))continue;
-			c.remove();
-			ret++;
-			
-			c.next();
+		// build index on primaryKey
+		if(schema.primaryKey != null){
+//			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
+			// XXX I'm going to hack it this way
+			DBEngine.getInstance().getDatabase().createIndex(Util.getPKIndexName(schema.primaryKey.name), schema.tableName, schema.primaryKey.name, true);
 		}
-		return ret;
 	}
 
-	public Cursor open() {
-		// TODO Auto-generated method stub
-		return null;
+	public SimpleCursor open() {
+		return new SimpleCursor();
 	}
 	@Override
 	public int update(List<String> colName, List<Expr> expr, Expr e) {
@@ -51,46 +46,161 @@ public class IOTable extends Table {
 	}
 
 	@Override
-	public int insert(Tree child) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void addRecord(Record r) {
+		SimpleCursor c = open();
+		//TODO
 	}
 
 	@Override
-	public int insert(CommonTree t, Tree v) {
-		int ret = 0;
-		Record r = new Record(schema);
-		r.autoFill();
-		for(int i=0;i<v.getChildCount();i++){
-			String colName = t.getChild(i+1).getText();
-			//Column c = r.schema.getColumn(i);
-			//if(c.type == java.sql.Types.CHAR || c.type == java.sql.Types.VARCHAR)
-				//trim to c.M
-			r.setField(colName, Util.getField(schema.getColumn(colName), v.getChild(i)));
+	public void deleteAll() {
+		// TODO 
+		
+	}
+	
+	// FIXME watch it here as simple cursor is doubly linked list.
+	public class SimpleCursor implements Cursor {
+
+		Integer pageID;
+		int offset;
+		List<Record> cache = new ArrayList<Record>();
+		public SimpleCursor(){
+			reset();
 		}
-		for(int i=0;i<r.cols.size();i++){
-			if(r.cols.get(i) != null)continue;
-			Column c = r.schema.getColumn(i);
-			if(c.notNull){
-				r.cols.set(i, new INT(c.getAutoInc()));
-			} else {
-				r.cols.set(i, NULL.getInstance());
+		@Override
+		public void reset() {
+			pageID = IOTable.this.firstPageID;
+			offset = 0;
+			cache = DBEngine.getInstance().recordManager.getRecords(pageID);
+		}
+
+		@Override
+		public void next() throws Throwable {
+			if(offset < cache.size() - 1)offset ++;
+			else{
+				pageID = getNextPage();
+				offset = 0;
+				cache = getRecords(pageID);
 			}
 		}
-		addRecord(r);
-		ret++;
-		return ret;
-	}
 
-	@Override
-	public void addRecord(Record r) {
-		// TODO Auto-generated method stub
-	}
+		private List<Record> getRecords(Integer pid) {
+			return DBEngine.getInstance().recordManager.getRecords(pid);
+		}
+		
+		private Integer getNextPage() throws Throwable{
+			return DBEngine.getInstance().recordManager.getNextPage(pageID);
+		}
+		
+		@Override
+		public void prev() {
+			// FIXME who will ever call me here at all?
+		}
 
-	@Override
-	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		@Override
+		public Object fetch(String col) {
+			return fetchRecord().getCol(col);
+		}
 
+		@Override
+		public Object[] fetch() {
+			return fetchRecord().cols.toArray();
+		}
+
+		@Override
+		public void delete() throws Throwable {
+			// TODO how to do this at all
+		}
+
+		@Override
+		public void close() {
+		}
+
+		@Override
+		public boolean hasNext() throws Throwable {
+			return getNextPage() != firstPageID;
+		}
+
+		@Override
+		public Record fetchRecord() {
+			return cache.get(offset);
+		}
+		@Override
+		public Integer getIdx() {
+			return pageID * MODOOFFSET + offset;
+		}
+		@Override
+		public boolean hasThis() {
+			return pageID >= 0 ;
+		}
+		
+	}
+	
+	public class IndexCursor implements Cursor {
+
+		BCursor bc;
+		
+		
+		@Override
+		public void reset() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void next() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void prev() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Object fetch(String col) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object[] fetch() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void delete() throws Throwable {
+			// TODO how to do this at all
+		}
+
+		@Override
+		public void close() {
+		}
+
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Record fetchRecord() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Integer getIdx() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean hasThis() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+	}
 }

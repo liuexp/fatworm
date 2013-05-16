@@ -421,6 +421,10 @@ public class Util {
 		return file + ".free";
 	}
 	
+	public static String getBTreeFile(String file) {
+		return file + ".btree";
+	}
+	
 	// XXX this method should only be used for getRequestedColumns from subquery
 	public static void removeAllCol(Collection<String> a, Collection<String> b){
 		Set<String> tmp = new HashSet<String> ();
@@ -458,5 +462,9 @@ public class Util {
 		ByteBuffer buf = ByteBuffer.wrap(ret);
 		buf.putLong(k);
 		return buf.array();
+	}
+
+	public static String getPKIndexName(String primaryKey) {
+		return "__PrimaryIndex__" + primaryKey;
 	}
 }

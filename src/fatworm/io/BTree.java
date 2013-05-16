@@ -36,9 +36,12 @@ public class BTree {
 	public BTree(BufferManager bm, int type) throws Throwable {
 		this.bm = bm;
 		this.type = type;
-		int keysize = BTreePage.keySize(type);
-		//fanout = (File.pageSize - 5*Byte.SIZE) / (IntSize + keysize);
 		root = bm.getBTreePage(this, bm.newPage(), type, true);
+	}
+	public BTree(BufferManager bm, Integer pageID, int type) throws Throwable {
+		this.bm = bm;
+		this.type = type;
+		root = bm.getBTreePage(this, pageID, type, false);
 	}
 	
 	private static class IntKey extends BKey{
@@ -140,9 +143,13 @@ public class BTree {
 			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
 			rp.beginTransaction();
 			pageID = rp.getID();
-			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 8;
-			for(int i=0;i<slotOffset;i++){
+			int curOffset = 0;
+			curOffset+=4;
+			int cnt = rp.getInt(curOffset);
+			rp.putInt(curOffset, cnt+1);
+			encodedOffset =pageID * MODOFFSET + cnt;
+			curOffset+=4;
+			for(int i=0;i<cnt;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
 			int length = rp.putDecimal(curOffset + 4, k);
@@ -255,9 +262,13 @@ public class BTree {
 			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
 			rp.beginTransaction();
 			pageID = rp.getID();
-			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 8;
-			for(int i=0;i<slotOffset;i++){
+			int curOffset = 0;
+			curOffset+=4;
+			int cnt = rp.getInt(curOffset);
+			rp.putInt(curOffset, cnt+1);
+			encodedOffset =pageID * MODOFFSET + cnt;
+			curOffset+=4;
+			for(int i=0;i<cnt;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
 			rp.putString(curOffset, k);
@@ -301,7 +312,7 @@ public class BTree {
 		}
 	}
 
-	public BKey getBKey(Field f){
+	public BKey newBKey(Field f){
 		switch(f.type){
 		case java.sql.Types.BOOLEAN:
 			return new IntKey(((BOOL)f).v ? 1 : 0);
@@ -353,4 +364,5 @@ public class BTree {
 		}
 		return null;
 	}
+
 }

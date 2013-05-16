@@ -6,22 +6,23 @@ import java.util.List;
 import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
+import fatworm.driver.Table;
 import fatworm.util.Env;
 import fatworm.util.Util;
-import fatworm.driver.MemTable;
+import fatworm.io.Cursor;
 
 public class FetchTable extends Plan {
 
 	//FIXME for now we use temporary database in memory 
 	public String tableName;
-	public MemTable table;
-	public int ptr = 0;
+	public Table table;
 	Schema schema;
+	Cursor cursor;
 	// FIXME why don't we just use table.schema, even for database on disk
 	public FetchTable(String table) {
 		super();
 		tableName = table;
-		this.table = (MemTable) DBEngine.getInstance().getTable(table);
+		this.table = DBEngine.getInstance().getTable(table);
 		if(table==null)Util.error("meow");
 		this.schema = new Schema(this.table.getSchema().tableName);
 		for(String old:this.table.getSchema().columnName){
@@ -35,9 +36,8 @@ public class FetchTable extends Plan {
 	// TODO Range Fetch?
 	@Override
 	public void eval(Env env) {
-		// TODO Auto-generated method stub
 		hasEval = true;
-		ptr = 0;
+		cursor = table.open();
 	}
 	@Override
 	public String toString(){
@@ -46,18 +46,19 @@ public class FetchTable extends Plan {
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return ptr < table.records.size();
+		return cursor.hasThis();
 	}
 
 	@Override
 	public Record next() {
-		return table.records.get(ptr++);
+		Record ret = cursor.fetchRecord();
+		cursor.next();
+		return ret;
 	}
 
 	@Override
 	public void reset() {
-		ptr = 0;
+		cursor.reset();
 	}
 
 	@Override
@@ -67,8 +68,7 @@ public class FetchTable extends Plan {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
+		cursor.close();
 	}
 
 	@Override
