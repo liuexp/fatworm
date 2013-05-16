@@ -33,6 +33,7 @@ public class BTreePage extends RawPage {
 	// null key to indicate you should just skip this key while searching(from left to right) as this is just a duplicate of the previous entries.
 	// FIXME to allow this, I should change the index from a<x<=b to be a<=x<b
 	// of course another way is to use bucket
+	// wait a second, if I dont reclaim space after deletion, it would be much better if I use bucketing...
 	private Integer nodeType;
 	private Integer parentPageID;
 	public List<Integer> children;
@@ -47,6 +48,7 @@ public class BTreePage extends RawPage {
 		byte [] tmp = new byte[File.pageSize];
 		this.keyType = keyType;
 		this.btree = btree;
+		// XXX let's settle it this way for now = =+
 		fanout = keySize(keyType) == LongSize ? 340 : 510;
 		if(!create){
 			dataFile.read(tmp, pageID);
@@ -161,33 +163,56 @@ public class BTreePage extends RawPage {
 			newPage.dirty = true;
 			dirty = true;
 			
-			int mid = (int) Math.ceil(key.size()/2.0);
+//			int mid = (int) Math.ceil(key.size()/2.0 - (1e-3));
+			int mid = (int) Math.ceil(fanout/2.0 - (1e-3));
 			int tmpidx = indexOf(k);
 			key.add(tmpidx, k);
+			children.add(tmpidx+1, val);
 			List<BKey> newlist1 = new ArrayList<BKey> ();
 			List<BKey> newlist2 = new ArrayList<BKey> ();
-			for(int i=0;i<mid;i++)
-				newlist1.add(key.get(i));
-			for(int i=mid+1;i<key.size();i++)
-				newlist2.add(key.get(i));
+			BKey toParent = key.get(mid-1);
+			if(isLeaf()){
+				for(int i=0;i<mid;i++)
+					newlist1.add(key.get(i));
+				for(int i=mid;i<key.size();i++)
+					newlist2.add(key.get(i));
+			}else {
+				for(int i=0;i<mid-1;i++)
+					newlist1.add(key.get(i));
+				for(int i=mid;i<key.size();i++)
+					newlist2.add(key.get(i));
+			}
 			key = newlist1;
 			newPage.key = newlist2;
-			BKey toParent = key.get(mid);
 			
 			List<Integer> newchild1 = new ArrayList<Integer> ();
 			List<Integer> newchild2 = new ArrayList<Integer> ();
-			for(int i=0;i<mid;i++)
-				newchild1.add(children.get(i));
-			for(int i=mid;i<children.size();i++)
-				newchild2.add(children.get(i));
+			if(isLeaf()){
+				for(int i=0;i<mid;i++)
+					newchild1.add(children.get(i));
+				newchild1.add(-1);
+				for(int i=mid;i<children.size();i++){
+					Integer cpid = children.get(i);
+					newchild2.add(cpid);
+					BTreePage cp = getPage(cpid);
+					cp.beginTransaction();
+					cp.parentPageID = newPage.pageID;
+					cp.commit();
+				}
+			}else {
+				for(int i=0;i<mid;i++)
+					newchild1.add(children.get(i));
+				for(int i=mid;i<children.size();i++){
+					Integer cpid = children.get(i);
+					newchild2.add(cpid);
+					BTreePage cp = getPage(cpid);
+					cp.beginTransaction();
+					cp.parentPageID = newPage.pageID;
+					cp.commit();
+				}
+			}
 			children = newchild1;
 			newPage.children = newchild2;
-
-			if(isLeaf())
-				children.add(-1);
-			else
-				key.remove(mid-1);
-			
 			if(!isRoot()){
 				int pidx = -1;
 				BTreePage parent = parent();
@@ -197,7 +222,11 @@ public class BTreePage extends RawPage {
 						break;
 					}
 				}
-				
+				parent.beginTransaction();
+				parent.children.set(pidx, newPage.pageID);
+				parent.insert(pidx, toParent, pageID);
+			} else {
+				//TODO new root
 			}
 			newPage.commit();
 			commit();
@@ -238,7 +267,7 @@ public class BTreePage extends RawPage {
 
 	public synchronized BCursor last() throws Throwable {
 		if(isLeaf())
-			return new BCursor(key.size()-1);	//NOTE that empty pages should have been GCed.
+			return new BCursor(key.size());
 		return getPage(children.get(key.size())).last();
 	}
 	
@@ -302,7 +331,7 @@ public class BTreePage extends RawPage {
 			assert valid();
 			if(idx > 0)
 				return new BCursor(idx-1);
-			else return BTreePage.this.prev().last();
+			else return BTreePage.this.prev().last().prev();	// In case of empty pages...I don't reclaim space here.
 		}
 		
 		public void insert(BKey k, int val) throws Throwable{
