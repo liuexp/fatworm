@@ -4,7 +4,7 @@ import fatworm.driver.Record;
 
 public interface Cursor {
 
-	public void reset();
+	public void reset() throws Throwable;
 	
 	public void next() throws Throwable;
 	

@@ -44,4 +44,18 @@ public class Column implements Serializable {
 	public Field getDefault(){
 		return Field.fromObject(defaultValue);
 	}
+	
+	@Override
+	public String toString(){
+		return name;
+	}
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Column)
+			return name.equalsIgnoreCase(((Column)o).name);
+		else return name.equalsIgnoreCase(o.toString());
+	}
+	public boolean hasDefault() {
+		return defaultValue != null;
+	}
 }

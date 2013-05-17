@@ -1,15 +1,20 @@
 package fatworm.driver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
+import fatworm.driver.Database.Index;
 import fatworm.field.INT;
 import fatworm.field.NULL;
+import fatworm.io.BKey;
+import fatworm.io.BTree;
 import fatworm.io.Cursor;
+import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -22,6 +27,7 @@ public abstract class Table implements Serializable {
 	public Schema schema;
 	//public List<Integer> pageIDs;
 	public Integer firstPageID; // so that dynamically splitting the page becomes possible
+	public List<Index> tableIndex = new ArrayList<Index>();
 	//public List<Integer> freePageList;
 	public int delete(Expr e) throws Throwable {
 		int ret = 0;
@@ -68,6 +74,7 @@ public abstract class Table implements Serializable {
 			} else {
 				r.cols.set(i, NULL.getInstance());
 			}
+			
 		}
 		addRecord(r);
 		ret++;
@@ -76,7 +83,24 @@ public abstract class Table implements Serializable {
 	public Schema getSchema() {
 		return schema;
 	}
+	public boolean hasIndexOn(String col){
+		return tableIndex.indexOf(schema.getColumn(col)) >= 0;
+	}
+	public Index getIndexOn(String col){
+		int i = tableIndex.indexOf(schema.getColumn(col));
+		if(i>=0)return tableIndex.get(i);
+		else return null;
+	}
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Table){
+			Table z = (Table) o;
+			return z.schema.equals(schema);
+		}
+		return false;
+	}
 	public abstract int update(List<String> colName, List<Expr> expr, Expr e);
+	// NOTE that this should also add the record into the index
 	public abstract void addRecord(Record r);
 	
 	public abstract void deleteAll();

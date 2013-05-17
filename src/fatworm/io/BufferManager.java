@@ -131,4 +131,8 @@ public class BufferManager {
 	public Integer getNextPage(Integer pageID) throws Throwable {
 		return getDataPage(pageID, false).nextPageID;
 	}
+
+	public Integer getPrevPage(Integer pageID) throws Throwable {
+		return getDataPage(pageID, false).prevPageID;
+	}
 }

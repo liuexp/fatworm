@@ -70,7 +70,7 @@ public class DBEngine {
 	
 	@SuppressWarnings("unchecked")
 	public void open(String file) throws IOException, ClassNotFoundException {
-		// TODO Auto-generated constructor stub
+		
 		metaFile = Util.getMetaFile(file);
 		try {
 			ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(metaFile)));
@@ -82,7 +82,7 @@ public class DBEngine {
 			out.writeObject(dbList);
 			out.close();
 		}
-		recordManager = new BufferManager(file);
+		recordManager = new BufferManager(Util.getRecordFile(file));
 		btreeManager = new BufferManager(Util.getBTreeFile(file));
 	}
 	

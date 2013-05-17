@@ -388,7 +388,7 @@ public class Util {
 
 	public static Field getField(Column column, Tree c) {
 		if(c == null || c.getText().equalsIgnoreCase("default")){
-			if(column.getDefault() != null){
+			if(column.hasDefault()){
 				return column.getDefault();
 			} else if(column.isAutoInc()){
 				//FIXME will there be any conflicts due to type in-compatibility?
@@ -423,6 +423,10 @@ public class Util {
 	
 	public static String getBTreeFile(String file) {
 		return file + ".btree";
+	}
+
+	public static String getRecordFile(String file) {
+		return file+".record";
 	}
 	
 	// XXX this method should only be used for getRequestedColumns from subquery
@@ -467,4 +471,5 @@ public class Util {
 	public static String getPKIndexName(String primaryKey) {
 		return "__PrimaryIndex__" + primaryKey;
 	}
+
 }

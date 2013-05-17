@@ -1,5 +1,6 @@
 package fatworm.driver;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Array;
 import java.sql.Blob;
@@ -19,10 +20,29 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import fatworm.util.Util;
+
 public class Connection implements java.sql.Connection {
 
-	public Connection() {
-		// TODO Auto-generated constructor stub
+	public Connection(String url) {
+		String file = url.substring("jdbc:fatworm:/".length()) + File.separator + "fatworm";
+//		if (file.charAt(1) != ':') {
+//			file = '/' + file;
+//		}
+		try {
+			DBEngine.getInstance().open(file);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			try {
+				Util.warn("File not accessible, falling back to default file /tmp/meow.");
+				DBEngine.getInstance().open("/tmp/meow");
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
