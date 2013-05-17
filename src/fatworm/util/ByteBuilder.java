@@ -56,6 +56,10 @@ public class ByteBuilder {
 		putInt(b.length);
 		putBytes(b, 0, b.length);
 	}
+	
+	public void putByteArray(byte[] b) {
+		putBytes(b, 0, b.length);
+	}
 
 	public void putBytes(byte[] b, int i, int length) {
 		ensureCapacity(length);

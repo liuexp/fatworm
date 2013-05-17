@@ -1,6 +1,7 @@
 package fatworm.io;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +11,13 @@ import java.util.TreeSet;
 import java.util.Comparator;
 
 import fatworm.driver.Record;
+import fatworm.driver.Schema;
 import fatworm.page.BTreePage;
 import fatworm.page.DataPage;
 import fatworm.page.Page;
 import fatworm.page.RawPage;
+import fatworm.page.RecordPage;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class BufferManager {
@@ -51,10 +55,10 @@ public class BufferManager {
 		return p;
 	}
 	
-	public synchronized DataPage getDataPage(int pageid, boolean create) throws Throwable{
+	public synchronized RecordPage getRecordPage(int pageid, boolean create) throws Throwable{
 		Page ret2 = getPageHelper(pageid);
-		if(ret2 != null)return (DataPage) ret2;
-		DataPage p = new DataPage(dataFile, pageid, create);
+		if(ret2 != null)return (RecordPage) ret2;
+		RecordPage p = new RecordPage(dataFile, pageid, create);
 		pages.put(pageid, p);
 		victimQueue.add(p);
 		return p;
@@ -124,15 +128,31 @@ public class BufferManager {
 		}
 	}
 
-	public List<Record> getRecords(Integer pageID) {
+	public List<Record> getRecords(Integer pageID, Schema schema) {
+		ArrayList<Record> ret = new ArrayList<Record>();
+		if(pageID < 0)return ret;
+		try {
+			RecordPage rp = getRecordPage(pageID, false);
+			if(!rp.isPartial())return rp.getRecords(schema);
+			ByteBuilder b = new ByteBuilder();
+			while(true){
+				b.putByteArray(rp.partialBytes);
+				if(rp.endOfPartial())break;
+				rp = getRecordPage(rp.nextPageID, false);
+			}
+			ret.add(Record.fromByte(schema, b.getByteArray()));
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	public Integer getNextPage(Integer pageID) throws Throwable {
-		return getDataPage(pageID, false).nextPageID;
+		return getRecordPage(pageID, false).nextPageID;
 	}
 
 	public Integer getPrevPage(Integer pageID) throws Throwable {
-		return getDataPage(pageID, false).prevPageID;
+		return getRecordPage(pageID, false).prevPageID;
 	}
 }

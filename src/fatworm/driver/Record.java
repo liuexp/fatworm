@@ -1,11 +1,13 @@
 package fatworm.driver;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
 import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
+import fatworm.field.NULL;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -73,5 +75,18 @@ public class Record {
 	}
 	public void setField(String colName, Field field) {
 		cols.set(schema.findIndex(colName), field);
+	}
+	public static Record fromByte(Schema scm, byte[] byteArray) {
+		Record r = new Record(scm);
+		ByteBuffer b = ByteBuffer.wrap(byteArray);
+		r.nullMap = b.getInt();
+		for(int i=0;i<scm.columnName.size();i++){
+			if((r.nullMap & 1) == 1){
+				r.cols.add(NULL.getInstance());
+			}else {
+				r.cols.add(Field.fromBytes(b, scm.getColumn(i).type));
+			}
+		}
+		return r;
 	}
 }
