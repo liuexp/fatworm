@@ -8,13 +8,14 @@ import fatworm.absyn.Expr;
 import fatworm.absyn.FuncCall;
 import fatworm.field.Field;
 import fatworm.field.NULL;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
 public class Record {
 
 	public List<Field> cols = new ArrayList<Field>();
-	public Integer nullMap = 0;
+//	public Integer nullMap = 0;
 	public Schema schema;
 	public Record() {
 		// TODO Auto-generated constructor stub
@@ -70,7 +71,7 @@ public class Record {
 			if(col.hasDefault() || col.type == java.sql.Types.TIMESTAMP || col.type == java.sql.Types.DATE){
 				cols.add(Util.getField(col, null));
 			} else 
-				cols.add(null);
+				cols.add(null);//FIXME is this okay?
 		}
 	}
 	public void setField(String colName, Field field) {
@@ -79,14 +80,35 @@ public class Record {
 	public static Record fromByte(Schema scm, byte[] byteArray) {
 		Record r = new Record(scm);
 		ByteBuffer b = ByteBuffer.wrap(byteArray);
-		r.nullMap = b.getInt();
+		Integer nullMap = b.getInt();
 		for(int i=0;i<scm.columnName.size();i++){
-			if((r.nullMap & 1) == 1){
+			if((nullMap & 1) == 1){
 				r.cols.add(NULL.getInstance());
 			}else {
 				r.cols.add(Field.fromBytes(b, scm.getColumn(i).type));
 			}
+			nullMap >>= 1;
 		}
 		return r;
+	}
+	public static byte[] toByte(Record r){
+		ByteBuilder b = new ByteBuilder();
+		Integer nullMap = 0;
+		for(int i=r.schema.columnName.size()-1;i>=0;i--){
+			if(r.cols.get(i)==null || r.cols.get(i).type == java.sql.Types.NULL){
+				nullMap += 1;
+			}
+			nullMap <<= 1;
+		}
+		b.putInt(nullMap);
+		for(int i=0;i<r.schema.columnName.size();i++){
+			Column c = r.schema.getColumn(i);
+			if(r.cols.get(i)!=null && r.cols.get(i).type != java.sql.Types.NULL)
+				r.cols.get(i).pushByte(b, c.A, c.B);
+		}
+		byte[] ret = new byte[b.getSize()];
+		byte[] tmp = b.getByteArray();
+		System.arraycopy(tmp, 0, ret, 0, b.getSize());
+		return ret;
 	}
 }

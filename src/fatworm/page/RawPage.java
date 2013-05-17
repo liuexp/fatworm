@@ -67,6 +67,8 @@ public class RawPage implements Page {
 	@Override
 	public synchronized void flush() throws Throwable {
 		hasFlushed = true;
+//		if(isInTransaction())return;
+		// TODO verify if it's in transaction, then there's no need to flush at this moment
 		write();
 	}
 	@Override
