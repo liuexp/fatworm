@@ -13,7 +13,6 @@ import java.util.Comparator;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.page.BTreePage;
-import fatworm.page.DataPage;
 import fatworm.page.Page;
 import fatworm.page.RawPage;
 import fatworm.page.RecordPage;
@@ -58,7 +57,7 @@ public class BufferManager {
 	public synchronized RecordPage getRecordPage(int pageid, boolean create) throws Throwable{
 		Page ret2 = getPageHelper(pageid);
 		if(ret2 != null)return (RecordPage) ret2;
-		RecordPage p = new RecordPage(dataFile, pageid, create);
+		RecordPage p = new RecordPage(this, dataFile, pageid, create);
 		pages.put(pageid, p);
 		victimQueue.add(p);
 		return p;
@@ -136,7 +135,7 @@ public class BufferManager {
 			if(!rp.isPartial())return rp.getRecords(schema);
 			ByteBuilder b = new ByteBuilder();
 			while(true){
-				b.putByteArray(rp.partialBytes);
+				b.putByteArray(rp.getPartialBytes());
 				if(rp.endOfPartial())break;
 				rp = getRecordPage(rp.nextPageID, false);
 			}

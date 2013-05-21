@@ -92,7 +92,8 @@ public class DBEngine {
 		try {
 			return execute(t);
 		} catch (Throwable e) {
-			Util.error(e.getMessage());
+//			Util.error(e.getMessage());
+			e.printStackTrace();
 			return new ResultSet(None.getInstance());
 		}
 	}
@@ -122,12 +123,12 @@ public class DBEngine {
 		case DROP_DATABASE:
 			name = t.getChild(0).getText().toLowerCase();
 			dbList.remove(name);
-			if(db.name.equals(name))
+			if(db!=null && db.name.equals(name))
 				db = null;
 			return new ResultSet(None.getInstance());
 		case CREATE_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
-			db.addTable(name, new MemTable(t));
+			db.addTable(name, new IOTable(t));
 			return new ResultSet(None.getInstance());
 		case DROP_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
@@ -198,10 +199,12 @@ public class DBEngine {
 		return (CommonTree) r.getTree();
 	}
 	
-	public void close() throws FileNotFoundException, IOException {
+	public void close() throws Throwable {
 		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
 		out.writeObject(dbList);
 		out.close();
+		recordManager.close();
+		btreeManager.close();
 	}
 	
 	@Override

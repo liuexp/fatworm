@@ -36,6 +36,10 @@ public class ByteBuilder {
 		buf.putInt(v);
 		updateSize();
 	}
+	
+	public int getSize(){
+		return size;
+	}
 
 	private void ensureCapacity(int i) {
 		if(buf.capacity() >= size + i)

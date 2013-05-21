@@ -13,7 +13,7 @@ import fatworm.io.Cursor;
 
 public class FetchTable extends Plan {
 
-	//FIXME for now we use temporary database in memory 
+	// TODO use index to accelerate
 	public String tableName;
 	public Table table;
 	Schema schema;
@@ -55,7 +55,7 @@ public class FetchTable extends Plan {
 		try {
 			cursor.next();
 		} catch (Throwable e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		return ret;
 	}

@@ -21,6 +21,7 @@ public class BTreePage extends RawPage {
 	private static final int ROOTNODE = 1;
 	private static final int INTERNALNODE = 2;
 	private static final int LEAFNODE = 3;
+	private static final int ROOTLEAFNODE = 4;
 	public static final int LongSize = Long.SIZE / Byte.SIZE;
 	public static final int IntSize = Integer.SIZE / Byte.SIZE;
 	// Page structure:
@@ -61,6 +62,9 @@ public class BTreePage extends RawPage {
 			children = new ArrayList<Integer>();
 			key = new ArrayList<BKey>();
 			dirty = true;
+			children.add(-1);
+			nodeType=ROOTLEAFNODE;
+			buf = ByteBuffer.wrap(tmp);
 		}
 	}
 
@@ -102,10 +106,10 @@ public class BTreePage extends RawPage {
 	}
 	
 	public boolean isLeaf(){
-		return nodeType == LEAFNODE;
+		return nodeType == LEAFNODE || nodeType == ROOTLEAFNODE;
 	}
 	public boolean isRoot(){
-		return nodeType == ROOTNODE;
+		return nodeType == ROOTNODE || nodeType == ROOTLEAFNODE;
 	}
 	public boolean isInternal(){
 		return nodeType == INTERNALNODE;
@@ -268,7 +272,7 @@ public class BTreePage extends RawPage {
 
 	public int indexOf(BKey k){
 		int idx = 0;
-		while((key.get(idx) == null || k.compareTo(key.get(idx)) >= 0) && idx < key.size()) idx++;
+		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
 		return idx;
 	}
 	public BCursor lookup(BKey k) throws Throwable{
