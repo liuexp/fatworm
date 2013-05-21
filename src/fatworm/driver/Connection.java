@@ -98,7 +98,7 @@ public class Connection implements java.sql.Connection {
 	public void close() throws SQLException {
 		try {
 			DBEngine.getInstance().close();
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

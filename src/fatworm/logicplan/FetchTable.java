@@ -55,7 +55,7 @@ public class FetchTable extends Plan {
 		try {
 			cursor.next();
 		} catch (Throwable e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		return ret;
 	}
