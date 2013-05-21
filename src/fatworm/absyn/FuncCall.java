@@ -38,7 +38,7 @@ public class FuncCall extends Expr {
 
 	@Override
 	public Field eval(Env env) {
-		if(!hasEvalCont)Util.error("Mie!!!You didn't give me anything to aggregate!!!");
+		if(!hasEvalCont)Util.warn("Mie!!!You didn't give me anything to aggregate!!!");
 		Field f = env.get(this.toString());
 		if(f == null){
 			f = ContField.newContField(func);

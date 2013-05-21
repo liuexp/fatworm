@@ -103,6 +103,7 @@ public abstract class Field {
 	}
 	public static Object getObject(Field f){
 		if(f instanceof FuncCall.ContField)f = ((FuncCall.ContField) f).getFinalResults();
+		if(f==null)return null;
 		int type = f.type;
 		switch(type){
 		case java.sql.Types.BOOLEAN:
@@ -125,7 +126,7 @@ public abstract class Field {
 			return new String(((VARCHAR)f).v);
 		case java.sql.Types.NULL:
 			return null;
-			//return new String(f.toString());
+//			return new String(f.toString());
 			default:
 				error2("Meow!!"+f.toString());
 				return new String(f.toString());

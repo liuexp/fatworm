@@ -104,8 +104,8 @@ public class RecordPage extends RawPage {
 			Integer realNext = nextPageID;
 			while(remainingSize > 0){
 				int cntFit = 1;
-				for(;cntFit<=cntRecord && offsetTable.get(curOffset + cntFit-1)+getHeaderSize(cntFit) <= File.pageSize;cntFit++);
-				if(offsetTable.get(curOffset+cntFit-1)+getHeaderSize(cntFit) > File.pageSize)
+				for(;cntFit<=cntRecord && canThisFit(curOffset, cntFit);cntFit++);
+				if(!canThisFit(curOffset, cntFit))
 					cntFit--;
 				if(cntFit >= 1){
 					// case 1 at least one record fits the page
@@ -122,17 +122,21 @@ public class RecordPage extends RawPage {
 			}
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.prevPageID.equals(thisid);
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.nextPageID.equals(realNext);
 			rp.nextPageID = realNext;
 			rp.commit();
 			
 		}
 		return buf.array();
+	}
+
+	private boolean canThisFit(int curOffset, int cntFit) {
+		return offsetTable.get(curOffset + cntFit-1) - (curOffset>0?offsetTable.get(curOffset-1):0) +getHeaderSize(cntFit) <= File.pageSize;
 	}
 
 	private Integer fitRecords(Integer thisid, int curOffset, int cntFit)
@@ -143,7 +147,7 @@ public class RecordPage extends RawPage {
 		if(previd != null){
 			RecordPage pp = bm.getRecordPage(previd, false);
 			pp.beginTransaction();
-			pp.dirty = true;
+			pp.dirty = !pp.nextPageID.equals(thisid);;
 			pp.nextPageID = thisid;
 			pp.commit();
 		}
