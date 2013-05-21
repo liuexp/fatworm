@@ -31,11 +31,14 @@ public abstract class Table implements Serializable {
 	//public List<Integer> freePageList;
 	public int delete(Expr e) throws Throwable {
 		int ret = 0;
-		for(Cursor c = open();c.hasThis();c.next()){
+		for(Cursor c = open();c.hasThis();){
 			Record r = c.fetchRecord();
 			Env env = new Env();
 			env.appendFromRecord(r);
-			if(e!=null&&!e.evalPred(env))continue;
+			if(e!=null&&!e.evalPred(env)){
+				c.next();
+				continue;
+			}
 			c.delete();
 			ret++;
 		}

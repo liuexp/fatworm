@@ -114,9 +114,9 @@ public class Group extends Plan {
 				}
 			}
 		}
-		//System.out.println("mie");
+//		System.out.println("mie");
 		for(Field f : groupHelper.keySet()){
-			//System.out.println("meow");
+//			System.out.println("meow");
 			Record r = groupHelper.get(f);
 			Env tmpEnv = aggrHelper.get(f);
 			env.appendFrom(tmpEnv);
