@@ -8,7 +8,8 @@ import java.nio.channels.FileChannel;
 import fatworm.page.Page;
 
 public class File {
-	public static final int pageSize = 4 * 1024;			//4KB
+	public static final int pageMult = 64;
+	public static final int pageSize = pageMult * 1024;			//64KB
 	RandomAccessFile file = null;
 	ByteBuffer buf = null;
 	FileChannel fc = null;

@@ -15,6 +15,7 @@ import fatworm.io.BKey;
 import fatworm.io.BTree;
 import fatworm.io.BufferManager;
 import fatworm.io.Cursor;
+import fatworm.io.File;
 import fatworm.page.RecordPage;
 import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
@@ -26,7 +27,7 @@ public class IOTable extends Table {
 	 * 
 	 */
 	private static final long serialVersionUID = -7673588089635019327L;
-	public static final Integer MODOOFFSET = 512;
+	public static final Integer MODOOFFSET = File.pageSize / 4;
 
 	public IOTable() {
 		firstPageID = -1;

@@ -118,7 +118,7 @@ public class BinaryExpr extends Expr {
 	private Field mydiv(Field lval, Field rval) {
 		BigDecimal ret = lval.toDecimal().divide(rval.toDecimal(), 9, BigDecimal.ROUND_HALF_EVEN);
 		if(lval.type == INTEGER && rval.type == INTEGER)
-			return new FLOAT(ret.intValue());
+			return new FLOAT(ret.floatValue());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
 			return new DECIMAL(ret);
 		if(lval.type == FLOAT || rval.type == FLOAT)
