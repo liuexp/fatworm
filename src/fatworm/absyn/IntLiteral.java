@@ -26,7 +26,7 @@ public class IntLiteral extends Expr {
 		super();
 		this.isConst = true;
 		this.size=1;
-		this.i = new INT(i);
+		this.i = new DECIMAL(i.toString());
 		value = this.i;
 		type = java.sql.Types.INTEGER;
 	}

@@ -8,7 +8,7 @@ Warning
 TODO
 ====================
 * so strange that fake flush within transaction didn't work so well as expected.
-* watch it for SimpleCursor, because hasThis() is always true for a doubly linked list!!!
+* index, index, index. select pusher.
 * watch for BCursor, after deletion there might be empty pages.
 * Btree, every node fills up a page. for int/float/long key it's okay just use a fixed length page. for var-length page, should I use extra page or var-length fanout?
 * comparisons with Mysql
