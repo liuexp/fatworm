@@ -94,9 +94,19 @@ public class BufferManager {
 	}
 
 	public void close() throws Throwable {
+		LinkedList<Page> tmp = new LinkedList<Page>(pages.values());
+		// the first pass is to generate necessary expansion of pages.
+		for(Page p: tmp){
+			assert !p.isInTransaction();
+			p.flush();
+			pages.remove(p.getID());
+			victimQueue.remove(p);
+		}
+		Util.warn("[bufferManager]first pass complete."+fileName);
 		for(Page p : pages.values()){
 			p.flush();
 		}
+		Util.warn("[bufferManager]second pass complete."+fileName);
 		dataFile.close();
 		FreeList.write(fileName, freeList);
 	}

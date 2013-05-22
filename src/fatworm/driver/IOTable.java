@@ -39,7 +39,7 @@ public class IOTable extends Table {
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 			// FIXME this table hasn't got into database's lists
-			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
+//			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
@@ -58,7 +58,8 @@ public class IOTable extends Table {
 				if(e!=null && !e.evalPred(env))continue;
 				for(int i=0;i<expr.size();i++){
 					Field res = expr.get(i).eval(env);
-					r.cols.set(r.schema.findIndex(colName.get(i)), res);
+					int idx = r.schema.findIndex(colName.get(i));
+					r.cols.set(idx, Field.fromString(r.schema.getColumn(idx).type, res.toString()));
 					env.put(colName.get(i), res);
 				}
 				c.updateWithRecord(r);
@@ -99,7 +100,8 @@ public class IOTable extends Table {
 				BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
 				Database.createIndexForRecord(idx, b, c, r);
 			} catch (Throwable e) {
-				Util.error(e.getMessage());
+//				Util.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -130,7 +132,8 @@ public class IOTable extends Table {
 		public void reset() {
 			pageID = IOTable.this.firstPageID;
 			offset = 0;
-			cache = DBEngine.getInstance().recordManager.getRecords(pageID, schema);
+			cache = getRecords(pageID);
+			reachedEnd = false;
 		}
 
 		@Override
@@ -145,7 +148,7 @@ public class IOTable extends Table {
 		}
 
 		private List<Record> getRecords(Integer pid) {
-			return DBEngine.getInstance().recordManager.getRecords(pid, schema);
+			return new ArrayList<Record>(DBEngine.getInstance().recordManager.getRecords(pid, schema));
 		}
 		
 		private Integer getNextPage() throws Throwable{
@@ -196,12 +199,20 @@ public class IOTable extends Table {
 			}else{
 				cache.remove(offset);
 			}
-			rp.tryReclaim();
+			boolean flag = rp.canReclaim();
+			if(flag && !pageID.equals(firstPageID)){ //it's safe to reclaim
+				rp.tryReclaim();
+				firstPageID = pageID;
+			}
 		}
 		
 		public void updateWithRecord(Record r) throws Throwable {
 			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).delRecord(schema, offset);
 			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).addRecord(r, offset);
+			//FIXME offset, update cache and record list on page
+//			if(offset>= cache.size()){
+//				int tonext = offset - cache.size() - 
+//			}
 		}
 
 		@Override

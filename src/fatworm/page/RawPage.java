@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import fatworm.io.File;
+import fatworm.util.Util;
 
 public class RawPage implements Page {
 	// first 4 byte: size overall
@@ -66,10 +67,9 @@ public class RawPage implements Page {
 	
 	@Override
 	public synchronized void flush() throws Throwable {
-		hasFlushed = true;
-//		if(isInTransaction())return;
-		// TODO verify if it's in transaction, then there's no need to flush at this moment
+		
 		write();
+//		hasFlushed = true;
 	}
 	@Override
 	public Long getTime() {
@@ -108,6 +108,11 @@ public class RawPage implements Page {
 	public synchronized void write() throws Throwable {
 		if(!dirty) return;
 		toBytes();
+		// TODO verify if it's in transaction, then there's no need to flush at this moment
+		if(isInTransaction()){
+			Util.warn("I'm "+pageID +" in transaction, fake flushed");
+			return;
+		}
 		hasFlushed = true;
 		dataFile.write(buf, pageID);
 		dirty = false;
@@ -270,6 +275,6 @@ public class RawPage implements Page {
 	}
 	@Override
 	public boolean isInTransaction() {
-		return inTransaction == 0;
+		return inTransaction != 0;
 	}
 }

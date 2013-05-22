@@ -3,6 +3,8 @@ package fatworm.util;
 import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ import fatworm.absyn.ExistCall;
 import fatworm.absyn.AnyCall;
 import fatworm.driver.Column;
 import fatworm.field.DATE;
+import fatworm.field.DECIMAL;
 import fatworm.field.FLOAT;
 import fatworm.field.Field;
 import fatworm.field.INT;
@@ -73,7 +76,13 @@ public class Util {
 		case FatwormParser.MIN:
 			return new FuncCall(t.getType(), getAttr(t.getChild(0)));
 		case FatwormParser.INTEGER_LITERAL:
-			return new IntLiteral(Integer.parseInt(t.getText()));
+			try {
+				Integer z=Integer.parseInt(t.getText());
+				return new IntLiteral(z);
+			} catch (NumberFormatException e) {
+				return new IntLiteral(new BigInteger(t.getText()));
+//				e.printStackTrace();
+			}
 		case FatwormParser.FLOAT_LITERAL:
 			return new FloatLiteral(Float.parseFloat(t.getText()));
 		case FatwormParser.STRING_LITERAL:
@@ -104,13 +113,18 @@ public class Util {
 				} else if(op!=null){
 					Expr tmp = getExpr(t.getChild(0));
 					if(tmp instanceof IntLiteral){
-						INT f = (INT)((IntLiteral)tmp).i;
-						return new IntLiteral(-f.v);
+						if(((IntLiteral)tmp).i instanceof DECIMAL){
+							DECIMAL f = (DECIMAL)((IntLiteral)tmp).i;
+							return new IntLiteral(f.v.negate().toBigIntegerExact());
+						}else{
+							INT f = (INT)((IntLiteral)tmp).i;
+							return new IntLiteral(-f.v);
+						}
 					}else if(tmp instanceof FloatLiteral){
 						FLOAT f = (FLOAT)((FloatLiteral)tmp).i;
 						return new FloatLiteral(-f.v);
 					}else
-						return new BinaryExpr(new IntLiteral(0), op, tmp);
+						return new BinaryExpr(new IntLiteral(BigInteger.valueOf(0)), op, tmp);
 				}else
 					return new Id(getAttr(t));
 		}
@@ -328,6 +342,7 @@ public class Util {
 	}
 	
 	public static void error(String x){
+		warn("[Exception]" + x);
 		throw new RuntimeException(x);
 	}
 	

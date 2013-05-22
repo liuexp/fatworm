@@ -92,8 +92,8 @@ public class DBEngine {
 		try {
 			return execute(t);
 		} catch (Throwable e) {
-//			Util.error(e.getMessage());
-			e.printStackTrace();
+			Util.error(e.getMessage());
+//			e.printStackTrace();
 			return new ResultSet(None.getInstance());
 		}
 	}
@@ -200,6 +200,7 @@ public class DBEngine {
 	}
 	
 	public void close() throws Throwable {
+		Util.warn("closing connection");
 		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
 		out.writeObject(dbList);
 		out.close();

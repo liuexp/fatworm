@@ -25,7 +25,7 @@ import fatworm.util.Util;
 public class Connection implements java.sql.Connection {
 
 	public Connection(String url) {
-		String file = url.substring("jdbc:fatworm:/".length()) + File.separator + "fatworm";
+		String file = url.substring("jdbc:fatworm://".length()) + File.separator + "fatworm";
 //		if (file.charAt(1) != ':') {
 //			file = '/' + file;
 //		}

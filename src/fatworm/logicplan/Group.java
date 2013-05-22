@@ -114,9 +114,9 @@ public class Group extends Plan {
 				}
 			}
 		}
-		//System.out.println("mie");
+//		System.out.println("mie");
 		for(Field f : groupHelper.keySet()){
-			//System.out.println("meow");
+//			System.out.println("meow");
 			Record r = groupHelper.get(f);
 			Env tmpEnv = aggrHelper.get(f);
 			env.appendFrom(tmpEnv);
@@ -127,6 +127,14 @@ public class Group extends Plan {
 				//System.out.println(Util.deepToString(env.res));
 				results.add(r);
 			}
+		}
+		if(results.size() == 0 && (having==null||having.evalPred(env))){
+			Record pr = new Record(schema);
+			pr.addColFromExpr(new Env(), func);
+			for(int i=0;i<expandedCols.size();i++){
+				pr.addCol(env.get(expandedCols.get(i)));
+			}
+			results.add(pr);
 		}
 	}
 	

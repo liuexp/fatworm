@@ -19,7 +19,7 @@ public class NULL extends Field {
 
 	@Override
 	public String toString() {
-		return "null";
+		return "NULL";
 	}
 
 	@Override

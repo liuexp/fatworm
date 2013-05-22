@@ -10,6 +10,7 @@ import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.io.BufferManager;
 import fatworm.io.File;
+import fatworm.util.Util;
 
 public class RecordPage extends RawPage {
 
@@ -34,8 +35,8 @@ public class RecordPage extends RawPage {
 			dataFile.read(tmp, pageID);
 			fromBytes(tmp);
 		}else{
-			nextPageID = -1;
-			prevPageID = -1;
+			nextPageID = pageID;
+			prevPageID = pageID;
 			dirty = true;
 			this.buf = ByteBuffer.wrap(tmp);
 			int length = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
@@ -98,36 +99,43 @@ public class RecordPage extends RawPage {
 			}
 //			commit();
 		}else{
-			int remainingSize = partialBytes.length;
-			Integer previd = null, thisid = pageID;
+			Integer thisid = pageID;
 			int curOffset = 0;
 			Integer realNext = nextPageID;
-			while(remainingSize > 0){
+			List<Integer> bakOffset = new ArrayList(offsetTable);
+			List<Record> bakRecord = new ArrayList(records);
+			int bakCntRecord = cntRecord;
+			while(curOffset < bakCntRecord){
 				int cntFit = 1;
-				for(;cntFit<=cntRecord && offsetTable.get(curOffset + cntFit-1)+getHeaderSize(cntFit) <= File.pageSize;cntFit++);
-				if(offsetTable.get(curOffset+cntFit-1)+getHeaderSize(cntFit) > File.pageSize)
+				for(;cntFit+curOffset<bakCntRecord && canThisFit(bakOffset, curOffset, cntFit);cntFit++);
+				cntFit = Math.min(bakCntRecord - curOffset, cntFit);
+				if(!canThisFit(bakOffset, curOffset, cntFit))
 					cntFit--;
+//				Util.warn("page "+ pageID + " separates with "+ (bakCntRecord-curOffset) + " remaining");
+				if(curOffset == 0){
+					cntRecord = Math.max(1, cntFit);
+					offsetTable = offsetTable.subList(0, cntRecord);
+					records = records.subList(0, cntRecord);
+				}
 				if(cntFit >= 1){
 					// case 1 at least one record fits the page
-					remainingSize -= offsetTable.get(curOffset + cntFit-1);
+					thisid = fitRecords(thisid, bakRecord.subList(curOffset, curOffset + cntFit));
 					curOffset += cntFit;
-					thisid = fitRecords(thisid, curOffset, cntFit);
 				}else {
 					// case 2 the first record (in sequential order) only fits partially
-					int recordSize = offsetTable.get(curOffset);
-					remainingSize -= recordSize;
-					curOffset += 1;
+					int recordSize = bakOffset.get(curOffset) - (curOffset>0?bakOffset.get(curOffset-1):0);
 					thisid = fitPartial(bm, partialBytes, thisid, curOffset, recordSize);
+					curOffset += 1;
 				}
 			}
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.prevPageID.equals(thisid);
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.nextPageID.equals(realNext);
 			rp.nextPageID = realNext;
 			rp.commit();
 			
@@ -135,7 +143,36 @@ public class RecordPage extends RawPage {
 		return buf.array();
 	}
 
-	private Integer fitRecords(Integer thisid, int curOffset, int cntFit)
+	private boolean canThisFit(List<Integer> bakOffset, int curOffset, int cntFit) {
+		return bakOffset.get(curOffset + cntFit-1) - (curOffset>0?bakOffset.get(curOffset-1):0) +getHeaderSize(cntFit) <= File.pageSize;
+	}
+
+	private Integer fitRecords(Integer thisid, List<Record> rs)
+			throws Throwable {
+		Integer previd;
+		previd = thisid;
+		thisid = bm.newPage();
+		if(previd != null){
+			RecordPage pp = bm.getRecordPage(previd, false);
+			pp.beginTransaction();
+			pp.dirty = !pp.nextPageID.equals(thisid);;
+			pp.nextPageID = thisid;
+			pp.commit();
+		}
+		RecordPage thisp = bm.getRecordPage(thisid, true);
+		thisp.beginTransaction();
+		thisp.dirty = true;
+		thisp.prevPageID = previd;
+		int cntFit = rs.size();
+		for(int j = 0;j<cntFit;j++){
+			boolean flag = thisp.tryAppendRecord(rs.get(j));
+			assert flag;
+		}
+		thisp.commit();
+		return thisid;
+	}
+	
+	private Integer fitRecords(Integer thisid, Record r)
 			throws Throwable {
 		Integer previd;
 		previd = thisid;
@@ -151,16 +188,15 @@ public class RecordPage extends RawPage {
 		thisp.beginTransaction();
 		thisp.dirty = true;
 		thisp.prevPageID = previd;
-		for(int j = 0;j<cntFit;j++){
-			boolean flag = thisp.tryAppendRecord(records.get(curOffset + j));
-			assert flag;
-		}
+		boolean flag = thisp.tryAppendRecord(r);
+		assert flag;
 		thisp.commit();
 		return thisid;
 	}
 
 	private static Integer fitPartial(BufferManager bm, byte[] bytes, Integer thisid, int startOffset, int recordSize)
 			throws Throwable {
+		Util.warn("Partial record detected!!!");
 		Integer previd;
 		int fittedSize = 0;
 		int maxFitSize = getMaxFitSize();
@@ -242,6 +278,7 @@ public class RecordPage extends RawPage {
 			byte [] tmpb = new byte[length];
 			System.arraycopy(partialBytes, lastOffset, tmpb, 0, length);
 			records.add(Record.fromByte(schema, tmpb));
+			lastOffset = offsetTable.get(i);
 		}
 	}
 	
@@ -282,7 +319,7 @@ public class RecordPage extends RawPage {
 		try {
 			dirty = true;
 			Integer realNext = nextPageID;
-			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords();
+			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords(pageID, r);
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
 			rp.dirty = true;
@@ -333,8 +370,8 @@ public class RecordPage extends RawPage {
 		dirty = true;
 	}
 
-	public void tryReclaim() {
-		if(cntRecord > 0 )return;
+	public boolean tryReclaim() {
+		if(!canReclaim() )return false;
 		try {
 			RecordPage rp = bm.getRecordPage(prevPageID, false);
 			rp.beginTransaction();
@@ -348,8 +385,14 @@ public class RecordPage extends RawPage {
 			rp.commit();
 			delete();
 			bm.releasePage(pageID);
+			return true;
 		} catch (Throwable e) {
 			e.printStackTrace();
+			return false;
 		}
+	}
+
+	public boolean canReclaim() {
+		return cntRecord <= 0 && !nextPageID.equals(pageID);
 	}
 }

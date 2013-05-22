@@ -28,7 +28,8 @@ public class CHAR extends Field {
 	}
 	@Override
 	public void pushByte(ByteBuilder b, int A, int B) {
-		String z = v.substring(0, Math.max(0, Math.min(v.length(), A)-1));
+		String z = v.substring(0, Math.max(0, Math.min(v.length(), A)));
+//		Util.warn("truncated to "+z + " from " +v + " A=" + A);
 		/*
 		for(int i=v.length();i<A;i++){
 			z = z + " ";

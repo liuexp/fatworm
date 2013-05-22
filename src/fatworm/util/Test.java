@@ -1,5 +1,7 @@
 package fatworm.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.util.Scanner;
 
@@ -18,7 +20,7 @@ public class Test {
 		DBEngine db = new DBEngine();
 		Scanner in = new Scanner(System.in);
 		
-		Expr ex = new BinaryExpr(new IntLiteral(1), BinaryOp.PLUS, new IntLiteral(2));
+		Expr ex = new BinaryExpr(new IntLiteral(BigInteger.valueOf(0)), BinaryOp.PLUS, new IntLiteral(BigInteger.valueOf(0)));
 		System.out.println(ex.eval(new Env()));
 		System.out.print(">");
 		while (in.hasNextLine()) {
