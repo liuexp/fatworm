@@ -7,6 +7,8 @@ Warning
 
 TODO
 ====================
+* looks like RawPage's size isn't correctly synchronized. and the cnt++ should probably use RawPage's own method.
+* 
 * select pusher.
 * theta-join
 * merge-join

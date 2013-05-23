@@ -24,7 +24,7 @@ public class BTree {
 
 	// every node fills up a whole page.
 
-	public static final int MODOFFSET = (int) (File.recordPageSize / 4); //how many slots could there be
+	public static final int MODOFFSET = (int) (File.btreePageSize / 4); //how many slots could there be
 	public static final int BytesPerChar = (int) Charset.defaultCharset().newEncoder().maxBytesPerChar();
 	public static final int LongSize = Long.SIZE / Byte.SIZE;
 	public static final int IntSize = Integer.SIZE / Byte.SIZE;
@@ -271,6 +271,8 @@ public class BTree {
 			for(int i=0;i<cnt;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
+			if(curOffset + 4 >= 4095)
+				Util.warn("meow:"+k+","+RawPage.getSize(k) +","+ rp.remainingSize());
 			rp.putString(curOffset, k);
 			rp.commit();
 		}
