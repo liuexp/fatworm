@@ -24,7 +24,7 @@ public class BTree {
 
 	// every node fills up a whole page.
 
-	public static final int MODOFFSET = File.pageSize / 4; //how many slots could there be
+	public static final int MODOFFSET = (int) (File.recordPageSize / 4); //how many slots could there be
 	public static final int BytesPerChar = (int) Charset.defaultCharset().newEncoder().maxBytesPerChar();
 	public static final int LongSize = Long.SIZE / Byte.SIZE;
 	public static final int IntSize = Integer.SIZE / Byte.SIZE;

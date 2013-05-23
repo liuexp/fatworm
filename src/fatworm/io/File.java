@@ -8,15 +8,21 @@ import java.nio.channels.FileChannel;
 import fatworm.page.Page;
 
 public class File {
-	public static final int pageMult = 64;
-	public static final int pageSize = pageMult * 1024;			//64KB
+	public static final long recordPageMult = 64;
+	public static final long btreePageMult = 4;
+	public static final long recordPageSize = recordPageMult * 1024;			//64KB
+	public static final long btreePageSize = btreePageMult * 1024;				//4KB
+	public int type = 0;
+	public static final int RECORDFILE = 0;
+	public static final int BTREEFILE = 1;
 	RandomAccessFile file = null;
 	ByteBuffer buf = null;
 	FileChannel fc = null;
 	
-	//TODO organization of the file: fatworm.data, fatworm.data.free, fatworm.btree, fatworm.btree.free
+	// organization of the file: fatworm.record, fatworm.record.free, fatworm.btree, fatworm.btree.free
 	
-	public File(String fileName) throws IOException{
+	public File(String fileName, int type) throws IOException{
+		this.type = type;
 		load(fileName);
 	}
 
@@ -25,13 +31,8 @@ public class File {
 		fc = file.getChannel();
 	}
 	
-	public void write(byte[] b, int block) throws IOException{
-		file.seek(block * pageSize);
-		file.write(b);
-	}
-	
 	public void read(byte[] b, int block) throws IOException {
-		file.seek(block * pageSize);
+		file.seek(block * getPageSize());
 		file.read(b);
 	}
 
@@ -47,7 +48,7 @@ public class File {
    public synchronized void read(ByteBuffer bb, Integer pageID) {
       try {
          bb.clear();
-         fc.read(bb, pageID * pageSize);
+         fc.read(bb, pageID * getPageSize());
       }
       catch (IOException e) {
          throw new RuntimeException("cannot read page " + pageID);
@@ -57,7 +58,7 @@ public class File {
    public synchronized void write(ByteBuffer bb, Integer pageID) {
       try {
          bb.rewind();
-         fc.write(bb, pageID * pageSize);
+         fc.write(bb, pageID * getPageSize());
       }
       catch (IOException e) {
          throw new RuntimeException("cannot write page " + pageID);
@@ -70,11 +71,15 @@ public class File {
    }
    
    public synchronized int size() {
-	      try {
-	         return (int)(fc.size() / pageSize);
-	      }
-	      catch (IOException e) {
-	         throw new RuntimeException("cannot access " + file);
-	      }
-	   }
+      try {
+         return (int)(fc.size() / getPageSize());
+      }
+      catch (IOException e) {
+         throw new RuntimeException("cannot access " + file);
+      }
+   }
+
+	private long getPageSize() {
+		return type==RECORDFILE?recordPageSize:btreePageSize;
+	}
 }

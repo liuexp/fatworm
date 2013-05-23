@@ -29,7 +29,7 @@ public class RecordPage extends RawPage {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
 		pageID = pageid;
-		byte [] tmp = new byte[File.pageSize];
+		byte [] tmp = new byte[(int) File.recordPageSize];
 		this.bm = bm;
 		if(!create){
 			dataFile.read(tmp, pageID);
@@ -41,7 +41,7 @@ public class RecordPage extends RawPage {
 			this.buf = ByteBuffer.wrap(tmp);
 			int length = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
 			partialBytes = new byte[length];
-			buf.position(File.pageSize - length);
+			buf.position((int) (File.recordPageSize - length));
 			buf.get(partialBytes);
 //			Collections.reverse(Arrays.asList(partialBytes));
 			ArrayUtils.reverse(partialBytes);
@@ -67,7 +67,7 @@ public class RecordPage extends RawPage {
 			int length = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
 			// int length = File.pageSize - buf.position();
 			partialBytes = new byte[length];
-			buf.position(File.pageSize - length);
+			buf.position((int) (File.recordPageSize - length));
 			buf.get(partialBytes);
 			ArrayUtils.reverse(partialBytes);
 //			Collections.reverse(Arrays.asList(partialBytes));
@@ -77,7 +77,7 @@ public class RecordPage extends RawPage {
 	
 	@Override
 	public byte[] toBytes() throws Throwable {
-		if(partialBytes.length + headerSize() <= File.pageSize){
+		if(partialBytes.length + headerSize() <= File.recordPageSize){
 //			beginTransaction();
 			dirty = true;
 			buf.position(0);
@@ -91,7 +91,7 @@ public class RecordPage extends RawPage {
 			if(!isPartial()){
 				// first expand the partial bytes
 				byte[] tmp = expandAndReverse(partialBytes);
-				buf.position(File.pageSize - tmp.length);
+				buf.position((int) (File.recordPageSize - tmp.length));
 				buf.put(tmp);
 			} else {
 				buf.putInt(partialBytes.length);
@@ -144,7 +144,7 @@ public class RecordPage extends RawPage {
 	}
 
 	private boolean canThisFit(List<Integer> bakOffset, int curOffset, int cntFit) {
-		return bakOffset.get(curOffset + cntFit-1) - (curOffset>0?bakOffset.get(curOffset-1):0) +getHeaderSize(cntFit) <= File.pageSize;
+		return bakOffset.get(curOffset + cntFit-1) - (curOffset>0?bakOffset.get(curOffset-1):0) +getHeaderSize(cntFit) <= File.recordPageSize;
 	}
 
 	private Integer fitRecords(Integer thisid, List<Record> rs)
@@ -222,7 +222,7 @@ public class RecordPage extends RawPage {
 	}
 	
 	private static int getMaxFitSize(){
-		return File.pageSize - getHeaderSize(1) - Integer.SIZE / Byte.SIZE;
+		return (int) (File.recordPageSize - getHeaderSize(1) - Integer.SIZE / Byte.SIZE);
 	}
 	
 	private void putPartial(byte[] b, int s, int maxFitSize,
@@ -240,7 +240,7 @@ public class RecordPage extends RawPage {
 	}
 
 	private byte[] expandAndReverse(byte[] z) {
-		byte[] tmp = new byte[File.pageSize - headerSize()];
+		byte[] tmp = new byte[(int) (File.recordPageSize - headerSize())];
 		System.arraycopy(z, 0, tmp, 0, z.length);
 //		Collections.reverse(Arrays.asList(tmp));
 		ArrayUtils.reverse(tmp);
@@ -309,7 +309,7 @@ public class RecordPage extends RawPage {
 		
 		if(lengthOfRecord > getMaxFitSize())
 			return appendPartialRecord(recordBytes, r, true);
-		else if(partialBytes.length + lengthOfRecord + getHeaderSize(cntRecord+1) > File.pageSize)
+		else if(partialBytes.length + lengthOfRecord + getHeaderSize(cntRecord+1) > File.recordPageSize)
 			return appendPartialRecord(recordBytes, r, false);
 		addRecord(r, cntRecord);
 		return true;

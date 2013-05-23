@@ -9,7 +9,7 @@ public class ByteBuilder {
 	ByteBuffer buf;
 	int size;
 	public ByteBuilder(){
-		buf = ByteBuffer.allocate(File.pageSize);
+		buf = ByteBuffer.allocate((int) File.recordPageSize);
 	}
 	public void putBool(boolean v) {
 		putByte(v?(byte)1:(byte)0);

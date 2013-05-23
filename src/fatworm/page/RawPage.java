@@ -60,7 +60,7 @@ public class RawPage implements Page {
 	protected File dataFile;
 	protected Long lastTime;
 	public int size;
-	public ByteBuffer buf = ByteBuffer.allocateDirect(File.pageSize);
+	public ByteBuffer buf = ByteBuffer.wrap(new byte[(int) File.btreePageSize]);//ByteBuffer.allocateDirect(File.pageSize);
 	public int cnt = 0;
 	public boolean hasFlushed = false;
 	public int inTransaction = 0;
@@ -92,7 +92,7 @@ public class RawPage implements Page {
 	}
 	@Override
 	public int remainingSize() {
-		return File.pageSize - size;
+		return (int) (File.btreePageSize - size);
 	}
 	@Override
 	public void markFree() {
@@ -249,7 +249,7 @@ public class RawPage implements Page {
 		Iterator<rpEntry> itr = pool.iterator();
 		while(itr.hasNext()){
 			rpEntry p = itr.next();
-			if(p.remainingSize * 4 < File.pageSize)
+			if(p.remainingSize * 4 < File.btreePageSize)
 				itr.remove();
 			if(p.remainingSize >= expect)
 				return p.pageID;

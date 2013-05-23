@@ -41,6 +41,7 @@ import static fatworm.parser.FatwormParser.UPDATE;
 import static fatworm.parser.FatwormParser.USE_DATABASE;
 import fatworm.absyn.Expr;
 import fatworm.io.BufferManager;
+import fatworm.io.File;
 import fatworm.logicplan.None;
 import fatworm.logicplan.Plan;
 import fatworm.parser.FatwormLexer;
@@ -52,6 +53,7 @@ import fatworm.util.Util;
 // but a direct interpreter is much easier to write.
 public class DBEngine {
 
+	private static final long maxMemSize = 1024 * 1024;
 	public Map<String, Database> dbList = new HashMap<String, Database>();
 	private static DBEngine instance;
 	private Database db;
@@ -82,8 +84,8 @@ public class DBEngine {
 			out.writeObject(dbList);
 			out.close();
 		}
-		recordManager = new BufferManager(Util.getRecordFile(file));
-		btreeManager = new BufferManager(Util.getBTreeFile(file));
+		recordManager = new BufferManager(Util.getRecordFile(file), File.RECORDFILE);
+		btreeManager = new BufferManager(Util.getBTreeFile(file), File.BTREEFILE);
 	}
 	
 	public ResultSet execute(String sql) throws Exception {
@@ -169,6 +171,7 @@ public class DBEngine {
 			List<Record> tmpTable = new LinkedList<Record>();
 			while(plan.hasNext()){
 				Record r = plan.next();
+				r.schema = table.schema;
 				tmpTable.add(r);
 			}
 			for(Record r:tmpTable){
@@ -219,5 +222,14 @@ public class DBEngine {
 	
 	public Database getDatabase(){
 		return db;
+	}
+	public boolean nearOOM() {
+		return btreeManager.pages.size() * File.btreePageMult+ recordManager.pages.size()* File.recordPageMult >= maxMemSize;
+	}
+	public void fireOther(BufferManager me) throws Throwable{
+		if(me == btreeManager)
+			recordManager.fireMeOne();
+		else
+			btreeManager.fireMeOne();
 	}
 }
