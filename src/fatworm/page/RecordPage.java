@@ -111,7 +111,7 @@ public class RecordPage extends RawPage {
 				cntFit = Math.min(bakCntRecord - curOffset, cntFit);
 				if(!canThisFit(bakOffset, curOffset, cntFit))
 					cntFit--;
-//				Util.warn("page "+ pageID + " separates with "+ (bakCntRecord-curOffset) + " remaining");
+				Util.warn("page "+ pageID + " separates with "+ (bakCntRecord-curOffset) + " remaining, thisid=" +thisid);
 				if(curOffset == 0){
 					cntRecord = Math.max(1, cntFit);
 					offsetTable = offsetTable.subList(0, cntRecord);
@@ -309,7 +309,7 @@ public class RecordPage extends RawPage {
 		
 		if(lengthOfRecord > getMaxFitSize())
 			return appendPartialRecord(recordBytes, r, true);
-		else if(partialBytes.length + lengthOfRecord + headerSize() > File.pageSize)
+		else if(partialBytes.length + lengthOfRecord + getHeaderSize(cntRecord+1) > File.pageSize)
 			return appendPartialRecord(recordBytes, r, false);
 		addRecord(r, cntRecord);
 		return true;
@@ -322,12 +322,12 @@ public class RecordPage extends RawPage {
 			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords(pageID, r);
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.prevPageID.equals(thisid);
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
-			rp.dirty = true;
+			rp.dirty = !rp.nextPageID.equals(realNext);
 			rp.nextPageID = realNext;
 			rp.commit();
 			return true;

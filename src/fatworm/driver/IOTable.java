@@ -15,6 +15,7 @@ import fatworm.io.BKey;
 import fatworm.io.BTree;
 import fatworm.io.BufferManager;
 import fatworm.io.Cursor;
+import fatworm.io.File;
 import fatworm.page.RecordPage;
 import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
@@ -26,7 +27,7 @@ public class IOTable extends Table {
 	 * 
 	 */
 	private static final long serialVersionUID = -7673588089635019327L;
-	public static final Integer MODOOFFSET = 512;
+	public static final Integer MODOOFFSET = File.pageSize / 4;
 
 	public IOTable() {
 		firstPageID = -1;
@@ -39,12 +40,34 @@ public class IOTable extends Table {
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 			// FIXME this table hasn't got into database's lists
-//			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
+			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
 	public SimpleCursor open() {
 		return new SimpleCursor();
+	}
+	
+	public IndexCursor scope(Index index, Field l, Field r){
+		try {
+			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
+			BCursor head = l==null||l.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(l));
+			BCursor last = r==null||r.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(r));
+			return new IndexCursor(index, head, last);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public IndexCursor order(Index index){
+		try {
+			return new IndexCursor(index);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	@Override
 	public int update(List<String> colName, List<Expr> expr, Expr e) {
@@ -248,17 +271,27 @@ public class IOTable extends Table {
 		Index index;
 		int idx;
 		
-		public IndexCursor(Index index, BTree btree) throws Throwable{
-			this.btree = btree;
+		public IndexCursor(Index index) throws Throwable{
+			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
 			this.index = index;
 			reset();
+		}
+		public IndexCursor(Index index, BCursor head1, BCursor last1) throws Throwable{
+			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
+			this.index = index;
+			head = head1;
+			last = last1;
+			reset();
+		}
+		public void head() {
+			bc = head;
+			if(!index.unique)idx = 0;
 		}
 		@Override
 		public void reset() throws Throwable {
 			if(head == null)head = btree.root.head();
 			if(last == null)last = btree.root.last();
-			bc = head;
-			idx = 0;
+			head();
 		}
 
 		@Override

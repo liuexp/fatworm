@@ -41,6 +41,13 @@ public class BoolLiteral extends Expr {
 	public List<String> getRequestedColumns() {
 		return new LinkedList<String>();
 	}
+	@Override
+	public void rename(String oldName, String newName) {
+	}
+	@Override
+	public boolean hasSubquery() {
+		return false;
+	}
 
 
 }

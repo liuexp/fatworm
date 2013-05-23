@@ -52,4 +52,8 @@ public abstract class Expr {
 			((BinaryExpr)this).r.collectCond(c);
 		}
 	}
+	
+//	public abstract boolean canEvalOn(Schema schema);
+	public abstract void rename(String oldName, String newName);
+	public abstract boolean hasSubquery();
 }

@@ -118,7 +118,7 @@ public class BinaryExpr extends Expr {
 	private Field mydiv(Field lval, Field rval) {
 		BigDecimal ret = lval.toDecimal().divide(rval.toDecimal(), 9, BigDecimal.ROUND_HALF_EVEN);
 		if(lval.type == INTEGER && rval.type == INTEGER)
-			return new FLOAT(ret.intValue());
+			return new FLOAT(ret.floatValue());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
 			return new DECIMAL(ret);
 		if(lval.type == FLOAT || rval.type == FLOAT)
@@ -244,5 +244,16 @@ public class BinaryExpr extends Expr {
 		List<String> z = l.getRequestedColumns();
 		Util.addAllCol(z, r.getRequestedColumns());
 		return z;
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		this.l.rename(oldName, newName);
+		this.r.rename(oldName, newName);
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return this.l.hasSubquery() || this.r.hasSubquery();
 	}
 }
