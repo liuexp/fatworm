@@ -50,4 +50,14 @@ public class InCall extends Expr {
 		return z;
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return false;
+	}
+
 }

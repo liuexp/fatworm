@@ -68,4 +68,15 @@ public class AnyCall extends Expr {
 		return z;
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+//		expr.rename(oldName, newName);
+		//FIXME also rename src
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return true;
+	}
+
 }
