@@ -8,6 +8,10 @@ import fatworm.util.Util;
 
 public class FLOAT extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8226001833948339793L;
 	public float v;
 
 	public FLOAT() {

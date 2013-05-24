@@ -9,6 +9,10 @@ import fatworm.util.Util;
 
 public class INT extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6271844745750885393L;
 	public int v;
 	public INT(){
 		this.type = java.sql.Types.INTEGER;

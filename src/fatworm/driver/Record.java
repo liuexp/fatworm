@@ -1,5 +1,6 @@
 package fatworm.driver;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,12 @@ import fatworm.util.ByteBuilder;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
-public class Record {
+public class Record implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6636550142198623635L;
 	public List<Field> cols = new ArrayList<Field>();
 //	public Integer nullMap = 0;
 	public Schema schema;

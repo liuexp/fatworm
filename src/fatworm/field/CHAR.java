@@ -6,6 +6,10 @@ import fatworm.util.Util;
 
 public class CHAR extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 762754381819824863L;
 	public String v;
 	public CHAR(){
 		type = java.sql.Types.CHAR;

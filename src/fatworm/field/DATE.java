@@ -6,6 +6,10 @@ import fatworm.util.Util;
 
 public class DATE extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5866417704280885487L;
 	public java.sql.Timestamp v;
 	public DATE(){
 		type = java.sql.Types.DATE;

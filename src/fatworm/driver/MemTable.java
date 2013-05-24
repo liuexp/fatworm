@@ -23,7 +23,7 @@ public class MemTable extends Table {
 	 * 
 	 */
 	private static final long serialVersionUID = -8437348728477933924L;
-	public transient List<Record> records;
+	public  List<Record> records;//transient
 	public MemTable(){
 		//pageIDs = new LinkedList<Integer>();
 		initTransient();

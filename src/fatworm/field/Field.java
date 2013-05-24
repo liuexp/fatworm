@@ -1,5 +1,6 @@
 package fatworm.field;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -9,8 +10,12 @@ import fatworm.absyn.FuncCall;
 import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
-public abstract class Field {
+public abstract class Field implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4018752204029700631L;
 	public int type;
 	public Field() {
 		// TODO Auto-generated constructor stub
