@@ -258,6 +258,7 @@ public class IOTable extends Table {
 		
 	}
 	
+	// FIXME IndexCursor's first and last should be put into use!!!
 	public class IndexCursor implements Cursor {
 		BTree btree;
 		BCursor bc;
