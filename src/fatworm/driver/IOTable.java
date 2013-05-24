@@ -278,6 +278,7 @@ public class IOTable extends Table {
 			last = last1;
 			reset();
 		}
+
 		public void head() {
 			bc = head;
 			if(!index.unique)idx = 0;
