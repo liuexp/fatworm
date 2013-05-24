@@ -24,7 +24,12 @@ public class Record {
 		schema = scm;
 	}
 	public Field getCol(String by) {
-		return cols.get(schema.findIndex(by));
+		int idx = schema.findIndex(by);
+		if(idx<0){
+			Util.warn("meow");
+			return NULL.getInstance();
+		}
+		return cols.get(idx);
 	}
 	public void addCol(Field x){
 		cols.add(x);

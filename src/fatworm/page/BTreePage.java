@@ -50,8 +50,7 @@ public class BTreePage extends RawPage {
 		byte [] tmp = new byte[(int) File.recordPageSize];
 		this.keyType = keyType;
 		this.btree = btree;
-		// XXX let's settle it this way for now = =+
-		fanout = keySize(keyType) == LongSize ? 340 : 510;
+		fanout = fanoutSize(keyType);
 		if(!create){
 			dataFile.read(tmp, pageID);
 			children = new ArrayList<Integer>();
@@ -163,6 +162,7 @@ public class BTreePage extends RawPage {
 	
 	public synchronized void add(Integer idx, BKey k, int val) {
 		key.add(idx, k);
+		assert(val>=0);
 		children.add(idx+1, val);
 		dirty = true;
 	}

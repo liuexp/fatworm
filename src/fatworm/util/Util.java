@@ -214,12 +214,13 @@ public class Util {
 		// XXX here we simultaneously rename order by field if necessary
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
+		boolean hasProjectAll = false;
 		for(Object x : t.getChildren()){
 			Tree y = (Tree) x;
 			if(y.getType() == FatwormParser.FROM)
 				break;
-			if(y.getText().equals("*") && y.getChildCount() == 0)
-				break;
+//			if(y.getText().equals("*") && y.getChildCount() == 0)
+//				break;
 			
 			if(y.getType() == FatwormParser.AS){
 				Expr tmp = getExpr(y.getChild(0));
@@ -234,9 +235,13 @@ public class Util {
 					if(orderField.get(i).equalsIgnoreCase(as))
 						orderField.set(i, tmp.toString());
 				// FIXME Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
-				if(groupBy!=null&&groupBy.equalsIgnoreCase(as))
+				}
+				if(groupBy!=null&&groupBy.equalsIgnoreCase(as)){
+					Util.warn("reverse renaming " + groupBy + " to " + tmp.toString());
 					groupBy = tmp.toString();
 				}
+			}else if(y.getText().equals("*") && y.getChildCount() == 0){
+				hasProjectAll = true;
 			}else{
 				Expr tmp = getExpr(y);
 				expr.add(tmp);
@@ -262,11 +267,11 @@ public class Util {
 		}
 		
 		if(hasAggr)
-			ret = new Group(ret, expr, groupBy, having);
+			ret = new Group(ret, expr, groupBy, having, alias);
 		if(hasOrder)
 			ret = new Order(ret, expr, orderField, orderType);
 		if(!expr.isEmpty()) //hasProject
-			ret = new Project(ret, expr);
+			ret = new Project(ret, expr, hasProjectAll);
 		if(hasRename)
 			ret = new Rename(ret, alias);
 		if(t.getType() == SELECT_DISTINCT) //hasDistinct

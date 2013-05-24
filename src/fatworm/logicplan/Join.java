@@ -1,7 +1,9 @@
 package fatworm.logicplan;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
@@ -23,10 +25,35 @@ public class Join extends Plan {
 		myAggr.addAll(this.left.getAggr());
 		myAggr.addAll(this.right.getAggr());
 		this.schema = new Schema(left.getSchema().tableName + " * " + right.getSchema().tableName);
-		this.schema.columnName.addAll(left.getSchema().columnName);
-		this.schema.columnName.addAll(right.getSchema().columnName);
-		this.schema.columnDef.putAll(left.getSchema().columnDef);
-		this.schema.columnDef.putAll(right.getSchema().columnDef);
+//		this.schema.columnName.addAll(left.getSchema().columnName);
+//		this.schema.columnName.addAll(right.getSchema().columnName);
+//		this.schema.columnDef.putAll(left.getSchema().columnDef);
+//		this.schema.columnDef.putAll(right.getSchema().columnDef);
+		// FIXME watch it for column name => lowerCase
+		Set<String> commonName = new HashSet<String> (left.getSchema().columnName);
+		commonName.retainAll(right.getSchema().columnName);
+		String ltbl = left.getSchema().tableName;
+		for(String colName : left.getSchema().columnName){
+			if(commonName.contains(colName)){
+				this.schema.columnName.add(ltbl + "." + colName);
+				this.schema.columnDef.put(ltbl + "." + colName, left.getSchema().columnDef.get(colName));
+			}else{
+				this.schema.columnName.add(colName);
+				this.schema.columnDef.put(colName, left.getSchema().columnDef.get(colName));
+			}
+		}
+		String rtbl = right.getSchema().tableName;
+		for(String colName : right.getSchema().columnName){
+			if(commonName.contains(colName)){
+				this.schema.columnName.add(rtbl + "." + colName);
+				this.schema.columnDef.put(rtbl + "." + colName, right.getSchema().columnDef.get(colName));
+			}else{
+				this.schema.columnName.add(colName);
+				this.schema.columnDef.put(colName, right.getSchema().columnDef.get(colName));
+			}
+		}
+		if(ltbl.equalsIgnoreCase("A")&& rtbl.equalsIgnoreCase("B")){
+		}
 	}
 
 	@Override
@@ -94,5 +121,12 @@ public class Join extends Plan {
 		List<String> z = new LinkedList<String> (left.getRequestedColumns());
 		z.addAll(right.getRequestedColumns());
 		return z;
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		left.rename(oldName, newName);
+		right.rename(oldName, newName);
+		
 	}
 }

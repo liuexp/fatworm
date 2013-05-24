@@ -17,6 +17,7 @@ import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.driver.Table;
 import fatworm.field.Field;
+import fatworm.field.INT;
 import fatworm.util.Env;
 import fatworm.util.Util;
 import fatworm.io.Cursor;
@@ -44,7 +45,7 @@ public class FetchTable extends Plan {
 	@Override
 	public void eval(Env env) {
 		hasEval = true;
-		if(parent instanceof Select){
+		if(parent instanceof Select && DBEngine.getInstance().turnOnIndex){
 			List<Cond> condList = new ArrayList<Cond>();
 			Map<String, List<Cond>> condGroup = new HashMap<String, List<Cond>>();
 			Map<String, Interval> condInt = new HashMap<String, Interval>();
@@ -87,18 +88,27 @@ public class FetchTable extends Plan {
 				return;
 			}
 			// if there's an index built on those column, return IndexCursor
-			// TODO maybe I should prefer those more effective intervals?
 			List<String> condName = new LinkedList<String>(condInt.keySet());
+			Interval bestInt = null;
+			int minDiff = Integer.MAX_VALUE;
+			Index bestIdx = null;
 			for(String name:condName){
 				if(table.hasIndexOn(name)){
 					Index index = table.getIndexOn(name);
 					Interval interval = condInt.get(name);
-					if(table instanceof IOTable){
-						IOTable iot = (IOTable) table;
-						cursor = iot.scope(index, interval.min, interval.max);
-						return;
+					int curDiff = interval.getRange();
+					if(curDiff < minDiff||bestInt==null){
+						minDiff = curDiff;
+						bestInt = interval;
+						bestIdx = index;
 					}
-					break;
+				}
+			}
+			if(bestInt != null){
+				if(table instanceof IOTable){
+					IOTable iot = (IOTable) table;
+					cursor = iot.scope(bestIdx, bestInt.min, bestInt.max);
+					return;
 				}
 			}
 		}
@@ -207,6 +217,13 @@ public class FetchTable extends Plan {
 		public boolean isEmpty(){
 			return !isNull(min) && !isNull(max) && min.applyWithComp(BinaryOp.GREATER, max);
 		}
+		public int getRange(){
+			if(min instanceof INT && max instanceof INT){
+				int diff = ((INT)max).v - ((INT)min).v;
+				if(diff>=0)return diff;
+			}
+			return Integer.MAX_VALUE;
+		}
 	}
 	
 	private class EmptyCursor implements Cursor{
@@ -260,6 +277,11 @@ public class FetchTable extends Plan {
 		public boolean hasThis() {
 			return false;
 		}
+		
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
 		
 	}
 }

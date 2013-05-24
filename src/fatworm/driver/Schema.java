@@ -34,6 +34,9 @@ public class Schema implements Serializable {
 			String y = columnName.get(i);
 			if(x.equalsIgnoreCase(y) || x.equalsIgnoreCase(this.tableName + "." + y))
 				return i;
+		}
+		for(int i=0;i<columnName.size();i++){
+			String y = columnName.get(i);
 			if(!y.contains("."))continue;
 			// FIXME hack for table name mismatch due to Join
 			if(Util.getAttr(x).equalsIgnoreCase(Util.getAttr(y)))

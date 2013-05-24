@@ -265,8 +265,9 @@ public class FuncCall extends Expr {
 
 	@Override
 	public void rename(String oldName, String newName) {
-		// TODO Auto-generated method stub
-		
+		if(col.equalsIgnoreCase(oldName)){
+			col = newName;
+		}
 	}
 
 	@Override

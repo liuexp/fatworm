@@ -63,4 +63,9 @@ public class One extends Plan {
 	public List<String> getRequestedColumns() {
 		return new LinkedList<String> ();
 	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		
+	}
 }

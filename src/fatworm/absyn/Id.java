@@ -37,6 +37,8 @@ public class Id extends Expr {
 		Field ret=env.get(name);
 		if(ret == null)
 			ret = env.get(Util.getAttr(name));
+		if(ret == null)
+			Util.warn("Id not found:"+name+","+env.toString());
 		return ret;
 	}
 
@@ -59,7 +61,9 @@ public class Id extends Expr {
 
 	@Override
 	public void rename(String oldName, String newName) {
-		// TODO Auto-generated method stub
+		if(Util.getAttr(oldName).equalsIgnoreCase(Util.getAttr(name))){
+			name = newName;
+		}
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class VARCHAR extends Field {
 	}
 	@Override
 	public boolean applyWithComp(BinaryOp op, Field x) {
-		return Field.cmpString(op, this.toString(), x.toString());
+		return Field.cmpString(op, this.toString(), x==null?"":x.toString());
 	}
 	@Override
 	public String toString() {

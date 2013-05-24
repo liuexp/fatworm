@@ -133,7 +133,7 @@ public class BTree {
 			int slotOffset = encodedOffset % MODOFFSET;
 			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
-				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+				curOffset += 4 + rp.getInt(curOffset);
 			}
 			curOffset += 4;// skip the length
 			k = rp.getDecimal(curOffset);
@@ -145,12 +145,12 @@ public class BTree {
 			pageID = rp.getID();
 			int curOffset = 0;
 			curOffset+=4;
-			int cnt = rp.getInt(curOffset);
-			rp.putInt(curOffset, cnt+1);
+			int cnt = rp.cnt;
+			rp.newEntry();
 			encodedOffset =pageID * MODOFFSET + cnt;
 			curOffset+=4;
 			for(int i=0;i<cnt;i++){
-				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+				curOffset += 4 + rp.getInt(curOffset);
 			}
 			int length = rp.putDecimal(curOffset + 4, k);
 			rp.putInt(curOffset, length);
@@ -158,15 +158,16 @@ public class BTree {
 		}
 		@Override
 		public void delete() throws Throwable {
-			RawPage rp = bm.getRawPage(pageID, false);
-			int curOffset = 4;
-			int cnt = rp.getInt(curOffset)-1;
-			rp.beginTransaction();
-			rp.putInt(curOffset, cnt);
-			if(cnt <= 0)
-				bm.releasePage(pageID);
-			else
-				rp.commit();
+			// FIXME
+//			RawPage rp = bm.getRawPage(pageID, false);
+//			int curOffset = 4;
+//			int cnt = rp.getInt(curOffset)-1;
+//			rp.beginTransaction();
+//			rp.putInt(curOffset, cnt);
+//			if(cnt <= 0)
+//				bm.releasePage(pageID);
+//			else
+//				rp.commit();
 		}
 		@Override
 		public int compareTo(BKey o) {
@@ -253,7 +254,7 @@ public class BTree {
 			int slotOffset = encodedOffset % MODOFFSET;
 			int curOffset = 4;
 			for(int i=0;i<slotOffset;i++){
-				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+				curOffset += 4 + rp.getInt(curOffset);
 			}
 			k = rp.getString(curOffset);
 		}
@@ -264,30 +265,29 @@ public class BTree {
 			pageID = rp.getID();
 			int curOffset = 0;
 			curOffset+=4;
-			int cnt = rp.getInt(curOffset);
-			rp.putInt(curOffset, cnt+1);
+			int cnt = rp.cnt;
+			rp.newEntry();
 			encodedOffset =pageID * MODOFFSET + cnt;
 			curOffset+=4;
 			for(int i=0;i<cnt;i++){
-				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+				curOffset += 4 + rp.getInt(curOffset);
 			}
-			if(curOffset + 4 >= 4095)
-				Util.warn("meow:"+k+","+RawPage.getSize(k) +","+ rp.remainingSize());
 			rp.putString(curOffset, k);
 			rp.commit();
 		}
 		
 		@Override
 		public void delete() throws Throwable {
-			RawPage rp = bm.getRawPage(pageID, false);
-			int curOffset = 4;
-			int cnt = rp.getInt(curOffset)-1;
-			rp.beginTransaction();
-			rp.putInt(curOffset, cnt);
-			if(cnt <= 0)
-				bm.releasePage(pageID);
-			else
-				rp.commit();
+			// FIXME not correct
+//			RawPage rp = bm.getRawPage(pageID, false);
+//			int curOffset = 4;
+//			int cnt = rp.getInt(curOffset)-1;
+//			rp.beginTransaction();
+//			rp.putInt(curOffset, cnt);
+//			if(cnt <= 0)
+//				bm.releasePage(pageID);
+//			else
+//				rp.commit();
 		}
 
 		@Override

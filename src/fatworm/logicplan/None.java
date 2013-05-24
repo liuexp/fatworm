@@ -75,4 +75,8 @@ public class None extends Plan {
 		return new LinkedList<String> ();
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+	}
+
 }

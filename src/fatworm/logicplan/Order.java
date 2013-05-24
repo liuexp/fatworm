@@ -39,12 +39,13 @@ public class Order extends Plan {
 		Schema scm = src.getSchema();
 		for(String colName : scm.columnName){
 			String ocol = colName;
-			colName = Util.getAttr(colName);
-			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(ocol))
+//			colName = Util.getAttr(colName);
+//			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(ocol))
+			if(this.schema.columnDef.containsKey(ocol))
 				continue;
-			this.schema.columnDef.put(colName, scm.getColumn(ocol));
-			this.schema.columnName.add(colName);
-			this.expandedCols.add(colName);
+			this.schema.columnDef.put(ocol, scm.getColumn(ocol));
+			this.schema.columnName.add(ocol);
+			this.expandedCols.add(ocol);
 		}
 	}
 
@@ -131,5 +132,11 @@ public class Order extends Plan {
 		List<String> z = src.getRequestedColumns();
 		Util.removeAllCol(z, src.getColumns());
 		return z;
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		// FIXME
+		src.rename(oldName, newName);
 	}
 }
