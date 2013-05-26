@@ -52,14 +52,13 @@ public class Join extends Plan {
 				this.schema.columnDef.put(colName, right.getSchema().columnDef.get(colName));
 			}
 		}
-		if(ltbl.equalsIgnoreCase("A")&& rtbl.equalsIgnoreCase("B")){
-		}
 	}
 
 	@Override
 	public void eval(Env envGlobal) {
 		hasEval = true;
 		curLeft = null;
+		Util.warn("this is Join.");
 		Env env = envGlobal.clone();
 		left.eval(env);
 		right.eval(env);
@@ -72,7 +71,7 @@ public class Join extends Plan {
 	@Override
 	public boolean hasNext() {
 		if(!hasEval)Util.error("Join not eval");
-		return right.hasNext();
+		return (curLeft!=null||left.hasNext()) &&right.hasNext();
 	}
 
 	@Override
@@ -127,6 +126,5 @@ public class Join extends Plan {
 	public void rename(String oldName, String newName) {
 		left.rename(oldName, newName);
 		right.rename(oldName, newName);
-		
 	}
 }

@@ -75,6 +75,7 @@ public class Env {
 	
 	@Override
 	public String toString(){
+		assert res!=null;
 		return Util.deepToString(res);
 	}
 }

@@ -60,7 +60,7 @@ public class DBEngine {
 	private String metaFile;
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
-	public boolean turnOnIndex = false;
+	public boolean turnOnIndex = true;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
@@ -230,10 +230,12 @@ public class DBEngine {
 	}
 	public void fireOther(BufferManager me) throws Throwable{
 		if(me == btreeManager){
-			recordManager.fireMeOne();
+			if(!recordManager.fireMeOne())
+				btreeManager.fireMeOne();
 			Util.warn("[BTreeBufferManager]I'm btree, I just fired one record");
 		}else{
-			btreeManager.fireMeOne();
+			if(!btreeManager.fireMeOne())
+				recordManager.fireMeOne();
 			Util.warn("[RecordBufferManager]I'm record, I just fired one btree");
 		}
 	}
