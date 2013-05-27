@@ -48,6 +48,7 @@ public abstract class Plan {
 	public abstract void rename(String oldName, String newName);
 	public void setSrc(Plan oldChild, Plan newChild) {
 		newChild.parent = this;
+		assert newChild!=this;
 		Plan plan = this;
 		if(plan instanceof Distinct){
 			Distinct p = (Distinct)plan;

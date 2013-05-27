@@ -112,6 +112,9 @@ public class Optimize {
 		Plan child = cur.src;
 		if(parent!=null)
 			parent.setSrc(cur, child);
+		else{
+			child.parent=null;
+		}
 		if(child instanceof Distinct){
 			Distinct p = (Distinct)child;
 			cur.setSrc(child, p.src);
