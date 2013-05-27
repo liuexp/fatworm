@@ -111,7 +111,7 @@ public class DBEngine {
 		switch(t.getType()){
 		case SELECT:
 		case SELECT_DISTINCT:
-			plan = Util.transSelect(t);
+			plan = Util.transSelect(t, true);
 			//System.out.println(plan.toString());
 			plan.eval(new Env());
 			return new ResultSet(plan);
@@ -167,7 +167,7 @@ public class DBEngine {
 		case INSERT_SUBQUERY:
 			name = t.getChild(0).getText().toLowerCase();
 			table = db.getTable(name);
-			plan = Util.transSelect((BaseTree) t.getChild(1));
+			plan = Util.transSelect((BaseTree) t.getChild(1), true);
 			plan.eval(new Env());
 			//FIXME this should be put onto disk
 			List<Record> tmpTable = new LinkedList<Record>();

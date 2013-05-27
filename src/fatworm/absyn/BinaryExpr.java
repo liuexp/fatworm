@@ -63,6 +63,25 @@ public class BinaryExpr extends Expr {
 		
 		return ls + op.toString() + rs;
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof BinaryExpr){
+			BinaryExpr e = (BinaryExpr) o;
+			// Watch this tree isomorphism comparison can be expensive when the BinaryExpr is too deep!!!
+			return op.equals(e.op) && (
+							(l.depth == e.l.depth && l.equals(e.l) && r.equals(e.r)) || 
+							(l.depth == e.r.depth && l.equals(e.r) && r.equals(e.l)) 
+					);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		return l.hashCode() ^ r.hashCode();
+	}
+	
 	public Field evalHelper(Field lval, Field rval) {
 		try {
 			switch(op){

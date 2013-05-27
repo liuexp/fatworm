@@ -1,9 +1,14 @@
 package fatworm.opt;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import fatworm.absyn.BinaryExpr;
+import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
+import fatworm.absyn.Id;
 import fatworm.logicplan.*;
 import fatworm.util.Util;
 
@@ -13,12 +18,12 @@ public class Optimize {
 		//TODO extract QueryCall which is just a fake subquery.
 		plan = decomposeAnd(plan);
 		plan = pushSelect(plan);
-		Util.warn("After push:"+plan.toString());
+//		Util.warn("After push:"+plan.toString());
 		// after the push we transform into theta-join and merge-join
 		// note that by now there shouldn't have been any ThetaJoin plan
 		transformTheta(plan);
 		// TODO next push all single orders inwards to fetchTable
-		Util.warn("After opt:"+plan.toString());
+//		Util.warn("After opt:"+plan.toString());
 		return plan;
 	}
 
@@ -78,7 +83,7 @@ public class Optimize {
 			Select cur = p;
 			
 			while(cur.isPushable()){
-				Util.warn("Pushing Select down!!!"+cur.toString()+", hasPushed="+cur.hasPushed);
+//				Util.warn("Pushing Select down!!!"+cur.toString()+", hasPushed="+cur.hasPushed);
 				if(cur.src instanceof RenameTable){
 					RenameTable curChild = (RenameTable) cur.src;
 					String tbl = curChild.alias;
@@ -101,8 +106,15 @@ public class Optimize {
 			cur.hasPushed=true;
 			head = pushSelect(head);
 			return head;
+		} else if(plan instanceof ThetaJoin){
+			ThetaJoin p = (ThetaJoin)plan;
+			p.left = pushSelect(p.left);
+			p.right = pushSelect(p.right);
+			p.left.parent = p;
+			p.right.parent = p;
+			return p;
 		} else {
-			Util.warn("Optimize:meow!!!");
+			Util.warn("Optimize:pushSelect:meow!!!");
 		}
 		return plan;
 	}
@@ -121,14 +133,14 @@ public class Optimize {
 			child.setSrc(p.src, cur);
 		}else if(child instanceof Join){
 			Join p = (Join)child;
-			if(Util.subsetof(cur.getRequestedColumns(), p.left.getColumns())){
+			if(Util.subsetof(cur.pred.getRequestedColumns(), p.left.getColumns())){
 				cur.setSrc(cur.src, p.left);
 				child.setSrc(p.left, cur);
-			}else if(Util.subsetof(cur.getRequestedColumns(), p.right.getColumns())){
+			}else if(Util.subsetof(cur.pred.getRequestedColumns(), p.right.getColumns())){
 				cur.setSrc(cur.src, p.right);
 				child.setSrc(p.right, cur);
 			}else{
-				Util.warn("select pushing meow!");
+				Util.warn("select pushing meow@Join!");
 			}
 		}else if(child instanceof Order){
 			Order p = (Order)child;
@@ -259,12 +271,63 @@ public class Optimize {
 				return p;
 			List<Expr> exprList = new LinkedList<Expr>();
 			p.pred.collectCond(exprList);
+			// infer all equivalent equivalent relations to some closure(least fixed point).
+			boolean closed = false;
+			while(!closed){
+				closed = true;
+				Set<Expr> toAdd = new HashSet<Expr>();
+				for(int i=0;i<exprList.size();i++){
+					Expr xxx = exprList.get(i);
+					if(!(xxx instanceof BinaryExpr) || ((BinaryExpr)xxx).op!=BinaryOp.EQ)continue;
+					BinaryExpr xx = (BinaryExpr) xxx;
+					Id x1 = (xx.l instanceof Id)?(Id)xx.l:null;
+					Id x2 = (xx.r instanceof Id)?(Id)xx.r:null;
+					if(x1==null && x2==null)continue;
+					for(int j=i+1;j<exprList.size();j++){
+						Expr yyy = exprList.get(j);
+						if(!(yyy instanceof BinaryExpr) || ((BinaryExpr)yyy).op!=BinaryOp.EQ)continue;
+						BinaryExpr yy = (BinaryExpr) yyy;
+						Id y1 = (yy.l instanceof Id)?(Id)yy.l:null;
+						Id y2 = (yy.r instanceof Id)?(Id)yy.r:null;
+						if(y1==null && y2==null)continue;
+						if(x1!=null&&y1!=null&&x1.name.equalsIgnoreCase(y1.name)){
+							toAdd.add(new BinaryExpr(x1, BinaryOp.EQ, yy.r));
+							toAdd.add(new BinaryExpr(y1, BinaryOp.EQ, xx.r));
+							toAdd.add(new BinaryExpr(yy.r, BinaryOp.EQ, xx.r));
+						}else if(x2!=null&&y1!=null&&x2.name.equalsIgnoreCase(y1.name)){
+							toAdd.add(new BinaryExpr(x2, BinaryOp.EQ, yy.r));
+							toAdd.add(new BinaryExpr(y1, BinaryOp.EQ, xx.l));
+							toAdd.add(new BinaryExpr(yy.r, BinaryOp.EQ, xx.l));
+						}else if(x1!=null&&y2!=null&&x1.name.equalsIgnoreCase(y2.name)){
+							toAdd.add(new BinaryExpr(x1, BinaryOp.EQ, yy.l));
+							toAdd.add(new BinaryExpr(y2, BinaryOp.EQ, xx.r));
+							toAdd.add(new BinaryExpr(yy.l, BinaryOp.EQ, xx.r));
+						}else if(x2!=null&&y2!=null&&x2.name.equalsIgnoreCase(y2.name)){
+							toAdd.add(new BinaryExpr(x2, BinaryOp.EQ, yy.l));
+							toAdd.add(new BinaryExpr(y2, BinaryOp.EQ, xx.l));
+							toAdd.add(new BinaryExpr(yy.r, BinaryOp.EQ, xx.l));
+						}
+					}
+				}
+				toAdd.addAll(exprList);
+				closed = exprList.size()>=toAdd.size();
+				if(!closed)
+					Util.warn("Generating new expressions!!!from "+Util.deepToString(exprList)+" to "+ Util.deepToString(toAdd));
+				exprList = new LinkedList<Expr>(toAdd);
+			}
 			Plan ret = p.src;
 			for (Expr e : exprList){
 				ret = new Select(ret, e);
 			}
 			ret.parent = p.parent;
 			return ret;
+		} else if(plan instanceof ThetaJoin){
+			ThetaJoin p = (ThetaJoin)plan;
+			p.left = decomposeAnd(p.left);
+			p.right = decomposeAnd(p.right);
+			p.left.parent = p;
+			p.right.parent = p;
+			return p;
 		} else {
 			Util.warn("Optimize:meow!!!");
 		}

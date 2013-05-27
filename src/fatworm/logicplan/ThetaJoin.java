@@ -65,7 +65,7 @@ public class ThetaJoin extends Plan {
 				lattr.add(leftName);
 				rattr.add(rightName);
 			}else{
-				Util.warn("meow@ThetaJoin eval");
+				Util.warn("meow@ThetaJoin eval: Not merge-join, falling back to normal theta join.");
 				hasMergeJoin = false;
 			}
 			if(hasMergeJoin){
