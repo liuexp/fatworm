@@ -500,4 +500,22 @@ public class Util {
 		return "__PrimaryIndex__" + primaryKey;
 	}
 
+	public static boolean subsetof(List<String> aa, List<String> bb) {
+		for(String a:aa){
+			boolean found = false;
+			for(String b:bb){
+				String x = b.toLowerCase();
+				String y = a.toLowerCase();
+				if(x.endsWith(y)){
+					if(x.indexOf(y)==0 || x.indexOf(y) == x.indexOf(".")+1){
+						found = true;
+						break;
+					}
+				}
+			}
+			if(!found)return false;
+		}
+		return true;
+	}
+
 }

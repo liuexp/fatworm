@@ -20,7 +20,6 @@ public class Rename extends Plan {
 		this.as = as;
 		src.parent = this;
 		myAggr.addAll(this.src.getAggr());
-		//FIXME HOW to do this at all?
 		this.schema = new Schema(src.getSchema().tableName);
 		for(int i = 0; i < src.getSchema().columnName.size(); i++){
 			String old = src.getSchema().columnName.get(i);
