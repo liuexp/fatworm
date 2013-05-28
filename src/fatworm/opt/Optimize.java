@@ -14,6 +14,7 @@ import fatworm.util.Util;
 
 public class Optimize {
 
+	public static Set<String> orderOnField = new HashSet<String>();
 	public static Plan optimize(Plan plan){
 		//TODO extract QueryCall which is just a fake subquery.
 		plan = decomposeAnd(plan);
@@ -22,9 +23,85 @@ public class Optimize {
 		// after the push we transform into theta-join and merge-join
 		// note that by now there shouldn't have been any ThetaJoin plan
 		transformTheta(plan);
+		orderOnField = new HashSet<String>();
+		plan = clearInnerOrders(plan);
 		// TODO next push all single orders inwards to fetchTable
-//		Util.warn("After opt:"+plan.toString());
+		Util.warn("After opt:"+plan.toString());
 		return plan;
+	}
+
+	private static Plan clearInnerOrders(Plan plan) {
+		// TODO Auto-generated method stub
+		if(plan instanceof Distinct){
+			Distinct p = (Distinct)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		}else if(plan instanceof FetchTable){
+			return plan;
+		}else if(plan instanceof Group){
+			Group p = (Group)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		}else if(plan instanceof Join){
+			Join p = (Join)plan;
+			p.left = clearInnerOrders(p.left);
+			p.right = clearInnerOrders(p.right);
+			p.left.parent = p;
+			p.right.parent = p;
+			return p;
+		}else if(plan instanceof None){
+			return plan;
+		}else if(plan instanceof One){
+			return plan;
+		}else if(plan instanceof Order){
+			Order p = (Order)plan;
+			boolean dup = !orderOnField.isEmpty();
+			for(String x:p.orderField){
+				//FIXME should check here and do rename on Rename & RenameTable instead 
+				if(!orderOnField.contains(Util.getAttr(x).toLowerCase())){
+//					dup = false;
+//					Util.warn("Non-Duplicate Order detected and staying."+Util.deepToString(orderOnField)+", "+Util.getAttr(x).toLowerCase());
+					orderOnField.add(Util.getAttr(x).toLowerCase());
+				}
+			}
+			if(dup)
+				Util.warn("Duplicate Order detected and eliminating.");
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = dup?p.parent:p;
+			return dup?p.src:p;
+		}else if(plan instanceof Project){
+			Project p = (Project)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		}else if(plan instanceof Rename){
+			Rename p = (Rename)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		}else if(plan instanceof RenameTable){
+			RenameTable p = (RenameTable)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		}else if(plan instanceof Select){
+			Select p = (Select)plan;
+			p.src = clearInnerOrders(p.src);
+			p.src.parent = p;
+			return p;
+		} else if(plan instanceof ThetaJoin){
+			ThetaJoin p = (ThetaJoin)plan;
+			p.left = clearInnerOrders(p.left);
+			p.right = clearInnerOrders(p.right);
+			p.left.parent = p;
+			p.right.parent = p;
+			return p;
+		} else {
+			Util.warn("ClearInnerOrders:meow!!!");
+		}
+		return null;
 	}
 
 	private static Plan pushSelect(Plan plan) {

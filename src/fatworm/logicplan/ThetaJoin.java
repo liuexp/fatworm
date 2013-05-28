@@ -1,6 +1,8 @@
 package fatworm.logicplan;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,37 +45,36 @@ public class ThetaJoin extends Plan {
 
 	@Override
 	public void eval(Env envGlobal) {
-		// TODO wrap left & right with Order 
 		hasEval = true;
 		curLeft = null;
 		this.env = envGlobal;
 		BinaryExpr aEQb = findMergeJoin();
 		if(aEQb != null){
-			List<String> lattr = new ArrayList<String>();
-			List<String> rattr = new ArrayList<String>();
-			List<Integer> orderType = new ArrayList<Integer>();
-			orderType.add(FatwormParser.ASC);
+//			List<String> lattr = new ArrayList<String>();
+//			List<String> rattr = new ArrayList<String>();
+//			List<Integer> orderType = new ArrayList<Integer>();
+//			orderType.add(FatwormParser.ASC);
 			hasMergeJoin = true;
 			if(left.getSchema().findIndex(aEQb.l.toString())>=0 && right.getSchema().findIndex(aEQb.r.toString())>=0){
 				leftName = aEQb.l.toString();
 				rightName = aEQb.r.toString();
-				lattr.add(leftName);
-				rattr.add(rightName);
+//				lattr.add(leftName);
+//				rattr.add(rightName);
 			}else if(right.getSchema().findIndex(aEQb.l.toString())>=0 && left.getSchema().findIndex(aEQb.r.toString())>=0) {
 				leftName = aEQb.r.toString();
 				rightName = aEQb.l.toString();
-				lattr.add(leftName);
-				rattr.add(rightName);
+//				lattr.add(leftName);
+//				rattr.add(rightName);
 			}else{
 				Util.warn("meow@ThetaJoin eval: Not merge-join, falling back to normal theta join.");
 				hasMergeJoin = false;
 			}
-			if(hasMergeJoin){
-				left = new Order(left, new ArrayList<Expr>(), lattr, orderType);
-				left.parent = this;
-				right = new Order(right, new ArrayList<Expr>(), rattr, orderType);
-				right.parent = this;
-			}
+//			if(hasMergeJoin){
+//				left = new Order(left, new ArrayList<Expr>(), lattr, orderType);
+//				left.parent = this;
+//				right = new Order(right, new ArrayList<Expr>(), rattr, orderType);
+//				right.parent = this;
+//			}
 		}
 		left.eval(env);
 		right.eval(env);
@@ -82,10 +83,40 @@ public class ThetaJoin extends Plan {
 			Util.warn("Watch me I'm Theta-Join!!!");
 			fetchNext();
 		}else{
-			if(!left.hasNext() || !right.hasNext())return;
+			LinkedList<Record> lresults = new LinkedList<Record>();
+			while(left.hasNext()){
+				lresults.add(left.next());
+			}
+			Collections.sort(lresults, new Comparator<Record>(){
+				public int compare(Record a, Record b){
+					Field l = a.getCol(leftName);
+					Field r = b.getCol(leftName);
+					if(l.applyWithComp(BinaryOp.GREATER, r))
+						return 1;
+					if(l.applyWithComp(BinaryOp.LESS, r))
+						return -1;
+					return 0;
+				}
+			});
+			LinkedList<Record> rresults = new LinkedList<Record>();
+			while(right.hasNext()){
+				rresults.add(right.next());
+			}
+			Collections.sort(rresults, new Comparator<Record>(){
+				public int compare(Record a, Record b){
+					Field l = a.getCol(rightName);
+					Field r = b.getCol(rightName);
+					if(l.applyWithComp(BinaryOp.GREATER, r))
+						return 1;
+					if(l.applyWithComp(BinaryOp.LESS, r))
+						return -1;
+					return 0;
+				}
+			});
+			if(lresults.isEmpty() || rresults.isEmpty())return;
 			Util.warn("Watch me I'm Merge-Join!!!"+leftName+"="+ rightName);
-			Record curl=left.next();
-			Record curr=right.next();
+			Record curl=lresults.pollFirst();
+			Record curr=rresults.pollFirst();
 			List<Record> lastRight = new ArrayList<Record>();
 			Field lval = curl.getCol(leftName);
 			Field rval = curr.getCol(rightName);
@@ -100,8 +131,8 @@ public class ThetaJoin extends Plan {
 					}
 				}else{
 					lastRight = new ArrayList<Record>();
-					while(lval.applyWithComp(BinaryOp.GREATER, rval) && right.hasNext()){
-						curr = right.next();
+					while(lval.applyWithComp(BinaryOp.GREATER, rval) && !rresults.isEmpty()){
+						curr = rresults.pollFirst();
 						rval = curr.getCol(rightName);
 					}
 					while(lval.applyWithComp(BinaryOp.EQ, rval)){
@@ -109,16 +140,16 @@ public class ThetaJoin extends Plan {
 						if(predTest(tmp))
 							results.add(tmp);
 						lastRight.add(curr);
-						if(!right.hasNext())
+						if(rresults.isEmpty())
 							break;
-						curr = right.next();
+						curr = rresults.pollFirst();
 						rval = curr.getCol(rightName);
 					}
 					lastr = lval;
 				}
-				if(!left.hasNext())
+				if(lresults.isEmpty())
 					break;
-				curl = left.next();
+				curl = lresults.pollFirst();
 			}
 		}
 //		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
