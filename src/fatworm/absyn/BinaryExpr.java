@@ -71,15 +71,38 @@ public class BinaryExpr extends Expr {
 			// Watch this tree isomorphism comparison can be expensive when the BinaryExpr is too deep!!!
 			return op.equals(e.op) && (
 							(l.depth == e.l.depth && l.equals(e.l) && r.equals(e.r)) || 
-							(l.depth == e.r.depth && l.equals(e.r) && r.equals(e.l)) 
+							(isCommutative(op) && l.depth == e.r.depth && l.equals(e.r) && r.equals(e.l)) 
 					);
 		}
 		return false;
 	}
 	
+	private boolean isCommutative(BinaryOp op2) {
+		switch(op){
+		case LESS:
+		case GREATER:
+		case LESS_EQ:
+		case GREATER_EQ:
+		case MINUS:
+		case DIVIDE:
+		case MODULO:
+			return false;
+		case EQ:
+		case NEQ:
+		case PLUS:
+		case MULTIPLY:
+		case AND:
+		case OR:
+			return true;
+		default:
+			error("Missing ops");
+		}
+		return false;
+	}
+
 	@Override
 	public int hashCode(){
-		return l.hashCode() ^ r.hashCode();
+		return isCommutative(op)?l.hashCode() ^ r.hashCode() ^ op.hashCode():toString().hashCode();
 	}
 	
 	public Field evalHelper(Field lval, Field rval) {
