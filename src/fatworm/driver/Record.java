@@ -31,7 +31,7 @@ public class Record implements Serializable  {
 	public Field getCol(String by) {
 		int idx = schema.findIndex(by);
 		if(idx<0){
-			Util.warn("meow");
+			Util.warn("meow: column not found!"+by+" in? " + schema.toString());
 			return NULL.getInstance();
 		}
 		return cols.get(idx);
