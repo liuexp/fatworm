@@ -44,4 +44,9 @@ public class TimestampLiteral extends Expr {
 		return false;
 	}
 
+	@Override
+	public Expr clone() {
+		return new TimestampLiteral(i.v);
+	}
+
 }

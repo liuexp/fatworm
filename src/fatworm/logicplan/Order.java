@@ -74,6 +74,7 @@ public class Order extends Plan {
 				pr.addCol(env.get(expandedCols.get(i)));
 			}
 			//System.out.println(pr.toString());
+//			Util.warn("Order got 1 result " + pr.toString());
 			results.add(pr);
 		}
 //		Util.warn("Start mem-ordering.");

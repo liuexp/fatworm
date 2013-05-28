@@ -7,15 +7,14 @@ import fatworm.absyn.Expr;
 import fatworm.driver.Column;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
-import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
 public class Project extends Plan {
 	
 	public Plan src;
-	List<Expr> expr;
-	List<String> names;
+	public final List<Expr> expr;
+	final List<String> names;
 	Schema schema;
 	Env env;
 	boolean hasNullCol=false;

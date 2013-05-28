@@ -11,7 +11,7 @@ import fatworm.util.Util;
 
 public class QueryCall extends Expr {
 
-	Plan src;
+	public final Plan src;
 	public QueryCall(Plan src) {
 		super();
 		this.src = src;
@@ -32,7 +32,7 @@ public class QueryCall extends Expr {
 	}
 	@Override
 	public String toString() {
-		return "@subquery("+src.toString() +")";
+		return "@QueryCall("+src.toString() +")";
 	}
 
 	@Override
@@ -49,6 +49,11 @@ public class QueryCall extends Expr {
 	@Override
 	public boolean hasSubquery() {
 		return true;
+	}
+
+	@Override
+	public Expr clone() {
+		return new QueryCall(src);
 	}
  
 }

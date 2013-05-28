@@ -23,6 +23,7 @@ import java.util.Map;
 import fatworm.field.Field;
 import fatworm.logicplan.None;
 import fatworm.logicplan.Plan;
+import fatworm.util.Util;
 
 
 public class ResultSet implements java.sql.ResultSet {
@@ -33,10 +34,10 @@ public class ResultSet implements java.sql.ResultSet {
 		current = null;
 	}
 
-	public ResultSet(Plan x) throws SQLException {
+	public ResultSet(Plan x) {
 		this();
 		if(x == null)x = None.getInstance();
-		if(!x.hasEval)throw new SQLException("not yet executed!");
+		if(!x.hasEval)Util.error("not yet executed!");
 		plan = x;
 	}
 

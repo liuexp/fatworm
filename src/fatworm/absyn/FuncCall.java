@@ -67,6 +67,17 @@ public class FuncCall extends Expr {
 	public String toString() {
 		return Util.getFuncName(func) + "(" + col + ")";
 	}
+	@Override
+	public int hashCode(){
+		return toString().hashCode();
+	}
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof FuncCall){
+			return o.toString().equals(toString());
+		}
+		return false;
+	}
 	
 	public boolean canEvalOn(Schema schema){
 		return schema.findStrictIndex(col)>=0;
@@ -273,5 +284,10 @@ public class FuncCall extends Expr {
 	@Override
 	public boolean hasSubquery() {
 		return false;
+	}
+
+	@Override
+	public Expr clone() {
+		return new FuncCall(func, col);
 	}
 }

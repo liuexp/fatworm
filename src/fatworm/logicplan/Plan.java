@@ -1,7 +1,8 @@
 package fatworm.logicplan;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
@@ -16,10 +17,10 @@ public abstract class Plan {
 
 	public Plan parent;
 	public boolean hasEval;
-	public List<FuncCall> myAggr;
+	public Set<FuncCall> myAggr;
 	public Plan() {
 		hasEval = false;
-		myAggr = new ArrayList<FuncCall>();
+		myAggr = new HashSet<FuncCall>();
 	}
 	public Plan(Plan parent) {
 		this();
@@ -37,7 +38,7 @@ public abstract class Plan {
 
 	public abstract void reset();
 
-	public List<FuncCall> getAggr() {
+	public Set<FuncCall> getAggr() {
 		return myAggr;
 	}
 	public abstract Schema getSchema();

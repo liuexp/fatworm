@@ -49,4 +49,9 @@ public class FloatLiteral extends Expr {
 		return false;
 	}
 
+	@Override
+	public Expr clone() {
+		return new FloatLiteral(i.v);
+	}
+
 }

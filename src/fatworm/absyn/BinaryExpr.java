@@ -260,15 +260,15 @@ public class BinaryExpr extends Expr {
 		if(this.op == BinaryOp.OR){
 			if(left.isAnd()){
 				ret = new BinaryExpr(
-						new BinaryExpr(((BinaryExpr)left).l, BinaryOp.OR, right),
+						new BinaryExpr(((BinaryExpr)left).l.clone(), BinaryOp.OR, right.clone()),
 						BinaryOp.AND,
-						new BinaryExpr(((BinaryExpr)left).r, BinaryOp.OR, right)
+						new BinaryExpr(((BinaryExpr)left).r.clone(), BinaryOp.OR, right.clone())
 						);
 			} else if(right.isAnd()){
 				ret = new BinaryExpr(
-						new BinaryExpr(left, BinaryOp.OR, ((BinaryExpr)right).l),
+						new BinaryExpr(left.clone(), BinaryOp.OR, ((BinaryExpr)right).l.clone()),
 						BinaryOp.AND,
-						new BinaryExpr(left, BinaryOp.OR, ((BinaryExpr)right).r)
+						new BinaryExpr(left.clone(), BinaryOp.OR, ((BinaryExpr)right).r.clone())
 						);
 			}
 		}
@@ -297,5 +297,10 @@ public class BinaryExpr extends Expr {
 	@Override
 	public boolean hasSubquery() {
 		return this.l.hasSubquery() || this.r.hasSubquery();
+	}
+
+	@Override
+	public Expr clone() {
+		return new BinaryExpr(l.clone(), op, r.clone());
 	}
 }

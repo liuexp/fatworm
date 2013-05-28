@@ -72,4 +72,9 @@ public class Id extends Expr {
 	public boolean hasSubquery() {
 		return false;
 	}
+
+	@Override
+	public Expr clone() {
+		return new Id(name);
+	}
 }

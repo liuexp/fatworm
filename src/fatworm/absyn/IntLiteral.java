@@ -59,4 +59,11 @@ public class IntLiteral extends Expr {
 		return false;
 	}
 
+	@Override
+	public Expr clone() {
+		return type==java.sql.Types.INTEGER?
+				new IntLiteral(((INT)i).v):
+					new IntLiteral(((DECIMAL)i).v.toBigIntegerExact());
+	}
+
 }
