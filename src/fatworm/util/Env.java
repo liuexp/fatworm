@@ -52,15 +52,32 @@ public class Env {
 	
 	public void appendFromRecord(Record x){
 		if(x == null)return;
+//		for(int i=0;i<x.cols.size();i++){
+//			String ocol = x.schema.columnName.get(i);
+//			String colName = Util.getAttr(ocol);
+//			String tblName = x.schema.tableName;
+//			put(ocol, x.cols.get(i));
+//			if(!ocol.contains("."))
+//				put(tblName+"."+colName, x.cols.get(i));
+//			else
+//				put(colName, x.cols.get(i));
+//		}
+		List<String> name1 = x.schema.getCanonicalName1();
+		List<String> name2 = x.schema.getCanonicalName2();
 		for(int i=0;i<x.cols.size();i++){
-			String colName = Util.getAttr(x.schema.columnName.get(i));
-			String tblName = x.schema.tableName;
-			put(x.schema.columnName.get(i), x.cols.get(i));
-			//FIXME how to resolve the name solely on canonical names?
-			put(colName, x.cols.get(i));
-			put(tblName+"."+colName, x.cols.get(i));
+			put(name1.get(i), x.cols.get(i));
+			put(name2.get(i), x.cols.get(i));
 		}
 	}
+	
+	public void appendFromRecord(List<String> name1, List<String> name2, Record x){
+		if(x == null)return;
+		for(int i=0;i<x.cols.size();i++){
+			put(name1.get(i), x.cols.get(i));
+			put(name2.get(i), x.cols.get(i));
+		}
+	}
+	
 	public void appendAlias(String tbl, List<Expr> expr, List<String> alias){
 		for(int i=0;i<alias.size();i++){
 			String colName = expr.get(i).toString();

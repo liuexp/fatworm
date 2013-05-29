@@ -220,6 +220,7 @@ public class Util {
 		List<Expr> expr = new ArrayList<Expr>();
 		List<String> alias = new ArrayList<String>();
 		boolean hasProjectAll = false;
+		boolean hasAlias = false;
 		for(Object x : t.getChildren()){
 			Tree y = (Tree) x;
 			if(y.getType() == FatwormParser.FROM)
@@ -228,6 +229,7 @@ public class Util {
 //				break;
 			
 			if(y.getType() == FatwormParser.AS){
+				hasAlias = true;
 				Expr tmp = getExpr(y.getChild(0));
 				expr.add(tmp);
 				String as = y.getChild(1).getText();
@@ -272,7 +274,7 @@ public class Util {
 		}
 		
 		if(hasAggr)
-			ret = new Group(ret, expr, groupBy, having, alias);
+			ret = new Group(ret, expr, groupBy, having, alias, hasOrder, hasAlias);
 		if(hasOrder)
 			ret = new Order(ret, expr, orderField, orderType);
 		if(!expr.isEmpty()) //hasProject

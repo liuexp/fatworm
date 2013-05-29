@@ -200,7 +200,11 @@ public abstract class Field implements Serializable {
 		case java.sql.Types.VARCHAR:
 			length = buf.getInt();
 			dst = new byte[length];
-			buf.get(dst, 0, length);
+			try {
+				buf.get(dst, 0, length);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 //			Util.warn("I just constructed VARCHAR field " + new String(dst));
 			return new VARCHAR(new String(dst));
 			default:

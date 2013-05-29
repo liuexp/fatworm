@@ -22,6 +22,7 @@ public class Order extends Plan {
 	public Plan src;
 	public List<String> orderField;
 	public List<Integer> orderType;
+	public List<Integer> orderIdx;
 	public List<Record> results;
 	public List<Expr> expr;
 	public List<String> expandedCols = new ArrayList<String>();
@@ -55,6 +56,10 @@ public class Order extends Plan {
 			this.schema.columnName.add(ocol);
 			this.expandedCols.add(ocol);
 		}
+		orderIdx = new ArrayList<Integer>();
+		for(String col:orderField){
+			orderIdx.add(this.schema.findIndex(col));
+		}
 	}
 
 	@Override
@@ -80,9 +85,9 @@ public class Order extends Plan {
 //		Util.warn("Start mem-ordering.");
 		Collections.sort(results, new Comparator<Record>(){
 			public int compare(Record a, Record b){
-				for(int i=0;i<orderField.size();i++){
-					Field l = a.getCol(orderField.get(i));
-					Field r = b.getCol(orderField.get(i));
+				for(int i=0;i<orderIdx.size();i++){
+					Field l = a.getCol(orderIdx.get(i));
+					Field r = b.getCol(orderIdx.get(i));
 					if(orderType.get(i) == FatwormParser.ASC){
 						if(l.applyWithComp(BinaryOp.GREATER, r))
 							return 1;

@@ -35,8 +35,8 @@ public class IOTable extends Table {
 		if(schema.primaryKey != null && DBEngine.getInstance().turnOnIndex){
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
-			// FIXME this table hasn't got into database's lists
-			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
+//			if(schema.primaryKey.type != java.sql.Types.VARCHAR && schema.primaryKey.type != java.sql.Types.CHAR)
+//				DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
@@ -44,15 +44,21 @@ public class IOTable extends Table {
 		return new SimpleCursor();
 	}
 	
-	public IndexCursor scope(Index index, Field l, Field r){
+	public IndexCursor scope(Index index, Field l, Field r, boolean isMaxEQ){
 		try {
 			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
 			BCursor head = l==null||l.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(l));
+			if(head!=null)
+				head = head.adjust();
 			BCursor last = r==null||r.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(r));
+			if(last!=null){
+				last = isMaxEQ?last.adjust():last.adjustLeft();
+				if(isMaxEQ && last.getKey().compareTo(b.newBKey(r))>0)
+					last = last.prev();
+			}
 //			Util.warn("Using index for traversals!");
 			return new IndexCursor(index, head, last);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -104,10 +110,12 @@ public class IOTable extends Table {
 				thisp.dirty = true;
 				thisp.nextPageID = thisp.prevPageID = thisp.getID();
 				thisp.commit();
+				createIndexForRecord(r, open());
 				return;
 			}
 			c.prev();
 			c.appendThisPage(r);
+			c.next();
 			createIndexForRecord(r, c);
 		} catch (Throwable e) {
 //			Util.error(e.getMessage());
@@ -181,7 +189,10 @@ public class IOTable extends Table {
 		
 		public boolean appendThisPage(Record r){
 			try {
-				return DBEngine.getInstance().recordManager.getRecordPage(pageID, false).tryAppendRecord(r);
+				boolean flag = DBEngine.getInstance().recordManager.getRecordPage(pageID, false).tryAppendRecord(r);
+				if(flag)
+					cache = getRecords(pageID);
+				return flag;
 			} catch (Throwable e) {
 				e.printStackTrace();
 				return false;
@@ -250,7 +261,9 @@ public class IOTable extends Table {
 		}
 		@Override
 		public Integer getIdx() {
-			return pageID * MODOOFFSET + offset;
+			int ret = pageID * MODOOFFSET + offset;
+			assert ret >= 0;
+			return ret;
 		}
 		@Override
 		public boolean hasThis() {
@@ -311,7 +324,7 @@ public class IOTable extends Table {
 		}
 
 		private void nextBc() throws Throwable {
-			bc = bc==last?null:bc.next();
+			bc = bc.equals(last)?null:bc.next();
 		}
 		@Override
 		public void prev() throws Throwable {
@@ -333,7 +346,7 @@ public class IOTable extends Table {
 		}
 
 		private void prevBc() throws Throwable {
-			bc = bc==head?null:bc.prev();
+			bc = bc.equals(head)?null:bc.prev();
 		}
 		@Override
 		public Object fetch(String col) {

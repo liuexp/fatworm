@@ -2,9 +2,11 @@ package fatworm.logicplan;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fatworm.absyn.Expr;
 import fatworm.absyn.FuncCall;
@@ -19,29 +21,44 @@ public class Group extends Plan {
 
 	public Plan src;
 	public String by;
+	public int byIdx1 = -1;
+//	public int byIdx2 = -1;
 	public Expr having;
 	public List<Expr> func;
 	public int ptr;
 	public List<Record> results;
 	public List<String> expandedCols = new ArrayList<String>();
 	List<String> alias;
+	boolean hasAlias;
 	public Schema schema;
 	
-	public Group(Plan src, List<Expr> func, String by, Expr having, List<String> alias) {
+	public Group(Plan src, List<Expr> func, String by, Expr having, List<String> alias, boolean expand, boolean hasAlias) {
 		super();
 		this.src = src;
 		this.by = by;
 		this.having = having;
 		this.func = func;
 		src.parent = this;
+		this.hasAlias = hasAlias;
 		ptr = 0;
 		this.alias = alias;
+		Set<String> neededAttr = new HashSet<String> ();
 		// note that aggregate functions from source must be eval on source, not here.
 		for(int i=0;i<func.size();i++){
 			myAggr.addAll(func.get(i).getAggr());
+			List<String> tmp = func.get(i).getRequestedColumns();
+			for(String xx:tmp){
+				neededAttr.add(xx.toLowerCase());
+			}
 		}
-		if(this.having != null)
+		
+		if(this.having != null){
 			myAggr.addAll(this.having.getAggr());
+			List<String> tmp = having.getRequestedColumns();
+			for(String xx:tmp){
+				neededAttr.add(xx.toLowerCase());
+			}
+		}
 		this.schema = new Schema();
 		this.schema.fromList(func, src.getSchema());
 		// Expand the table for now.
@@ -51,10 +68,15 @@ public class Group extends Plan {
 			colName = Util.getAttr(colName);
 			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(ocol))
 				continue;
+			if(!neededAttr.contains(ocol.toLowerCase()) && !neededAttr.contains(colName.toLowerCase()))
+				continue;
 			this.schema.columnDef.put(colName, scm.getColumn(ocol));
 			this.schema.columnName.add(colName);
 			this.expandedCols.add(colName);
 		}
+		if(by!=null)
+			byIdx1 = scm.findIndex(by);
+		Util.warn("This is group : expanded=" + Util.deepToString(expandedCols));
 	}
 
 	//TODO: Memory GroupBy and disk group by. 
@@ -78,56 +100,74 @@ public class Group extends Plan {
 		Env env = envGlobal.clone();
 		
 		src.eval(env);
+		LinkedList<FuncCall> evalAggr = new LinkedList<FuncCall>();
+//		Set<String> aggrNeed = new HashSet<String>();
 		for(FuncCall a : myAggr){
-			if(a.canEvalOn(schema))env.remove(a.toString());
+			if(a.canEvalOn(schema)){
+				env.remove(a.toString());
+				evalAggr.add(a);
+//				aggrNeed.add(a.col.toLowerCase());
+			}
 		}
 		
+		LinkedList<Record> tmpTable = new LinkedList<Record>();
 		// First propagate for aggregation by evalCont().
 		while(src.hasNext()){
 			Record r = src.next();
-			Field f = by==null? NULL.getInstance(): r.getCol(by);
+			Field f = by==null? NULL.getInstance(): r.getCol(byIdx1);
 			Env tmpEnv = aggrHelper.get(f);
 			if(tmpEnv == null)
 				tmpEnv = env.clone();
 			tmpEnv.appendFromRecord(r);
-			for(FuncCall a : myAggr){
-				if(a.canEvalOn(schema))
-					a.evalCont(tmpEnv);
+			for(FuncCall a : evalAggr){
+				a.evalCont(tmpEnv);
 			}
 			aggrHelper.put(f, tmpEnv);
+			tmpTable.addLast(r);
 		}
-		src.reset();
+//		src.reset();
 
 		// Now we can fill all FuncCall with ContField's final results by calling eval() as we fillCol().
-		while(src.hasNext()){
-			Record r = src.next();
-			Field f = by==null? NULL.getInstance(): r.getCol(by);
+		while(!tmpTable.isEmpty()){
+			Record r = tmpTable.pollFirst();
+			Field f = by==null? NULL.getInstance(): r.getCol(byIdx1);
 			Record pr = groupHelper.get(f);
 
 			if(pr == null){
 				Env tmpEnv = aggrHelper.get(f);
-				env.appendFrom(tmpEnv);
-				env.appendFromRecord(r);
+//				env.appendFrom(tmpEnv);
+//				env.appendFromRecord(r);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
-				pr.addColFromExpr(env, func);
+				pr.addColFromExpr(tmpEnv, func);
 				for(int i=0;i<expandedCols.size();i++){
-					pr.addCol(env.get(expandedCols.get(i)));
+					pr.addCol(tmpEnv.get(expandedCols.get(i)));
 				}
 			}
 		}
-		for(Field f : groupHelper.keySet()){
-			Record r = groupHelper.get(f);
-			Env tmpEnv = aggrHelper.get(f);
-			env.appendFrom(tmpEnv);
-			env.appendFromRecord(r);
-			env.appendAlias(schema.tableName, func, alias);
-			//System.out.println(r.toString());
-			//System.out.println(Util.deepToString(env.res));
-			if(having==null||having.evalPred(env)){
-//				Util.warn("Group got :"+r.toString()+" with env="+Util.deepToString(env.res));
-				results.add(r);
+		if(!hasAlias){
+			for(Field f : groupHelper.keySet()){
+				Record r = groupHelper.get(f);
+				Env tmpEnv = aggrHelper.get(f);
+//				env.appendFrom(tmpEnv);
+//				env.appendFromRecord(r);
+				if(having==null||having.evalPred(tmpEnv)){
+					results.add(r);
+				}
 			}
+		}else{
+			Env tmpEnv = null;
+			for(Field f : groupHelper.keySet()){
+				Record r = groupHelper.get(f);
+				tmpEnv = aggrHelper.get(f);
+//				env.appendFrom(tmpEnv);
+				tmpEnv.appendFromRecord(r);
+				tmpEnv.appendAlias(schema.tableName, func, alias);
+				if(having==null||having.evalPred(tmpEnv)){
+					results.add(r);
+				}
+			}
+			env.appendFrom(tmpEnv);
 		}
 		if(results.size() == 0 && (having==null||having.evalPred(env))){
 			Record pr = new Record(schema);
@@ -181,7 +221,8 @@ public class Group extends Plan {
 	public List<String> getRequestedColumns() {
 		List<String> z = src.getRequestedColumns();
 		Util.removeAllCol(z, src.getColumns());
-		Util.addAllCol(z, having.getRequestedColumns());
+		if(having!=null)
+			Util.addAllCol(z, having.getRequestedColumns());
 		return z;
 	}
 

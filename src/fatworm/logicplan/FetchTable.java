@@ -108,8 +108,29 @@ public class FetchTable extends Plan {
 			}
 			if(bestInt != null){
 				if(table instanceof IOTable){
+					boolean isMaxEQ = false;
+					cur = (Select) parent;
+					while(true){
+						if(cur.pred instanceof BinaryExpr){
+							BinaryExpr cond = (BinaryExpr)cur.pred;
+							if((cond.op == BinaryOp.GREATER_EQ||cond.op == BinaryOp.LESS_EQ) &&(cond.l instanceof Id && cond.r.isConst)||(cond.r instanceof Id && cond.l.isConst)){
+								Cond tmp = new Cond((BinaryExpr)cur.pred);
+								if(tmp.name.equalsIgnoreCase(bestIdx.column.name)){
+									cur.markedSkip = true;
+									if(!Interval.isNull(bestInt.max) && tmp.value.applyWithComp(BinaryOp.EQ, bestInt.max))
+										isMaxEQ = true;
+								}
+							}
+						}
+						if(cur.parent instanceof Select)
+							cur = (Select)cur.parent;
+						else 
+							break;
+					}
 					IOTable iot = (IOTable) table;
-					cursor = iot.scope(bestIdx, bestInt.min, bestInt.max);
+					cursor = iot.scope(bestIdx, bestInt.min, bestInt.max, isMaxEQ);
+					
+					
 					return;
 				}
 			}
@@ -175,7 +196,7 @@ public class FetchTable extends Plan {
 		return new LinkedList<String>();
 	}
 	
-	private class Cond{
+	private static class Cond{
 		public BinaryOp op;
 		public String name;
 		public Field value;
@@ -207,7 +228,7 @@ public class FetchTable extends Plan {
 		}
 	}
 	
-	private class Interval{
+	private static class Interval{
 		public Field min;
 		public Field max;
 		public Interval(){
@@ -224,7 +245,7 @@ public class FetchTable extends Plan {
 			if(isNull(max) || (!isNull(x.max) && max.applyWithComp(BinaryOp.GREATER, x.max)))
 				max = x.max;
 		}
-		private boolean isNull(Field x){
+		public static boolean isNull(Field x){
 			return x==null||x.type==java.sql.Types.NULL;
 		}
 		public boolean isEmpty(){
@@ -235,11 +256,13 @@ public class FetchTable extends Plan {
 				int diff = ((INT)max).v - ((INT)min).v;
 				if(diff>=0)return diff;
 			}
+			if(!isNull(min) && !isNull(max) && min.applyWithComp(BinaryOp.EQ, max))
+				return 0;
 			return Integer.MAX_VALUE;
 		}
 	}
 	
-	private class EmptyCursor implements Cursor{
+	private static class EmptyCursor implements Cursor{
 
 		@Override
 		public void reset() throws Throwable {
