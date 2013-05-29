@@ -8,7 +8,6 @@ import java.util.Map;
 
 import fatworm.absyn.BinaryExpr;
 import fatworm.absyn.BinaryOp;
-import fatworm.absyn.Expr;
 import fatworm.absyn.Id;
 import fatworm.driver.DBEngine;
 import fatworm.driver.Database.Index;
@@ -34,6 +33,7 @@ public class FetchTable extends Plan {
 		tableName = table;
 		this.table = DBEngine.getInstance().getTable(table);
 		if(table==null)Util.error("meow");
+		// New schema so that it can be changed.
 		this.schema = new Schema(this.table.getSchema().tableName);
 		for(String old:this.table.getSchema().columnName){
 			String now = this.table.schema.tableName + "." + Util.getAttr(old);
@@ -46,6 +46,7 @@ public class FetchTable extends Plan {
 	@Override
 	public void eval(Env env) {
 		hasEval = true;
+		// Utilize index for scoping
 		if(parent instanceof Select && DBEngine.getInstance().turnOnIndex){
 			List<Cond> condList = new ArrayList<Cond>();
 			Map<String, List<Cond>> condGroup = new HashMap<String, List<Cond>>();
@@ -113,6 +114,15 @@ public class FetchTable extends Plan {
 				}
 			}
 		}
+		// Thanks to m4h, data that needs OrderedByPrimaryKey is commented out....
+//		if(schema.primaryKey!=null && DBEngine.getInstance().turnOnIndex && table instanceof IOTable){
+//			String name = schema.primaryKey.name;
+//			assert table.hasIndexOn(name);
+//			Index index = table.getIndexOn(name);
+//			IOTable iot = (IOTable) table;
+//			cursor = iot.order(index);
+//			return;
+//		}
 		cursor = table.open();
 	}
 	@Override
@@ -189,6 +199,8 @@ public class FetchTable extends Plan {
 			case GREATER:
 			case GREATER_EQ:
 				return new Interval(value, null);
+			default:
+				break;
 			}
 			Util.error("Missing interval generation for operator:" + op);
 			return null;
@@ -283,6 +295,5 @@ public class FetchTable extends Plan {
 
 	@Override
 	public void rename(String oldName, String newName) {
-		
 	}
 }

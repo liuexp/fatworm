@@ -29,7 +29,10 @@ public class InCall extends Expr {
 		src.eval(env);
 		boolean ret=false;
 		while(src.hasNext()){
-			if(l.applyWithComp(BinaryOp.EQ, src.next().cols.get(0)))ret=true;
+			if(l.applyWithComp(BinaryOp.EQ, src.next().cols.get(0))){
+				ret=true;
+				break;
+			}
 		}
 		return not ^ ret;
 	}
@@ -58,6 +61,11 @@ public class InCall extends Expr {
 	@Override
 	public boolean hasSubquery() {
 		return false;
+	}
+
+	@Override
+	public Expr clone() {
+		return new InCall(src, expr.clone(), not);
 	}
 
 }

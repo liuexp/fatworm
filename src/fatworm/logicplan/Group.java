@@ -116,9 +116,7 @@ public class Group extends Plan {
 				}
 			}
 		}
-//		System.out.println("mie");
 		for(Field f : groupHelper.keySet()){
-//			System.out.println("meow");
 			Record r = groupHelper.get(f);
 			Env tmpEnv = aggrHelper.get(f);
 			env.appendFrom(tmpEnv);
@@ -127,7 +125,7 @@ public class Group extends Plan {
 			//System.out.println(r.toString());
 			//System.out.println(Util.deepToString(env.res));
 			if(having==null||having.evalPred(env)){
-				//System.out.println(Util.deepToString(env.res));
+//				Util.warn("Group got :"+r.toString()+" with env="+Util.deepToString(env.res));
 				results.add(r);
 			}
 		}

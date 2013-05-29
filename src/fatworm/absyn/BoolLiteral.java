@@ -48,6 +48,10 @@ public class BoolLiteral extends Expr {
 	public boolean hasSubquery() {
 		return false;
 	}
+	@Override
+	public Expr clone() {
+		return new BoolLiteral(i.v);
+	}
 
 
 }

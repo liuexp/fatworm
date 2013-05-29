@@ -54,13 +54,15 @@ import fatworm.util.Util;
 public class DBEngine {
 
 	private static final long maxMemSize = 1000 * 1024;
+	
 	public Map<String, Database> dbList = new HashMap<String, Database>();
 	private static DBEngine instance;
 	private Database db;
 	private String metaFile;
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
-	public boolean turnOnIndex = false;
+	public final boolean turnOnIndex = false;
+	public final boolean turnOnDebug = false;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
@@ -89,10 +91,10 @@ public class DBEngine {
 		btreeManager = new BufferManager(Util.getBTreeFile(file), File.BTREEFILE);
 	}
 	
-	public ResultSet execute(String sql) throws Exception {
-		CommonTree t = parse(sql);
-		//System.out.println(t.toStringTree());
+	public ResultSet execute(String sql) {
 		try {
+			CommonTree t = parse(sql);
+			//System.out.println(t.toStringTree());
 			return execute(t);
 		} catch (Throwable e) {
 //			Util.error(e.getMessage());
@@ -190,8 +192,10 @@ public class DBEngine {
 			return new ResultSet(None.getInstance());
 		case DROP_INDEX:
 			db.dropIndex(t.getChild(0).getText().toLowerCase());
+			return new ResultSet(None.getInstance());
 		default:
-				throw new RuntimeException("not implemented.");
+				Util.error("not implemented.");
+				return new ResultSet(None.getInstance());
 		}
 	}
 
@@ -204,13 +208,24 @@ public class DBEngine {
 		return (CommonTree) r.getTree();
 	}
 	
-	public void close() throws Throwable {
+	public void close() {
 		Util.warn("closing connection");
-		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
-		out.writeObject(dbList);
-		out.close();
-		recordManager.close();
-		btreeManager.close();
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(metaFile)));
+			out.writeObject(dbList);
+			out.close();
+			recordManager.close();
+			btreeManager.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

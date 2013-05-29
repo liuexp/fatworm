@@ -13,8 +13,6 @@ import fatworm.absyn.Id;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
-import fatworm.field.NULL;
-import fatworm.parser.FatwormParser;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -55,12 +53,12 @@ public class ThetaJoin extends Plan {
 //			List<Integer> orderType = new ArrayList<Integer>();
 //			orderType.add(FatwormParser.ASC);
 			hasMergeJoin = true;
-			if(left.getSchema().findIndex(aEQb.l.toString())>=0 && right.getSchema().findIndex(aEQb.r.toString())>=0){
+			if(left.getSchema().findStrictIndex(aEQb.l.toString())>=0 && right.getSchema().findStrictIndex(aEQb.r.toString())>=0){
 				leftName = aEQb.l.toString();
 				rightName = aEQb.r.toString();
 //				lattr.add(leftName);
 //				rattr.add(rightName);
-			}else if(right.getSchema().findIndex(aEQb.l.toString())>=0 && left.getSchema().findIndex(aEQb.r.toString())>=0) {
+			}else if(right.getSchema().findStrictIndex(aEQb.l.toString())>=0 && left.getSchema().findStrictIndex(aEQb.r.toString())>=0) {
 				leftName = aEQb.r.toString();
 				rightName = aEQb.l.toString();
 //				lattr.add(leftName);
@@ -83,7 +81,7 @@ public class ThetaJoin extends Plan {
 		right.eval(env);
 //		hasMergeJoin = false;
 		if(!hasMergeJoin){
-			Util.warn("Watch me I'm Theta-Join!!!");
+			Util.warn("Watch me I'm Theta-Join!!!" +schema.tableName +" s.t. "+ Util.deepToString(condList));
 			fetchNext();
 		}else{
 			LinkedList<Record> lresults = new LinkedList<Record>();
