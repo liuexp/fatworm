@@ -2,6 +2,27 @@
 <project default="create_run_jar" name="Create Runnable Jar for Project fatworm">
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
+<property name="src.dir" value="src"/>
+<property name="lib.dir" value="lib"/>
+<property name="bin.dir" value="bin"/>
+<property name="dst.dir" value="dst"/>
+
+<path id="classpath">
+	<fileset dir="${lib.dir}">
+		<include name="**/*.jar"/>
+	</fileset>
+	<fileset dir="/">
+		<include name="usr/share/java/antlr-3.5-complete.jar"/>
+	</fileset>
+</path>
+
+<target name="compile">
+	<mkdir dir="${bin.dir}"/>
+	<javac srcdir="${src.dir}" destdir="${bin.dir}" nowarn="true">
+		<classpath refid="classpath"/>
+	</javac>
+</target>
+
     <target name="create_run_jar">
         <jar destfile="/home/liuexp/Downloads/fatjudger/fatworm.jar" filesetmanifest="mergewithoutmain">
             <manifest>
