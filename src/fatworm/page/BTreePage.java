@@ -1,17 +1,16 @@
 package fatworm.page;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
 
+import fatworm.driver.DBEngine;
 import fatworm.io.BKey;
 import fatworm.io.BTree;
-import fatworm.io.Cursor;
 import fatworm.io.File;
+import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Util;
 
 // 4096 = 4 * 5 + 4 * 510 + 4 * 509 (INT key)
@@ -38,8 +37,8 @@ public class BTreePage extends RawPage {
 	// wait a second, if I dont reclaim space after deletion, it would be much better if I use bucketing...
 	private int nodeType;
 	private Integer parentPageID;
-	public List<Integer> children;
-	public List<BKey> key;
+	public ArrayList<Integer> children;
+	public ArrayList<BKey> key;
 	public int keyType;
 	public BTree btree;
 	public int fanout;
@@ -198,9 +197,16 @@ public class BTreePage extends RawPage {
 			int tmpidx = indexOf(k);
 			key.add(tmpidx, k);
 			children.add(tmpidx+1, val);
-			List<BKey> newlist1 = new ArrayList<BKey> ();
-			List<BKey> newlist2 = new ArrayList<BKey> ();
-			BKey toParent = key.get(mid-1);
+			
+			if(DBEngine.getInstance().turnOnDebug){
+				for(int i=0;i<key.size()-1;i++){
+					assert key.get(i).compareTo(key.get(i+1)) < 0;
+				}
+			}
+			
+			ArrayList<BKey> newlist1 = new ArrayList<BKey> ();
+			ArrayList<BKey> newlist2 = new ArrayList<BKey> ();
+			BKey toParent = key.get(mid);
 			if(isLeaf){
 				for(int i=0;i<mid;i++)
 					newlist1.add(key.get(i));
@@ -215,13 +221,13 @@ public class BTreePage extends RawPage {
 			key = newlist1;
 			newPage.key = newlist2;
 			
-			List<Integer> newchild1 = new ArrayList<Integer> ();
-			List<Integer> newchild2 = new ArrayList<Integer> ();
+			ArrayList<Integer> newchild1 = new ArrayList<Integer> ();
+			ArrayList<Integer> newchild2 = new ArrayList<Integer> ();
 			if(isLeaf){
-				for(int i=0;i<mid;i++)
+				for(int i=0;i<mid+1;i++)
 					newchild1.add(children.get(i));
-				newchild1.add(-1);
-				for(int i=mid;i<children.size();i++){
+				newchild2.add(-1);
+				for(int i=mid+1;i<children.size();i++){
 					Integer cpid = children.get(i);
 					newchild2.add(cpid);
 					//FIXME leaf node's child is value
@@ -244,6 +250,7 @@ public class BTreePage extends RawPage {
 			}
 			children = newchild1;
 			newPage.children = newchild2;
+			Util.warn("BTree splitting:"+pageID+" to "+newPage.pageID);
 			if(!isRoot){
 				commit();
 				newPage.commit();
@@ -256,8 +263,7 @@ public class BTreePage extends RawPage {
 					}
 				}
 				parent.beginTransaction();
-				parent.children.set(pidx, newPage.pageID);
-				parent.insert(pidx, toParent, pageID);
+				parent.insert(pidx, toParent, newPage.pageID);
 				parent.commit();
 			} else {
 				BTreePage newRoot = btree.bm.getBTreePage(btree, btree.bm.newPage(), keyType, true);
@@ -271,6 +277,9 @@ public class BTreePage extends RawPage {
 				newRoot.children = new ArrayList<Integer>();
 				newRoot.children.add(pageID);
 				newRoot.children.add(newPage.pageID);
+//				DBEngine.getInstance().announceBTreeNewRoot(btree.root.getID(), newRoot.getID());
+				btree.table.announceNewRoot(btree.root.getID(), newRoot.getID());
+				Util.warn("BTree changing root!oldRoot="+btree.root.getID()+", newRoot="+newRoot.getID());
 				btree.root = newRoot;
 				newRoot.dirty = true;
 				newRoot.commit();
@@ -279,14 +288,21 @@ public class BTreePage extends RawPage {
 	}
 
 	public int indexOf(BKey k){
-		int idx = 0;
-//		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
-		while(idx < key.size()){
-			if(key.get(idx) != null && k.compareTo(key.get(idx))<0)
-				return idx;
-			idx++;
-		}
-		return idx;
+//		int idx = 0;
+////		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
+//		while(idx < key.size()){
+//			if(key.get(idx) != null && k.compareTo(key.get(idx))<=0)
+//				return idx;
+//			idx++;
+//		}
+//		return idx;
+		int idx = Collections.binarySearch(key, k, new Comparator<BKey>(){
+			@Override
+			public int compare(BKey arg0, BKey arg1) {
+				return arg0.compareTo(arg1);
+			}
+		});
+		return idx<0?(-1)-idx:idx;
 	}
 	public BCursor lookup(BKey k) throws Throwable{
 		int idx = indexOf(k);
@@ -392,14 +408,14 @@ public class BTreePage extends RawPage {
 		}
 		
 		public BCursor prev() throws Throwable{
-			assert valid();
+//			assert valid();
 			if(idx > 0)
 				return new BCursor(idx-1);
 			else return BTreePage.this.prev().last().prev();	// In case of empty pages...I don't reclaim space here.
 		}
 		
 		public void insert(BKey k, int val) throws Throwable{
-			assert valid();
+			assert valid() || idx == key.size();
 			BTreePage.this.beginTransaction();
 			BTreePage.this.insert(idx, k, val);
 			BTreePage.this.commit();
@@ -414,6 +430,35 @@ public class BTreePage extends RawPage {
 		
 		public boolean valid(){
 			return idx >=0 && idx < key.size();
+		}
+
+		public BCursor adjust() throws Throwable {
+			if(valid())return this;
+			if(idx.equals(key.size()) && BTreePage.this.hasNext()){
+				return BTreePage.this.next().head();
+			}
+			return null;
+		}
+
+		public BCursor adjustLeft() {
+			if(valid())return this;
+			if(idx.equals(key.size()) && idx > 0){
+				return new BCursor(idx-1);
+			}
+			return null;
+		}
+		
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof BCursor){
+				BCursor b = (BCursor) o;
+				return getPageID().equals(b.getPageID()) && idx.equals(b.idx);
+			}
+			return false;
+		}
+
+		private Integer getPageID() {
+			return BTreePage.this.getID();
 		}
 	}
 

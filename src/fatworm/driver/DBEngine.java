@@ -40,6 +40,7 @@ import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import static fatworm.parser.FatwormParser.UPDATE;
 import static fatworm.parser.FatwormParser.USE_DATABASE;
 import fatworm.absyn.Expr;
+import fatworm.driver.Database.Index;
 import fatworm.io.BufferManager;
 import fatworm.io.File;
 import fatworm.logicplan.None;
@@ -56,13 +57,14 @@ public class DBEngine {
 	private static final long maxMemSize = 1000 * 1024;
 	
 	public Map<String, Database> dbList = new HashMap<String, Database>();
+//	public Map<Integer, List<Index>> indexList = new HashMap<Integer, List<Index>>();
 	private static DBEngine instance;
 	private Database db;
 	private String metaFile;
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
-	public final boolean turnOnIndex = false;
-	public final boolean turnOnDebug = false;
+	public final boolean turnOnIndex = true;
+	public final boolean turnOnDebug = true;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
@@ -247,11 +249,42 @@ public class DBEngine {
 		if(me == btreeManager){
 			if(!recordManager.fireMeOne())
 				btreeManager.fireMeOne();
-			Util.warn("[BTreeBufferManager]I'm btree, I just fired one record");
+			Util.warn("[BTreeBufferManager]I'm btree, I just fired one record!");
 		}else{
 			if(!btreeManager.fireMeOne())
 				recordManager.fireMeOne();
-			Util.warn("[RecordBufferManager]I'm record, I just fired one btree");
+			Util.warn("[RecordBufferManager]I'm record, I just fired one btree!");
 		}
 	}
+	
+//	public synchronized void announceBTreeNewRoot(int oldRoot, int newRoot){
+//		List<Index> idxs = indexList.remove(oldRoot);
+//		if(idxs == null)
+//			return;
+//		for(Index idx : idxs){
+//			synchronized(idx){
+//				assert idx.pageID.equals(oldRoot);
+//				idx.pageID = newRoot;
+//			}
+//		}
+//		indexList.put(newRoot, idxs);
+//	}
+//	public synchronized void addIndex(Index index) {
+//		List<Index> idxs = indexList.remove(index.pageID);
+//		if(idxs==null)
+//			idxs = new LinkedList<Index>();
+//		else{
+//			Util.warn("Another index with same pageID detected!me="+index.toString()+", them="+Util.deepToString(idxs));
+//		}
+//		idxs.add(index);
+//		indexList.put(index.pageID, idxs);
+//	}
+//	public synchronized void removeIndex(Index index) {
+//		List<Index> idxs = indexList.remove(index.pageID);
+//		if(idxs==null)
+//			return;
+//		idxs.remove(index);
+//		if(!idxs.isEmpty())
+//			indexList.put(index.pageID, idxs);
+//	}
 }

@@ -67,9 +67,6 @@ public class ThetaJoin extends Plan {
 				Util.warn("meow@ThetaJoin eval: Not merge-join, falling back to normal theta join.");
 				hasMergeJoin = false;
 			}
-			if(hasMergeJoin){
-				Util.warn("here left = " + leftName + ", right=" + rightName);
-			}
 //			if(hasMergeJoin){
 //				left = new Order(left, new ArrayList<Expr>(), lattr, orderType);
 //				left.parent = this;
@@ -88,10 +85,12 @@ public class ThetaJoin extends Plan {
 			while(left.hasNext()){
 				lresults.add(left.next());
 			}
+			final int leftIdx = left.getSchema().findIndex(leftName);
+			final int rightIdx = right.getSchema().findIndex(rightName);
 			Collections.sort(lresults, new Comparator<Record>(){
 				public int compare(Record a, Record b){
-					Field l = a.getCol(leftName);
-					Field r = b.getCol(leftName);
+					Field l = a.getCol(leftIdx);
+					Field r = b.getCol(leftIdx);
 					if(l.applyWithComp(BinaryOp.GREATER, r))
 						return 1;
 					if(l.applyWithComp(BinaryOp.LESS, r))
@@ -105,8 +104,8 @@ public class ThetaJoin extends Plan {
 			}
 			Collections.sort(rresults, new Comparator<Record>(){
 				public int compare(Record a, Record b){
-					Field l = a.getCol(rightName);
-					Field r = b.getCol(rightName);
+					Field l = a.getCol(rightIdx);
+					Field r = b.getCol(rightIdx);
 					if(l.applyWithComp(BinaryOp.GREATER, r))
 						return 1;
 					if(l.applyWithComp(BinaryOp.LESS, r))
@@ -119,11 +118,11 @@ public class ThetaJoin extends Plan {
 			Record curl=lresults.pollFirst();
 			Record curr=rresults.pollFirst();
 			List<Record> lastRight = new ArrayList<Record>();
-			Field lval = curl.getCol(leftName);
-			Field rval = curr.getCol(rightName);
+			Field lval = curl.getCol(leftIdx);
+			Field rval = curr.getCol(rightIdx);
 			Field lastr = null;
 			while(true){
-				lval = curl.getCol(leftName);
+				lval = curl.getCol(leftIdx);
 				if(lastr!=null && lval.applyWithComp(BinaryOp.EQ, lastr)){
 					for(Record r : lastRight){
 						Record tmp = productRecord(curl, r);
@@ -134,7 +133,7 @@ public class ThetaJoin extends Plan {
 					lastRight = new ArrayList<Record>();
 					while(lval.applyWithComp(BinaryOp.GREATER, rval) && !rresults.isEmpty()){
 						curr = rresults.pollFirst();
-						rval = curr.getCol(rightName);
+						rval = curr.getCol(rightIdx);
 					}
 					while(lval.applyWithComp(BinaryOp.EQ, rval)){
 						Record tmp = productRecord(curl, curr);
@@ -144,7 +143,7 @@ public class ThetaJoin extends Plan {
 						if(rresults.isEmpty())
 							break;
 						curr = rresults.pollFirst();
-						rval = curr.getCol(rightName);
+						rval = curr.getCol(rightIdx);
 					}
 					lastr = lval;
 				}
@@ -153,7 +152,7 @@ public class ThetaJoin extends Plan {
 				curl = lresults.pollFirst();
 			}
 		}
-		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
+//		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
 	}
 
 	private BinaryExpr findMergeJoin() {

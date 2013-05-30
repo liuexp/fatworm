@@ -25,11 +25,16 @@ public class Schema implements Serializable {
 	public String tableName;
 	
 	public List<String> columnName = new ArrayList<String> ();
+	private List<String> canonicalName1 = null;
+	private List<String> canonicalName2 = null;
 	
 	public Column primaryKey;
 	public Map<String, Column> columnDef = new HashMap<String, Column>();
+
+	public boolean isJoin = false;
 	
 	public int findIndex(String x) {
+		if(x==null)return -1;
 		for(int i=0;i<columnName.size();i++){
 			String y = columnName.get(i);
 			if(x.equalsIgnoreCase(y) || x.equalsIgnoreCase(this.tableName + "." + y))
@@ -193,4 +198,26 @@ public class Schema implements Serializable {
 	public Column getColumn(int i) {
 		return getColumn(columnName.get(i));
 	}
+
+	// TODO what about a toLowerCase?
+	public List<String> getCanonicalName1() {
+		if(canonicalName1 == null){
+			canonicalName1 = new ArrayList<String>();
+			for(String x : columnName){
+				canonicalName1.add(Util.getAttr(x));
+			}
+		}
+		return canonicalName1;
+	}
+
+	public List<String> getCanonicalName2() {
+		if(canonicalName2 == null){
+			canonicalName2 = new ArrayList<String>();
+			for(String x : columnName){
+				canonicalName2.add(x.contains(".")?x:(tableName + "." + Util.getAttr(x)));
+			}
+		}
+		return canonicalName2;
+	}
+
 }

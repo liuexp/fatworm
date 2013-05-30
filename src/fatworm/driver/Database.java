@@ -40,27 +40,30 @@ public class Database implements Serializable {
 			Table table) {
 		Index index = new Index(idx, table, table.schema.getColumn(col), unique);
 		try {
-			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.column.type);
-			index.pageID = b.root.getID();
+			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.column.type, index.table);
 			for(Cursor c = table.open();c.hasThis();c.next()){
 				Record r = c.fetchRecord();
 				createIndexForRecord(index, b, c, r);
 			}
+			index.pageID = b.root.getID();
 		} catch (Throwable e) {
 //			Util.error(e.getMessage());
 			e.printStackTrace();
 		}
 		indexList.put(idx, index);
 		table.tableIndex.add(index);
+//		DBEngine.getInstance().addIndex(index);
 	}
 	public static void createIndexForRecord(Index index, BTree b, Cursor c, Record r)
 			throws Throwable {
-		BKey key = b.newBKey(r.getCol(index.column.name));
+		BKey key = b.newBKey(r.getCol(index.columnIdx));
 		BCursor bc = b.root.lookup(key);
 		if(index.unique){
+			if(bc.valid() && bc.getKey().equals(key))
+				Util.warn("duplicated keys in unique index!!!");
 			bc.insert(key, c.getIdx());
 		}else{
-			if(bc.getKey().equals(key)){
+			if(bc.valid() && bc.getKey().equals(key)){
 				index.buckets.get(bc.getValue()).add(c.getIdx());
 			}else{
 				List<Integer> tmp = new ArrayList<Integer>();
@@ -71,13 +74,14 @@ public class Database implements Serializable {
 		}
 	}
 	public void dropIndex(String idx) {
-		Index index = indexList.get(idx);
+		Index index = indexList.remove(idx);
 		try {
-			new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type).root.delete();
+			new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type, index.table).root.delete();
 		} catch (Throwable e) {
 			Util.error(e.getMessage());
 		}
 		index.table.tableIndex.remove(index);
+//		DBEngine.getInstance().removeIndex(index);
 	}
 	
 	public static class Index implements Serializable {
@@ -88,18 +92,20 @@ public class Database implements Serializable {
 		public String indexName;
 		public Table table;
 		public Column column;
+		public int columnIdx;
 		public boolean unique;
 		public Integer pageID;
 		public List<List<Integer>> buckets = new ArrayList<List<Integer>>();
 		public Index(String a, Table b, Column c, boolean u){
 			this(a,b,c);
-			unique = true;
+			unique = u;
 		}
 		public Index(String a, Table b, Column c){
 			indexName = a;
 			table = b;
 			column = c;
 			unique = false;
+			columnIdx = b.schema.findIndex(c.name);
 		}
 		
 		@Override
@@ -109,6 +115,16 @@ public class Database implements Serializable {
 				return z.indexName.equals(indexName) && z.table.equals(table);
 			}
 			return false;
+		}
+		
+		@Override
+		public int hashCode(){
+			return pageID ^ indexName.hashCode();
+		}
+		
+		@Override
+		public String toString(){
+			return indexName + " on " +table.toString()+" on " + column.toString() +" with pageID="+pageID;
 		}
 	}
 }

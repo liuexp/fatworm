@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 
 import fatworm.page.BTreePage;
 import fatworm.page.RawPage;
+import fatworm.driver.Table;
 import fatworm.field.BOOL;
 import fatworm.field.CHAR;
 import fatworm.field.DATE;
@@ -32,16 +33,19 @@ public class BTree {
 	public int type; //key type
 	public BTreePage root;
 	public BufferManager bm;
+	public Table table;
 
-	public BTree(BufferManager bm, int type) throws Throwable {
+	public BTree(BufferManager bm, int type, Table table) throws Throwable {
 		this.bm = bm;
 		this.type = type;
 		root = bm.getBTreePage(this, bm.newPage(), type, true);
+		this.table = table;
 	}
-	public BTree(BufferManager bm, Integer pageID, int type) throws Throwable {
+	public BTree(BufferManager bm, Integer pageID, int type, Table table) throws Throwable {
 		this.bm = bm;
 		this.type = type;
 		root = bm.getBTreePage(this, pageID, type, false);
+		this.table = table;
 	}
 	
 	private static class IntKey extends BKey{
@@ -74,6 +78,11 @@ public class BTree {
 			if(o instanceof BKey)
 				return 0 == compareTo((BKey)o);
 			else return false;
+		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
 		}
 	}
 	
@@ -109,6 +118,11 @@ public class BTree {
 			if(o instanceof BKey)
 				return 0 == compareTo((BKey)o);
 			else return false;
+		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
 		}
 	}
 	
@@ -192,6 +206,11 @@ public class BTree {
 				return 0 == compareTo((BKey)o);
 			else return false;
 		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
+		}
 	}
 	
 	private static class TimestampKey extends BKey{
@@ -233,6 +252,11 @@ public class BTree {
 				return 0 == compareTo((BKey)o);
 			else return false;
 		}
+		
+		@Override
+		public String toString(){
+			return "TIMESTAMP=" + k;
+		}
 	}
 	
 	private class StringKey extends BKey{
@@ -252,7 +276,7 @@ public class BTree {
 		private void fromPage() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
 			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 4;
+			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
 				curOffset += 4 + rp.getInt(curOffset);
 			}
@@ -311,6 +335,11 @@ public class BTree {
 			if(o instanceof BKey)
 				return 0 == compareTo((BKey)o);
 			else return false;
+		}
+		
+		@Override
+		public String toString(){
+			return "'" + k + "'";
 		}
 	}
 
