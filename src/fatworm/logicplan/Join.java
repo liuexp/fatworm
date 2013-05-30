@@ -55,6 +55,7 @@ public class Join extends Plan {
 				this.schema.columnDef.put(colName, right.getSchema().columnDef.get(colName));
 			}
 		}
+		this.schema.isJoin = true;
 	}
 
 	@Override

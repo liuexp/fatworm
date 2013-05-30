@@ -11,6 +11,10 @@ import fatworm.field.*;
 public class Env {
 
 	public Map<String, Field> res;
+	private static int tempCnt = 0;
+	public synchronized static int getNewTemp(){
+		return tempCnt++;
+	}
 	public Env() {
 		res = new HashMap<String, Field> ();
 	}

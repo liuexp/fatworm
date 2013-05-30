@@ -79,6 +79,8 @@ public class Main {
 //		List<Byte> z = Arrays.asList(tmpb);
 //		Collections.reverse(z);
 //		System.out.println(tmpb[0]);
+//		BinaryExpr ee = new BinaryExpr(new Id("a.ch"), BinaryOp.PLUS, new BinaryExpr(new Id("b.ch"), BinaryOp.PLUS, new Id("c.ch")));
+//		System.out.println(ee.toString());
 		System.out.print(">");
 		db.open("/tmp/meow");
 		while (in.hasNextLine()) {

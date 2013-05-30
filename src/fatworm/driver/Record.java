@@ -43,21 +43,21 @@ public class Record implements Serializable  {
 		cols.add(x);
 	}
 	public void addColFromExpr(Env env, List<Expr> func) {
-		if(func.size()==0||Util.trim(func.get(0).toString()).equals("*")){
-			for(int i=0;i<schema.columnName.size();i++){
-				String col = schema.columnName.get(i);
-				Field f = env.get(col);
-				if(f==null)f = env.get(Util.getAttr(col));
-				cols.add(f);
-			}
-		}else{
+//		if(func.size()==0||Util.trim(func.get(0).toString()).equals("*")){
+//			for(int i=0;i<schema.columnName.size();i++){
+//				String col = schema.columnName.get(i);
+//				Field f = env.get(col);
+//				if(f==null)f = env.get(Util.getAttr(col));
+//				cols.add(f);
+//			}
+//		}else{
 			for(int i=0;i<func.size();i++){
 				Expr e = func.get(i);
 				Field f = env.get(e.toString());
 				if(f == null||f instanceof FuncCall.ContField) f= e.eval(env);
 				cols.add(f);
 			}
-		}
+//		}
 	}
 	@Override
 	public boolean equals(Object o) {

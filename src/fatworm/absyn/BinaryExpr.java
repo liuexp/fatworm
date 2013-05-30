@@ -21,7 +21,7 @@ public class BinaryExpr extends Expr {
 	
 	public Expr l, r;
 	public BinaryOp op;
-	
+	String myName;
     
 	public BinaryExpr(Expr lhs, BinaryOp op, Expr rhs) {
 		super();
@@ -56,12 +56,28 @@ public class BinaryExpr extends Expr {
 	
 	@Override
 	public String toString(){
-		String ls = l.toString();
-		if(l.depth>1)ls = "(" + ls + ")";
-		String rs = r.toString();
-		if(r.depth>1)rs = "(" + rs + ")";
-		
-		return ls + op.toString() + rs;
+		if(myName!=null)return myName;
+//		StringBuffer buf = new StringBuffer(20);
+//		String ls = (l instanceof Id)? Util.getAttr(((Id)l).name) : l.toString();
+//		if(l.depth>1){
+//			buf.append("(");
+//			buf.append(ls);
+//			buf.append(")");
+//		}else{
+//			buf.append(ls);
+//		}
+//		buf.append(op.toString());
+//		String rs = (r instanceof Id)? Util.getAttr(((Id)r).name) : r.toString();
+//		if(r.depth>1){
+//			buf.append("(");
+//			buf.append(rs);
+//			buf.append(")");
+//		}else{
+//			buf.append(rs);
+//		}
+//		myName = buf.toString();
+		myName = ""+Env.getNewTemp();
+		return myName;
 	}
 	
 	@Override
