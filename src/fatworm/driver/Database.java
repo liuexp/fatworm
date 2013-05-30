@@ -40,7 +40,7 @@ public class Database implements Serializable {
 			Table table) {
 		Index index = new Index(idx, table, table.schema.getColumn(col), unique);
 		try {
-			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.column.type);
+			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.column.type, index.table);
 			for(Cursor c = table.open();c.hasThis();c.next()){
 				Record r = c.fetchRecord();
 				createIndexForRecord(index, b, c, r);
@@ -52,7 +52,7 @@ public class Database implements Serializable {
 		}
 		indexList.put(idx, index);
 		table.tableIndex.add(index);
-		DBEngine.getInstance().addIndex(index);
+//		DBEngine.getInstance().addIndex(index);
 	}
 	public static void createIndexForRecord(Index index, BTree b, Cursor c, Record r)
 			throws Throwable {
@@ -76,12 +76,12 @@ public class Database implements Serializable {
 	public void dropIndex(String idx) {
 		Index index = indexList.remove(idx);
 		try {
-			new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type).root.delete();
+			new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type, index.table).root.delete();
 		} catch (Throwable e) {
 			Util.error(e.getMessage());
 		}
 		index.table.tableIndex.remove(index);
-		DBEngine.getInstance().removeIndex(index);
+//		DBEngine.getInstance().removeIndex(index);
 	}
 	
 	public static class Index implements Serializable {

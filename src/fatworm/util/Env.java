@@ -73,6 +73,11 @@ public class Env {
 			put(name2.get(i), x.cols.get(i));
 		}
 	}
+	public void appendFromRecord(List<String> name, List<Integer> offset, List<Field> cols){
+		for(int i=0;i<name.size();i++){
+			put(name.get(i), cols.get(offset.get(i)));
+		}
+	}
 	
 	public void appendFromRecord(List<String> name1, List<String> name2, Record x){
 		if(x == null)return;

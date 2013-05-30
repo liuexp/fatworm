@@ -36,7 +36,7 @@ public class IOTable extends Table {
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 //			if(schema.primaryKey.type != java.sql.Types.VARCHAR && schema.primaryKey.type != java.sql.Types.CHAR)
-//				DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
+				DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
@@ -46,11 +46,16 @@ public class IOTable extends Table {
 	
 	public IndexCursor scope(Index index, Field l, Field r, boolean isMaxEQ){
 		try {
-			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
-			BCursor head = l==null||l.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(l));
+			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type, index.table);
+			BCursor head = l==null||l.type==java.sql.Types.NULL?
+					null:
+						b.root.lookup(b.newBKey(l));
 			if(head!=null)
 				head = head.adjust();
-			BCursor last = r==null||r.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(r));
+			
+			BCursor last = r==null||r.type==java.sql.Types.NULL?
+					null:
+						b.root.lookup(b.newBKey(r));
 			if(last!=null){
 				last = isMaxEQ?last.adjust():last.adjustLeft();
 				if(isMaxEQ && last.getKey().compareTo(b.newBKey(r))>0)
@@ -125,7 +130,7 @@ public class IOTable extends Table {
 	private void createIndexForRecord(Record r, SimpleCursor c) {
 		for(Index idx : tableIndex){
 			try {
-				BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
+				BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type, this);
 				Database.createIndexForRecord(idx, b, c, r);
 			} catch (Throwable e) {
 //				Util.error(e.getMessage());
@@ -281,12 +286,12 @@ public class IOTable extends Table {
 		int idx;
 		
 		public IndexCursor(Index index) throws Throwable{
-			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
+			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type, index.table);
 			this.index = index;
 			reset();
 		}
 		public IndexCursor(Index index, BCursor head1, BCursor last1) throws Throwable{
-			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
+			this.btree = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type, index.table);
 			this.index = index;
 			head = head1;
 			last = last1;

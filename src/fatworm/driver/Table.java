@@ -120,6 +120,13 @@ public abstract class Table implements Serializable {
 	
 	public abstract void deleteAll();
 	public abstract Cursor open();
+
+	public void announceNewRoot(Integer id, Integer id2) {
+		for(Index idx:tableIndex){
+			if(idx.pageID.equals(id))
+				idx.pageID = id2;
+		}
+	}
 	
 
 }

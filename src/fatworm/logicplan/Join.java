@@ -27,7 +27,8 @@ public class Join extends Plan {
 		curLeft = null;
 		myAggr.addAll(this.left.getAggr());
 		myAggr.addAll(this.right.getAggr());
-		this.schema = new Schema(left.getSchema().tableName + " * " + right.getSchema().tableName);
+		this.schema = new Schema("table"+Env.getNewTemp());
+//		this.schema = new Schema(left.getSchema().tableName + " * " + right.getSchema().tableName);
 //		this.schema.columnName.addAll(left.getSchema().columnName);
 //		this.schema.columnName.addAll(right.getSchema().columnName);
 //		this.schema.columnDef.putAll(left.getSchema().columnDef);

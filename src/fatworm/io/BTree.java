@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 
 import fatworm.page.BTreePage;
 import fatworm.page.RawPage;
+import fatworm.driver.Table;
 import fatworm.field.BOOL;
 import fatworm.field.CHAR;
 import fatworm.field.DATE;
@@ -32,16 +33,19 @@ public class BTree {
 	public int type; //key type
 	public BTreePage root;
 	public BufferManager bm;
+	public Table table;
 
-	public BTree(BufferManager bm, int type) throws Throwable {
+	public BTree(BufferManager bm, int type, Table table) throws Throwable {
 		this.bm = bm;
 		this.type = type;
 		root = bm.getBTreePage(this, bm.newPage(), type, true);
+		this.table = table;
 	}
-	public BTree(BufferManager bm, Integer pageID, int type) throws Throwable {
+	public BTree(BufferManager bm, Integer pageID, int type, Table table) throws Throwable {
 		this.bm = bm;
 		this.type = type;
 		root = bm.getBTreePage(this, pageID, type, false);
+		this.table = table;
 	}
 	
 	private static class IntKey extends BKey{
