@@ -1,5 +1,6 @@
 package fatworm.logicplan;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class Select extends Plan {
 	public Record current;
 	public boolean hasPushed;
 	public boolean markedSkip = false;
+	
+	List<String> nameList;
+	List<Integer> offsetList;
+	
 	public Select(Plan src, Expr pred) {
 		super();
 		this.src = src;
@@ -29,6 +34,7 @@ public class Select extends Plan {
 		src.parent = this;
 		myAggr.addAll(this.src.getAggr());
 		hasPushed = false;
+		
 	}
 	
 	@Override
@@ -42,6 +48,13 @@ public class Select extends Plan {
 		current = null;
 		src.eval(env);
 		this.env = env;
+//		nameList = new ArrayList<String>();
+//		offsetList = new ArrayList<Integer>();
+//		for(String x:pred.getRequestedColumns()){
+//			nameList.add(x);
+//			offsetList.add(getSchema().findStrictIndex(x));
+//		}
+//		Util.warn("nameList = "+Util.deepToString(nameList)+", offsetList = "+Util.deepToString(offsetList));
 		fetchNext();
 	}
 
@@ -55,6 +68,8 @@ public class Select extends Plan {
 			Record r = src.next();
 			Env localEnv = env.clone();
 			localEnv.appendFromRecord(r);
+			// TODO I dont know why this doesn't work
+//			localEnv.appendFromRecord(nameList, offsetList, r.cols);
 			if(pred.evalPred(localEnv)){
 				ret = r;
 				break;

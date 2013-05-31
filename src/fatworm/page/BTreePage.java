@@ -143,14 +143,42 @@ public class BTreePage extends RawPage {
 		case java.sql.Types.BOOLEAN:
 		case java.sql.Types.INTEGER:
 		case java.sql.Types.FLOAT:
-			return 510;
+			switch((int)File.btreePageSize){
+			case 1024:
+				return 126;
+			case 2048:
+				return 254;
+			case 4096:
+				return 510;
+			case 8192:
+				return 1022;
+			}
 		case java.sql.Types.CHAR:
 		case java.sql.Types.VARCHAR:
 		case java.sql.Types.DECIMAL:
-			return 510;		// for now we take its key value as encoded INT, may change to 340 if necessary
+			// for now we take its key value as encoded INT, may change to 340 if necessary
+			switch((int)File.btreePageSize){
+			case 1024:
+				return 126;
+			case 2048:
+				return 254;
+			case 4096:
+				return 510;
+			case 8192:
+				return 1022;
+			}
 		case java.sql.Types.DATE:
 		case java.sql.Types.TIMESTAMP:
-			return 340;
+			switch((int)File.btreePageSize){
+			case 1024:
+				return 84;
+			case 2048:
+				return 168;
+			case 4096:
+				return 340;
+			case 8192:
+				return 680;
+			}
 			default:
 				Util.error("meow@BTreePage");
 		}

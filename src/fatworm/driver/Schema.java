@@ -151,7 +151,7 @@ public class Schema implements Serializable {
 //		tableName = "ProjectFrom("+src.tableName+")";
 		tableName = src.tableName;
 		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
-			//System.out.println("meow");
+//			System.err.println("* in exprList!!!");
 			columnName.addAll(src.columnName);
 			columnDef.putAll(src.columnDef);
 		}else {

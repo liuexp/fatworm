@@ -32,6 +32,10 @@ public class Group extends Plan {
 	boolean hasAlias;
 	public Schema schema;
 	
+	List<String> nameList;
+	List<Integer> offsetList;
+	Set<String> neededAttr;
+	
 	public Group(Plan src, List<Expr> func, String by, Expr having, List<String> alias, boolean expand, boolean hasAlias) {
 		super();
 		this.src = src;
@@ -42,7 +46,7 @@ public class Group extends Plan {
 		this.hasAlias = hasAlias;
 		ptr = 0;
 		this.alias = alias;
-		Set<String> neededAttr = new HashSet<String> ();
+		neededAttr = new HashSet<String> ();
 		// note that aggregate functions from source must be eval on source, not here.
 		for(int i=0;i<func.size();i++){
 			myAggr.addAll(func.get(i).getAggr());
@@ -101,13 +105,19 @@ public class Group extends Plan {
 		
 		src.eval(env);
 		LinkedList<FuncCall> evalAggr = new LinkedList<FuncCall>();
-//		Set<String> aggrNeed = new HashSet<String>();
+		Set<String> aggrNeed = new HashSet<String>();
 		for(FuncCall a : myAggr){
 			if(a.canEvalOn(schema)){
 				env.remove(a.toString());
 				evalAggr.add(a);
-//				aggrNeed.add(a.col.toLowerCase());
+				aggrNeed.add(a.col.toLowerCase());
 			}
+		}
+		nameList = new ArrayList<String>();
+		offsetList = new ArrayList<Integer>();
+		for(String x:aggrNeed){
+			nameList.add(x);
+			offsetList.add(src.getSchema().findStrictIndex(x));
 		}
 		
 		LinkedList<Record> tmpTable = new LinkedList<Record>();
@@ -118,7 +128,8 @@ public class Group extends Plan {
 			Env tmpEnv = aggrHelper.get(f);
 			if(tmpEnv == null)
 				tmpEnv = env.clone();
-			tmpEnv.appendFromRecord(r);
+//			tmpEnv.appendFromRecord(r);
+			tmpEnv.appendFromRecord(nameList, offsetList, r.cols);
 			for(FuncCall a : evalAggr){
 				a.evalCont(tmpEnv);
 			}
@@ -127,6 +138,12 @@ public class Group extends Plan {
 		}
 //		src.reset();
 
+		nameList = new ArrayList<String>();
+		offsetList = new ArrayList<Integer>();
+		for(String x:neededAttr){
+			nameList.add(x);
+			offsetList.add(src.getSchema().findStrictIndex(x));
+		}
 		// Now we can fill all FuncCall with ContField's final results by calling eval() as we fillCol().
 		while(!tmpTable.isEmpty()){
 			Record r = tmpTable.pollFirst();
@@ -137,6 +154,7 @@ public class Group extends Plan {
 				Env tmpEnv = aggrHelper.get(f);
 //				env.appendFrom(tmpEnv);
 //				env.appendFromRecord(r);
+				tmpEnv.appendFromRecord(nameList, offsetList, r.cols);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
 				pr.addColFromExpr(tmpEnv, func);
@@ -161,7 +179,7 @@ public class Group extends Plan {
 				Record r = groupHelper.get(f);
 				tmpEnv = aggrHelper.get(f);
 //				env.appendFrom(tmpEnv);
-				tmpEnv.appendFromRecord(r);
+//				tmpEnv.appendFromRecord(r);
 				tmpEnv.appendAlias(schema.tableName, func, alias);
 				if(having==null||having.evalPred(tmpEnv)){
 					results.add(r);
