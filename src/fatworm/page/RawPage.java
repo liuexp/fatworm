@@ -53,9 +53,9 @@ public class RawPage implements Page {
 		}
 	}
 
-	protected Integer pageID;
-	public Integer nextPageID;
-	public Integer prevPageID;
+	protected int pageID;
+	public int nextPageID;
+	public int prevPageID;
 	public boolean dirty = false;
 	protected File dataFile;
 	protected Long lastTime;
@@ -241,7 +241,7 @@ public class RawPage implements Page {
 	@Override
 	public boolean equals(Object o){
 		if(o instanceof RawPage)
-			return pageID.equals(((RawPage)o).pageID);
+			return pageID==((RawPage)o).pageID;
 		return false;
 	}
 

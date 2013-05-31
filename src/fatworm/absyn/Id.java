@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.driver.Column;
+import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.field.Field;
 import fatworm.field.NULL;
@@ -14,7 +15,7 @@ import fatworm.util.Util;
 public class Id extends Expr {
 	
 	public String name;
-
+	public int idx = -1;
 	public Id(String sym) {
 		super();
 		this.name = sym;
@@ -35,10 +36,11 @@ public class Id extends Expr {
 	public Field eval(Env env) {
 		if(name.equalsIgnoreCase("null"))return NULL.getInstance();
 		Field ret=env.get(name);
-		if(ret == null)
+		if(ret == null){
 			ret = env.get(Util.getAttr(name));
-		if(ret == null)
-			Util.warn("Id not found:"+name+","+env.toString());
+			if(ret == null)
+				Util.warn("Id not found:"+name+","+env.toString());
+		}
 		return ret;
 	}
 
@@ -76,5 +78,13 @@ public class Id extends Expr {
 	@Override
 	public Expr clone() {
 		return new Id(name);
+	}
+
+	public void fillIndex(Schema schema) {
+		idx = schema.findStrictIndex(name);
+	}
+
+	public Field evalByIndex(Record r) {
+		return r.cols.get(idx);
 	}
 }
