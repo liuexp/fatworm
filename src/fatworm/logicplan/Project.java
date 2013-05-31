@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
-import fatworm.absyn.FuncCall;
 import fatworm.absyn.LinearCombinationList;
 import fatworm.driver.Column;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
-import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
 

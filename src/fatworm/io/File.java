@@ -5,8 +5,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-import fatworm.page.Page;
-
 public class File {
 	public static final long recordPageMult = 8;
 	public static final long btreePageMult = 4;

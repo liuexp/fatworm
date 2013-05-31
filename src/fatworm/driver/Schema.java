@@ -148,10 +148,8 @@ public class Schema implements Serializable {
 	}
 
 	public void fromList(List<Expr> expr, Schema src) {
-//		tableName = "ProjectFrom("+src.tableName+")";
 		tableName = src.tableName;
 		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
-//			System.err.println("* in exprList!!!");
 			columnName.addAll(src.columnName);
 			columnDef.putAll(src.columnDef);
 		}else {
@@ -173,7 +171,6 @@ public class Schema implements Serializable {
 	
 	@Override
 	public boolean equals(Object o){
-//		return toString().equalsIgnoreCase(o.toString());
 		if(o instanceof Schema){
 			Schema z = (Schema ) o;
 			return z.tableName.equalsIgnoreCase(this.tableName);

@@ -104,6 +104,11 @@ public class FuncCall extends Expr {
 	// in particular to tackle cases like SELECT AVG( a + ab ) FROM  `meow` GROUP BY a
 	public abstract static class ContField extends Field{
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6030892886920992221L;
+
 		public ContField(){
 		}
 		@Override
@@ -142,6 +147,10 @@ public class FuncCall extends Expr {
 	
 	public static class AvgContField extends ContField{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2476740024589020129L;
 		BigDecimal res;
 		int cnt;
 		boolean isNull;
@@ -171,6 +180,10 @@ public class FuncCall extends Expr {
 	}
 	public static class CountContField extends ContField{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8135247904034503486L;
 		int cnt;
 		
 		public CountContField(){
@@ -192,6 +205,10 @@ public class FuncCall extends Expr {
 	}
 	public static class MaxContField extends ContField{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7003864920493570359L;
 		Field res;
 		boolean isNull;
 		
@@ -222,6 +239,10 @@ public class FuncCall extends Expr {
 	}
 	public static class MinContField extends ContField{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3681209761738752462L;
 		Field res;
 		boolean isNull;
 		
@@ -252,6 +273,10 @@ public class FuncCall extends Expr {
 	}
 	public static class SumContField extends ContField{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3363863800491382294L;
 		BigDecimal res;
 		boolean isNull;
 		

@@ -15,8 +15,6 @@ public class Join extends Plan {
 	public Plan left,right;
 	public Record curLeft;
 	public Schema schema;
-//	public List<Record> lresult = new LinkedList<Record> ();
-//	public List<Record> rresult = new LinkedList<Record> ();
 	public boolean init = false;
 	public Join(Plan left, Plan right) {
 		super();
@@ -28,11 +26,6 @@ public class Join extends Plan {
 		myAggr.addAll(this.left.getAggr());
 		myAggr.addAll(this.right.getAggr());
 		this.schema = new Schema("table"+Env.getNewTemp());
-//		this.schema = new Schema(left.getSchema().tableName + " * " + right.getSchema().tableName);
-//		this.schema.columnName.addAll(left.getSchema().columnName);
-//		this.schema.columnName.addAll(right.getSchema().columnName);
-//		this.schema.columnDef.putAll(left.getSchema().columnDef);
-//		this.schema.columnDef.putAll(right.getSchema().columnDef);
 		// FIXME watch it for column name => lowerCase
 		Set<String> commonName = new HashSet<String> (left.getSchema().columnName);
 		commonName.retainAll(right.getSchema().columnName);

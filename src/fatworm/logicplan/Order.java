@@ -71,15 +71,12 @@ public class Order extends Plan {
 		src.eval(env);
 		while(src.hasNext()){
 			Record r = src.next();
-			//System.out.println(r.toString());
 			env.appendFromRecord(r);
 			Record pr = new Record(schema);
 			pr.addColFromExpr(env, expr);
 			for(int i=0;i<expandedCols.size();i++){
 				pr.addCol(env.get(expandedCols.get(i)));
 			}
-			//System.out.println(pr.toString());
-//			Util.warn("Order got 1 result " + pr.toString());
 			results.add(pr);
 		}
 //		Util.warn("Start mem-ordering.");

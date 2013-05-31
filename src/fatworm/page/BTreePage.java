@@ -4,13 +4,11 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import fatworm.driver.DBEngine;
 import fatworm.io.BKey;
 import fatworm.io.BTree;
 import fatworm.io.File;
-import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Util;
 
 // 4096 = 4 * 5 + 4 * 510 + 4 * 509 (INT key)
