@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 
 public class NULL extends Field {
 
@@ -29,5 +30,10 @@ public class NULL extends Field {
 	public synchronized static Field getInstance(){
 		if(instance == null)instance = new NULL();
 		return instance;
+	}
+
+	@Override
+	public void pushByte(ByteBuilder b) {
+		// TODO or do nothing
 	}
 }

@@ -3,6 +3,7 @@ package fatworm.field;
 import java.sql.Timestamp;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class TIMESTAMP extends Field {
@@ -42,5 +43,9 @@ public class TIMESTAMP extends Field {
 		}
 		error2("TIMESTAMP.compWith missing type");
 		return false;
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putLong(v.getTime());
 	}
 }

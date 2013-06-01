@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class VARCHAR extends Field {
@@ -25,6 +26,10 @@ public class VARCHAR extends Field {
 	@Override
 	public int hashCode() {
 		return v.hashCode();
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putString(v);
 	}
 
 }

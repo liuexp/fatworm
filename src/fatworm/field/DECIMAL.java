@@ -3,6 +3,7 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class DECIMAL extends Field{
@@ -45,5 +46,10 @@ public class DECIMAL extends Field{
 	@Override
 	public BigDecimal toDecimal(){
 		return v;
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		//FIXME watch this, how will it look like when reconstructing from string?
+		b.putString(v.toPlainString());
 	}
 }

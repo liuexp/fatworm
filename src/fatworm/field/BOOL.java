@@ -3,6 +3,7 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class BOOL extends Field {
@@ -39,5 +40,9 @@ public class BOOL extends Field {
 	@Override
 	public BigDecimal toDecimal() {
 		return new BigDecimal(v?1:0).setScale(10);
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putBool(v);
 	}
 }

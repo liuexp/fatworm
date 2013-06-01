@@ -1,9 +1,11 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.FuncCall;
+import fatworm.util.ByteBuilder;
 
 public abstract class Field {
 
@@ -147,6 +149,13 @@ public abstract class Field {
 		else
 			return NULL.getInstance();
 	}
+	
+	public static Field fromBytes(int type, byte[] y){
+		ByteBuffer buf = java.nio.ByteBuffer.wrap(y);
+		return fromString(type, buf.toString());
+	}
+	
+	public abstract void pushByte(ByteBuilder b);
 	/*@Override
 	public boolean equals(Object x){
 		if(!(o instanceof Field))

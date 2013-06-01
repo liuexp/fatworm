@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class DATE extends Field {
@@ -39,5 +40,9 @@ public class DATE extends Field {
 	@Override
 	public String toString() {
 		return "'" + v.toString() + "'";
+	}
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putLong(v.getTime());
 	}
 }

@@ -3,6 +3,7 @@ package fatworm.field;
 import java.math.BigDecimal;
 
 import fatworm.absyn.BinaryOp;
+import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class FLOAT extends Field {
@@ -54,6 +55,11 @@ public class FLOAT extends Field {
 		}
 		error2("FLOAT.compWith missing type");
 		return false;
+	}
+
+	@Override
+	public void pushByte(ByteBuilder b) {
+		b.putDouble(v);
 	}
 
 }
