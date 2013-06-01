@@ -60,7 +60,7 @@ public class DBEngine {
 	private String metaFile;
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
-	public boolean turnOnIndex = true;
+	public boolean turnOnIndex = false;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
