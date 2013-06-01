@@ -295,12 +295,13 @@ public class BTreePage extends RawPage {
 //			idx++;
 //		}
 //		return idx;
-		return Collections.binarySearch(key, k, new Comparator<BKey>(){
+		int idx = Collections.binarySearch(key, k, new Comparator<BKey>(){
 			@Override
 			public int compare(BKey arg0, BKey arg1) {
 				return arg0.compareTo(arg1);
 			}
 		});
+		return idx<0?(-1)-idx:idx;
 	}
 	public BCursor lookup(BKey k) throws Throwable{
 		int idx = indexOf(k);
