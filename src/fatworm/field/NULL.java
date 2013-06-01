@@ -33,7 +33,7 @@ public class NULL extends Field {
 	}
 
 	@Override
-	public void pushByte(ByteBuilder b) {
+	public void pushByte(ByteBuilder b, int A, int B) {
 		// TODO or do nothing
 	}
 }

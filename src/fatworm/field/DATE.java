@@ -46,7 +46,7 @@ public class DATE extends Field {
 		return "'" + v.toString() + "'";
 	}
 	@Override
-	public void pushByte(ByteBuilder b) {
+	public void pushByte(ByteBuilder b, int A, int B) {
 		b.putLong(v.getTime());
 	}
 }

@@ -190,7 +190,7 @@ public abstract class Field {
 		}
 	}
 	
-	public abstract void pushByte(ByteBuilder b);
+	public abstract void pushByte(ByteBuilder b, int A, int B);
 	/*@Override
 	public boolean equals(Object x){
 		if(!(o instanceof Field))

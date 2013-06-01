@@ -1,9 +1,12 @@
 package fatworm.absyn;
 
+import java.util.List;
+
 import fatworm.field.BOOL;
 import fatworm.field.Field;
 import fatworm.logicplan.Plan;
 import fatworm.util.Env;
+import fatworm.util.Util;
 
 public class InCall extends Expr {
 
@@ -38,6 +41,13 @@ public class InCall extends Expr {
 	@Override
 	public String toString() {
 		return expr.toString() + (not? " not ":" ") + "in " + src.toString();
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		List<String> z = src.getRequestedColumns();
+		Util.addAllCol(z, expr.getRequestedColumns());
+		return z;
 	}
 
 }

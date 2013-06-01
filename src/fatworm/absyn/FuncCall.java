@@ -1,6 +1,7 @@
 package fatworm.absyn;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import fatworm.driver.Schema;
 import fatworm.field.DECIMAL;
@@ -135,7 +136,7 @@ public class FuncCall extends Expr {
 		}
 
 		@Override
-		public void pushByte(ByteBuilder b) {
+		public void pushByte(ByteBuilder b, int A, int B) {
 			Util.error("should never reach here");
 		}
 	}
@@ -156,7 +157,7 @@ public class FuncCall extends Expr {
 		}
 
 		@Override
-		public void pushByte(ByteBuilder b) {
+		public void pushByte(ByteBuilder b, int A, int B) {
 			Util.error("should never reach here");
 		}
 	}
@@ -186,7 +187,7 @@ public class FuncCall extends Expr {
 		}
 
 		@Override
-		public void pushByte(ByteBuilder b) {
+		public void pushByte(ByteBuilder b, int A, int B) {
 			Util.error("should never reach here");
 		}
 	}
@@ -216,7 +217,7 @@ public class FuncCall extends Expr {
 		}
 
 		@Override
-		public void pushByte(ByteBuilder b) {
+		public void pushByte(ByteBuilder b, int A, int B) {
 			Util.error("should never reach here");
 		}
 	}
@@ -242,7 +243,7 @@ public class FuncCall extends Expr {
 		}
 
 		@Override
-		public void pushByte(ByteBuilder b) {
+		public void pushByte(ByteBuilder b, int A, int B) {
 			Util.error("should never reach here");
 		}
 	}
@@ -252,5 +253,11 @@ public class FuncCall extends Expr {
 			type = schema.getColumn(col).type;
 		}
 		return type;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

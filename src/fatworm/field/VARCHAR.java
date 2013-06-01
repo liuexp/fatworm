@@ -28,8 +28,9 @@ public class VARCHAR extends Field {
 		return v.hashCode();
 	}
 	@Override
-	public void pushByte(ByteBuilder b) {
-		b.putString(v);
+	public void pushByte(ByteBuilder b, int A, int B) {
+		String z = v.substring(0, Math.min(v.length(), A)-1);
+		b.putString(z);
 	}
 
 }

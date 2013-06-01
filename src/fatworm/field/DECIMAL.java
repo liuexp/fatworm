@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import fatworm.absyn.BinaryOp;
 import fatworm.util.ByteBuilder;
@@ -48,9 +49,12 @@ public class DECIMAL extends Field{
 		return v;
 	}
 	@Override
-	public void pushByte(ByteBuilder b) {
-		//b.putString(v.toPlainString());
-		b.putInt(v.scale());
-		b.putBytes(v.unscaledValue().toByteArray());
+	public void pushByte(ByteBuilder b, int A, int B) {
+		int os = v.scale();
+		b.putInt(os);
+		v.setScale(B, BigDecimal.ROUND_HALF_EVEN);
+		BigInteger z = v.unscaledValue();
+		BigDecimal vv = new BigDecimal(z.mod(BigInteger.valueOf(10).pow(A+B)), os);
+		b.putBytes(vv.unscaledValue().toByteArray());
 	}
 }

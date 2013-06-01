@@ -1,6 +1,5 @@
 package fatworm.absyn;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import fatworm.driver.Schema;

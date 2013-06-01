@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.driver.Schema;
 import fatworm.field.BOOL;
 import fatworm.field.Field;
@@ -33,6 +36,10 @@ public class BoolLiteral extends Expr {
 	@Override
 	public int getType(Schema schema) {
 		return type;
+	}
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
 
 

@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.field.DATE;
 import fatworm.field.Field;
 import fatworm.util.Env;
@@ -25,6 +28,11 @@ public class TimestampLiteral extends Expr {
 	@Override
 	public Field eval(Env env) {
 		return i;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
 
 }

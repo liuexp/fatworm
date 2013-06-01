@@ -1,5 +1,8 @@
 package fatworm.absyn;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fatworm.field.Field;
 import fatworm.field.VARCHAR;
 import fatworm.util.Env;
@@ -31,6 +34,11 @@ public class StringLiteral extends Expr {
 	@Override
 	public Field eval(Env env) {
 		return value;
+	}
+
+	@Override
+	public List<String> getRequestedColumns() {
+		return new LinkedList<String>();
 	}
 
 }
