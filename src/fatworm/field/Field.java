@@ -110,7 +110,9 @@ public abstract class Field {
 		case java.sql.Types.CHAR:
 			return new String(((CHAR)f).v);
 		case java.sql.Types.DATE:
-			return new java.sql.Date(((DATE)f).v.getTime());
+//			return new java.sql.Date(((DATE)f).v.getTime());
+			// the above is a hack for fatworm your sister
+			return new java.sql.Timestamp(((DATE)f).v.getTime());
 		case java.sql.Types.DECIMAL:
 			return ((DECIMAL)f).toDecimal();
 		case java.sql.Types.FLOAT:

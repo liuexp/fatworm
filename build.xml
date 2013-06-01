@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project fatworm">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/liuexp/Downloads/fatjudger/z.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="fatworm.main.Main"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/liuexp/projects/fatworm/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/java/antlr-3.5-complete.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/liuexp/projects/fatworm/lib/commons-lang3-3.1.jar"/>
+        </jar>
+    </target>
+</project>
