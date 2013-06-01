@@ -2,11 +2,15 @@ package fatworm.util;
 
 import java.nio.ByteBuffer;
 
+import fatworm.io.File;
+
 public class ByteBuilder {
 
 	ByteBuffer buf;
 	int size;
-	
+	public ByteBuilder(){
+		buf = ByteBuffer.allocate(File.pageSize);
+	}
 	public void putBool(boolean v) {
 		putByte(v?(byte)1:(byte)0);
 	}
