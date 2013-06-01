@@ -123,7 +123,7 @@ public class BTree {
 		private void fromPage() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
 			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 4;
+			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
@@ -132,9 +132,10 @@ public class BTree {
 		}
 		
 		private void toPage() throws Throwable {
-			RawPage rp = bm.getRawPage(pageID, false);
+			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
+			pageID = rp.getID();
 			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 4;
+			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
@@ -144,7 +145,7 @@ public class BTree {
 		@Override
 		public void delete() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
-			int curOffset = 0;
+			int curOffset = 4;
 			int cnt = rp.getInt(curOffset)-1;
 			rp.putInt(curOffset, cnt);
 			if(cnt <= 0)
@@ -158,7 +159,8 @@ public class BTree {
 		}
 
 		@Override
-		public byte[] toByte() {
+		public byte[] toByte() throws Throwable {
+			toPage();
 			return Util.intToByte(encodedOffset);
 		}
 		
@@ -241,18 +243,20 @@ public class BTree {
 		}
 		
 		private void toPage() throws Throwable {
-			RawPage rp = bm.getRawPage(pageID, false);
+			RawPage rp = bm.newRawPage(4 + RawPage.getSize(k));
+			pageID = rp.getID();
 			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 4;
+			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
 				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
 			}
 			rp.putString(curOffset, k);
 		}
+		
 		@Override
 		public void delete() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
-			int curOffset = 0;
+			int curOffset = 4;
 			int cnt = rp.getInt(curOffset)-1;
 			rp.putInt(curOffset, cnt);
 			if(cnt <= 0)
@@ -266,7 +270,8 @@ public class BTree {
 		}
 
 		@Override
-		public byte[] toByte() {
+		public byte[] toByte() throws Throwable {
+			toPage();
 			return Util.intToByte(encodedOffset);
 		}
 		@Override

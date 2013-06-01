@@ -93,4 +93,20 @@ public class BufferManager {
 		}
 		//TODO
 	}
+	
+	public Integer newPage(){
+		return freeList.poll();
+	}
+
+	public RawPage newRawPage(int size) throws Throwable {
+		Integer ret = RawPage.newPoolPage(size);
+		if(ret == null) {
+			ret = newPage();
+			return getRawPage(ret, true);
+		}else {
+			RawPage rp = getRawPage(ret, false);
+			rp.newEntry();
+			return rp;
+		}
+	}
 }
