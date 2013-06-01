@@ -1,6 +1,7 @@
 package fatworm.absyn;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.driver.Schema;
@@ -257,7 +258,8 @@ public class FuncCall extends Expr {
 
 	@Override
 	public List<String> getRequestedColumns() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> z = new LinkedList<String> ();
+		z.add(col);
+		return z;
 	}
 }
