@@ -152,9 +152,14 @@ public abstract class Field {
 	}
 	
 	public static Field fromBytes(byte[] y){
+		// XXX This is pretty waste of space without much simplicity of coding, shouldn't be used anymore.
 		ByteBuffer buf = java.nio.ByteBuffer.wrap(y);
-		int length=0;
 		int type = buf.getInt();
+		return fromBytes(buf, type);
+	}
+	
+	public static Field fromBytes(ByteBuffer buf, int type){
+		int length=0;
 		switch(type){
 		case java.sql.Types.BOOLEAN:
 			return new BOOL(buf.get()==0?false:true);
