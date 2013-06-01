@@ -65,7 +65,6 @@ public class RawPage implements Page {
 	
 	@Override
 	public synchronized void flush() throws Throwable {
-		
 		write();
 //		hasFlushed = true;
 	}

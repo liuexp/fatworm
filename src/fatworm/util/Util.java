@@ -127,7 +127,6 @@ public class Util {
 				} else if(op!=null){
 					Expr tmp = getExpr(t.getChild(0));
 					if(tmp instanceof IntLiteral){
-
 						if(((IntLiteral)tmp).i instanceof DECIMAL){
 							DECIMAL f = (DECIMAL)((IntLiteral)tmp).i;
 							return new IntLiteral(f.v.negate().toBigIntegerExact());

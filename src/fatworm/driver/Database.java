@@ -81,7 +81,6 @@ public class Database implements Serializable {
 			Util.error(e.getMessage());
 		}
 		index.table.tableIndex.remove(index);
-
 //		DBEngine.getInstance().removeIndex(index);
 	}
 	
