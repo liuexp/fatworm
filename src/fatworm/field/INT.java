@@ -51,7 +51,7 @@ public class INT extends Field {
 		case java.sql.Types.FLOAT:
 			return Field.cmpHelper(op, value, ((FLOAT)x).toDecimal());
 		}
-		error("INT.compWith missing type");
+		error2("INT.compWith missing type");
 		return false;
 	}
 
