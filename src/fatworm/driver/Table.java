@@ -9,6 +9,7 @@ import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Database.Index;
+import fatworm.field.Field;
 import fatworm.field.INT;
 import fatworm.field.NULL;
 import fatworm.io.BKey;
@@ -52,7 +53,12 @@ public abstract class Table implements Serializable {
 		for(int i=0;i<t.getChildCount();i++){
 			Tree c = t.getChild(i);
 			String colName = schema.columnName.get(i);
-			r.setField(colName, Util.getField(schema.getColumn(colName), c));
+			Column col = schema.getColumn(colName);
+			Field val = Util.getField(col, c);
+			r.setField(colName, val);
+			if(col.isAutoInc() && val instanceof INT){
+				col.ai = Math.max(col.ai, ((INT)val).v+1);
+			}
 		}
 		addRecord(r);
 		ret++;

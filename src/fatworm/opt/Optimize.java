@@ -9,6 +9,8 @@ import fatworm.absyn.BinaryExpr;
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
 import fatworm.absyn.Id;
+import fatworm.absyn.QueryCall;
+import fatworm.absyn.InCall;
 import fatworm.logicplan.*;
 import fatworm.util.Util;
 
@@ -16,8 +18,11 @@ public class Optimize {
 
 	public static Set<String> orderOnField = new HashSet<String>();
 	public static Plan optimize(Plan plan){
-		//TODO extract QueryCall which is just a fake subquery.
+		Util.warn("Before opt:"+plan.toString());
+		cleanupSelect(plan);
+		Util.warn("After cleanup:"+plan.toString());
 		plan = decomposeAnd(plan);
+//		Util.warn("Before push:"+plan.toString());
 		plan = pushSelect(plan);
 //		Util.warn("After push:"+plan.toString());
 		// after the push we transform into theta-join and merge-join
@@ -26,12 +31,76 @@ public class Optimize {
 		orderOnField = new HashSet<String>();
 		plan = clearInnerOrders(plan);
 		// TODO next push all single orders inwards to fetchTable
-		Util.warn("After opt:"+plan.toString());
+//		Util.warn("After opt:"+plan.toString());
 		return plan;
 	}
 
+	private static void cleanupSelect(Plan plan) {
+		if(plan instanceof Distinct){
+			Distinct p = (Distinct)plan;
+			cleanupSelect(p.src);
+		}else if(plan instanceof FetchTable){
+		}else if(plan instanceof Group){
+			Group p = (Group)plan;
+			cleanupSelect(p.src);
+		}else if(plan instanceof Join){
+			Join p = (Join)plan;
+			cleanupSelect(p.left);
+			cleanupSelect(p.right);
+		}else if(plan instanceof None){
+		}else if(plan instanceof One){
+		}else if(plan instanceof Order){
+			Order p = (Order)plan;
+			cleanupSelect(p.src);
+		}else if(plan instanceof Project){
+			Project p = (Project)plan;
+			List<Expr> expr = p.expr;
+			for(int i=0;i<expr.size();i++){
+				Expr e = expr.get(i);
+				if(e instanceof QueryCall && ((QueryCall)e).src instanceof Project){
+					Project tmp = (Project) ((QueryCall)e).src;
+					if(tmp.src instanceof One){
+						expr.set(i, tmp.expr.get(0));
+					}
+				}
+			}
+			cleanupSelect(p.src);
+		}else if(plan instanceof Rename){
+			Rename p = (Rename)plan;
+			cleanupSelect(p.src);
+		}else if(plan instanceof RenameTable){
+			RenameTable p = (RenameTable)plan;
+			cleanupSelect(p.src);
+		}else if(plan instanceof Select){
+			Select p = (Select)plan;
+			cleanupSelect(p.src);
+			if(p.pred instanceof InCall){
+				InCall tmp1 = (InCall) p.pred;
+				if(tmp1.src instanceof Project){
+					Project tmp2 = (Project) tmp1.src;
+					if(tmp2.src instanceof FetchTable && 
+							tmp2.expr.get(0) instanceof Id && 
+							(!Util.getAttr(tmp2.expr.get(0).toString()).equalsIgnoreCase(Util.getAttr(tmp1.expr.toString()))||
+									tmp1.expr.toString().contains("."))){
+						
+						String tbl = Util.tablePrefix+tmp2.getSchema().tableName;
+						p.src = new Join(p.src, new RenameTable(tmp2, tbl));
+						p.src.parent = p;
+						String col0 = tbl + "." + Util.getAttr(tmp2.expr.get(0).toString());
+						p.pred = new BinaryExpr(tmp1.expr, BinaryOp.EQ, new Id(col0));
+					}
+				}
+			}
+		} else if(plan instanceof ThetaJoin){
+			ThetaJoin p = (ThetaJoin)plan;
+			cleanupSelect(p.left);
+			cleanupSelect(p.right);
+		} else {
+			Util.warn("cleanupSelect:meow!!!");
+		}
+	}
+
 	private static Plan clearInnerOrders(Plan plan) {
-		// TODO Auto-generated method stub
 		if(plan instanceof Distinct){
 			Distinct p = (Distinct)plan;
 			p.src = clearInnerOrders(p.src);
@@ -292,7 +361,7 @@ public class Optimize {
 			transformTheta(p.left);
 			transformTheta(p.right);
 		} else {
-			Util.warn("Optimize:meow!!!");
+			Util.warn("transformTheta:meow!!!");
 		}
 	}
 
@@ -349,6 +418,7 @@ public class Optimize {
 			List<Expr> exprList = new LinkedList<Expr>();
 			p.pred.collectCond(exprList);
 			// infer all equivalent equivalent relations to some closure(least fixed point).
+//			Util.warn("collected "+Util.deepToString(exprList));
 			boolean closed = false;
 			while(!closed){
 				closed = true;
@@ -392,6 +462,7 @@ public class Optimize {
 					Util.warn("Generating new expressions!!!from "+Util.deepToString(exprList)+" to "+ Util.deepToString(toAdd));
 				exprList = new LinkedList<Expr>(toAdd);
 			}
+//			Util.warn("propogated to "+Util.deepToString(exprList));
 			Plan ret = p.src;
 			for (Expr e : exprList){
 				ret = new Select(ret, e);
@@ -406,7 +477,7 @@ public class Optimize {
 			p.right.parent = p;
 			return p;
 		} else {
-			Util.warn("Optimize:meow!!!");
+			Util.warn("decomposeAnd:meow!!!");
 		}
 		return null;
 	}

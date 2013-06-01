@@ -58,7 +58,7 @@ public class Join extends Plan {
 	public void eval(Env envGlobal) {
 		hasEval = true;
 		curLeft = null;
-		Util.warn("this is Join.");
+		Util.warn("this is Join."+schema.tableName);
 		Env env = envGlobal.clone();
 		left.eval(env);
 		right.eval(env);

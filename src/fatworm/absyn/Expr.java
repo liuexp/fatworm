@@ -1,7 +1,8 @@
 package fatworm.absyn;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fatworm.driver.Schema;
 import fatworm.field.Field;
@@ -12,14 +13,14 @@ public abstract class Expr {
 	public Integer size,depth;
 	public Field value;
 	public boolean isConst;
-	public List<FuncCall> myAggr;
+	public Set<FuncCall> myAggr;
 	public int type;
 
 	public Expr() {
 		size=1;
 		depth=1;
 		isConst = false;
-		myAggr = new ArrayList<FuncCall>();
+		myAggr = new HashSet<FuncCall>();
 		value = null;
 	}
 	//eval as a predicate
@@ -28,7 +29,7 @@ public abstract class Expr {
 	//eval as an expression
 	public abstract Field eval(Env env);
 	
-	public List<FuncCall> getAggr() {
+	public Set<FuncCall> getAggr() {
 		return myAggr;
 	}
 	public boolean hasAggr() {
@@ -70,4 +71,6 @@ public abstract class Expr {
 		}
 		return false;
 	}
+	
+	public abstract Expr clone();
 }

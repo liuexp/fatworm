@@ -3,7 +3,6 @@ package fatworm.util;
 import static fatworm.parser.FatwormParser.SELECT;
 import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
@@ -33,6 +32,7 @@ import fatworm.absyn.StringLiteral;
 import fatworm.absyn.ExistCall;
 import fatworm.absyn.AnyCall;
 import fatworm.driver.Column;
+import fatworm.driver.DBEngine;
 import fatworm.field.DATE;
 import fatworm.field.DECIMAL;
 import fatworm.field.FLOAT;
@@ -54,6 +54,8 @@ import fatworm.opt.Optimize;
 import fatworm.parser.FatwormParser;
 
 public class Util {
+
+	public static final String tablePrefix = "__FATWORMYOURSISTER__";
 
 	public Util() {
 	}
@@ -124,6 +126,9 @@ public class Util {
 					}else if(tmp instanceof FloatLiteral){
 						FLOAT f = (FLOAT)((FloatLiteral)tmp).i;
 						return new FloatLiteral(-f.v);
+					}else if(tmp.isConst && tmp.value instanceof INT){
+						INT f = (INT)tmp.value;
+						return new IntLiteral(-f.v);
 					}else
 						return new BinaryExpr(new IntLiteral(BigInteger.valueOf(0)), op, tmp);
 				}else
@@ -349,11 +354,13 @@ public class Util {
 	
 	public static void error(String x){
 		warn("[Exception]" + x);
-		throw new RuntimeException(x);
+		if(DBEngine.getInstance().turnOnDebug)
+			throw new RuntimeException(x);
 	}
 	
 	public static void warn(String x){
-		System.err.println("[Warning]" + x);
+		if(DBEngine.getInstance().turnOnDebug)
+			System.err.println("[Warning]" + x);
 	}
 	
 	public static <T> boolean deepEquals(List<T> a, List<T> b){
@@ -408,7 +415,7 @@ public class Util {
 	}
 
 	public static Field getField(Column column, Tree c) {
-		if(c == null || c.getText().equalsIgnoreCase("default")){
+		if(c == null || c.getText().equalsIgnoreCase("default") || c.getText().equalsIgnoreCase("null")){
 			if(column.hasDefault()){
 				return column.getDefault();
 			} else if(column.isAutoInc()){
@@ -419,8 +426,8 @@ public class Util {
 			} else if(column.type == java.sql.Types.TIMESTAMP){
 				return new TIMESTAMP(new java.sql.Timestamp((new GregorianCalendar()).getTimeInMillis()));
 			}
-			error("meow@GetField");
-		} 
+			warn("meow@GetField");
+		}
 		return Field.fromString(column.type, getExpr(c).eval(new Env()).toString());
 	}
 

@@ -9,16 +9,11 @@ TODO
 ====================
 * looks like RawPage's cnt & deletion isn't correctly handled
 * !!! index hasn't been turned on actually...
-* select pusher.
-* theta-join and theta builder.
-* merge-join
 * watch for BCursor, after deletion there might be empty pages.
-* comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
-
-                select * from InfraTest where k <= 2 or 2 <= k
-
+* OPT: Reconstruct Join List according to AndList s.t. more inner join is Theta join, the better.(arno/query, trii/fatworm-select).
+* OPT: improve eval speed on Env.
+* OPT: String pool in memory & serialize
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
-* Figure out general expressions renaming so that Select plan can be pushed beyond Rename.
 
 Testing
 ======================

@@ -48,4 +48,9 @@ public class ExistCall extends Expr {
 	public boolean hasSubquery() {
 		return true;
 	}
+
+	@Override
+	public Expr clone() {
+		return new ExistCall(src, not);
+	}
 }

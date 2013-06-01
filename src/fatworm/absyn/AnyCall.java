@@ -83,4 +83,9 @@ public class AnyCall extends Expr {
 		return true;
 	}
 
+	@Override
+	public Expr clone() {
+		return new AnyCall(src, expr.clone(), op, isAll);
+	}
+
 }

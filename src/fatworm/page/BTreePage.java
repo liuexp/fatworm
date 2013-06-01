@@ -36,7 +36,7 @@ public class BTreePage extends RawPage {
 	// FIXME to allow this, I should change the index from a<x<=b to be a<=x<b
 	// of course another way is to use bucket
 	// wait a second, if I dont reclaim space after deletion, it would be much better if I use bucketing...
-	private Integer nodeType;
+	private int nodeType;
 	private Integer parentPageID;
 	public List<Integer> children;
 	public List<BKey> key;
@@ -52,6 +52,9 @@ public class BTreePage extends RawPage {
 		this.btree = btree;
 		fanout = fanoutSize(keyType);
 		if(!create){
+			if(pageID<0){
+				Util.warn("BTree pageID < 0!!");
+			}
 			dataFile.read(tmp, pageID);
 			children = new ArrayList<Integer>();
 			key = new ArrayList<BKey>();
@@ -265,6 +268,7 @@ public class BTreePage extends RawPage {
 				newRoot.beginTransaction();
 				newRoot.nodeType = ROOTNODE;
 				newRoot.key.add(toParent);
+				newRoot.children = new ArrayList<Integer>();
 				newRoot.children.add(pageID);
 				newRoot.children.add(newPage.pageID);
 				btree.root = newRoot;
@@ -276,7 +280,12 @@ public class BTreePage extends RawPage {
 
 	public int indexOf(BKey k){
 		int idx = 0;
-		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
+//		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
+		while(idx < key.size()){
+			if(key.get(idx) != null && k.compareTo(key.get(idx))<0)
+				return idx;
+			idx++;
+		}
 		return idx;
 	}
 	public BCursor lookup(BKey k) throws Throwable{

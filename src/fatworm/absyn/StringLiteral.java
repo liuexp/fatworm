@@ -50,4 +50,9 @@ public class StringLiteral extends Expr {
 		return false;
 	}
 
+	@Override
+	public Expr clone() {
+		return new StringLiteral(s);
+	}
+
 }

@@ -32,7 +32,7 @@ public class IOTable extends Table {
 		this();
 		schema = new Schema(t);
 		// build index on primaryKey
-		if(schema.primaryKey != null){
+		if(schema.primaryKey != null && DBEngine.getInstance().turnOnIndex){
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 			// FIXME this table hasn't got into database's lists
@@ -364,7 +364,7 @@ public class IOTable extends Table {
 			Integer pid = encodedOffset / MODOOFFSET;
 			Integer offset = encodedOffset % MODOOFFSET;
 			if(offset<0){
-				Util.warn("meow");
+				Util.warn("meow@FetchRecord@IOTable");
 			}
 			return getRecords(pid).get(offset);
 		}
