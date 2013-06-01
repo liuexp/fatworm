@@ -3,7 +3,9 @@ package fatworm.logicplan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
@@ -37,11 +39,17 @@ public class Order extends Plan {
 		this.schema = new Schema();
 		this.schema.fromList(func, src.getSchema());
 		Schema scm = src.getSchema();
+		Set<String> neededAttr = new HashSet<String>();
+		for(String x:orderField){
+			neededAttr.add(Util.getAttr(x).toLowerCase());
+		}
 		for(String colName : scm.columnName){
 			String ocol = colName;
 //			colName = Util.getAttr(colName);
 //			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(ocol))
 			if(this.schema.columnDef.containsKey(ocol))
+				continue;
+			if(!neededAttr.contains(Util.getAttr(ocol).toLowerCase()))
 				continue;
 			this.schema.columnDef.put(ocol, scm.getColumn(ocol));
 			this.schema.columnName.add(ocol);
@@ -68,6 +76,7 @@ public class Order extends Plan {
 			//System.out.println(pr.toString());
 			results.add(pr);
 		}
+//		Util.warn("Start mem-ordering.");
 		Collections.sort(results, new Comparator<Record>(){
 			public int compare(Record a, Record b){
 				for(int i=0;i<orderField.size();i++){
