@@ -186,9 +186,10 @@ public class BinaryExpr extends Expr {
 	}
 
 	private Field mymult(Field lval, Field rval) {
-		BigDecimal ret = lval.toDecimal().multiply(rval.toDecimal());
 		if(lval.type == INTEGER && rval.type == INTEGER)
-			return new INT(ret.intValue());
+			return new INT(((INT)lval).v * ((INT)rval).v);
+		
+		BigDecimal ret = lval.toDecimal().multiply(rval.toDecimal());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
 			return new DECIMAL(ret);
 		if(lval.type == FLOAT || rval.type == FLOAT)
@@ -210,9 +211,10 @@ public class BinaryExpr extends Expr {
 	}
 
 	private Field myadd(Field lval, Field rval) {
-		BigDecimal ret = lval.toDecimal().add(rval.toDecimal());
 		if(lval.type == INTEGER && rval.type == INTEGER)
-			return new INT(ret.intValue());
+			return new INT(((INT)lval).v + ((INT)rval).v);
+		
+		BigDecimal ret = lval.toDecimal().add(rval.toDecimal());
 		if(lval.type == DECIMAL || rval.type == DECIMAL)
 			return new DECIMAL(ret);
 		if(lval.type == FLOAT || rval.type == FLOAT)

@@ -40,7 +40,6 @@ import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import static fatworm.parser.FatwormParser.UPDATE;
 import static fatworm.parser.FatwormParser.USE_DATABASE;
 import fatworm.absyn.Expr;
-import fatworm.driver.Database.Index;
 import fatworm.io.BufferManager;
 import fatworm.io.File;
 import fatworm.logicplan.None;
@@ -64,7 +63,7 @@ public class DBEngine {
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
 	public final boolean turnOnIndex = true;
-	public final boolean turnOnDebug = true;
+	public final boolean turnOnDebug = false;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)

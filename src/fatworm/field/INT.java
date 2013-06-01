@@ -53,9 +53,9 @@ public class INT extends Field {
 		case java.sql.Types.DECIMAL:
 			return Field.cmpHelper(op, value, ((DECIMAL)x).v);
 		case java.sql.Types.INTEGER:
-			return Field.cmpHelper(op, value, ((INT)x).toDecimal());
+			return Field.cmpHelper(op, v, ((INT)x).v);
 		case java.sql.Types.FLOAT:
-			return Field.cmpHelper(op, value, ((FLOAT)x).toDecimal());
+			return Field.cmpHelper(op, Float.valueOf(v), ((FLOAT)x).v);
 		case java.sql.Types.CHAR:
 		case java.sql.Types.VARCHAR:
 			return Field.cmpHelper(op, value, (new INT(x.toString())).toDecimal());

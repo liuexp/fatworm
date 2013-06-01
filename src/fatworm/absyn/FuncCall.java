@@ -91,8 +91,8 @@ public class FuncCall extends Expr {
 		}
 		@Override
 		public boolean applyWithComp(BinaryOp op, Field x) {
-			error("ContField never reach");
-			return false;
+			Util.warn("ContField@applyWithComp should never reach, too aggresive on alias?");
+			return getFinalResults().applyWithComp(op, x);
 		}
 		
 		public abstract void applyWithAggr(Field x);
@@ -112,7 +112,7 @@ public class FuncCall extends Expr {
 			case FatwormParser.SUM:
 				return new SumContField();
 			default:
-				error("ContField never reach.");
+				Util.warn("ContField never reach.");
 				return null;
 			}
 		}

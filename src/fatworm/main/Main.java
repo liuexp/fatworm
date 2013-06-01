@@ -86,7 +86,7 @@ public class Main {
 		while (in.hasNextLine()) {
 				try {
 					String tmp = in.nextLine();
-					if(tmp.equalsIgnoreCase("quit")||tmp.equalsIgnoreCase("exit"))break;
+					if(tmp.equalsIgnoreCase("quit")||tmp.equalsIgnoreCase("exit")||tmp.equalsIgnoreCase("\\q"))break;
 					@SuppressWarnings("unused")
 					fatworm.driver.ResultSet result = db.execute(tmp);
 					Plan plan = result.plan;

@@ -34,7 +34,7 @@ public class Record implements Serializable  {
 	}
 	public Field getCol(int idx) {
 		if(idx<0){
-			Util.warn("meow");
+			Util.warn("meow@Reocrd.getCol");
 			return NULL.getInstance();
 		}
 		return cols.get(idx);

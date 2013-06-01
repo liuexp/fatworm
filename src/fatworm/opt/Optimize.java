@@ -31,7 +31,7 @@ public class Optimize {
 		orderOnField = new HashSet<String>();
 		plan = clearInnerOrders(plan);
 		// TODO next push all single orders inwards to fetchTable
-//		Util.warn("After opt:"+plan.toString());
+		Util.warn("After opt:"+plan.toString());
 		return plan;
 	}
 

@@ -39,6 +39,7 @@ public class Project extends Plan {
 		this.hasProjectAll = hasProjectAll;
 		if(src.getSchema().isJoin)
 			noTablePrefix = true;
+		Util.warn("This is Project's schema:"+this.schema.toString());
 	}
 
 	@Override
@@ -75,13 +76,6 @@ public class Project extends Plan {
 		Record ret = new Record(schema);
 		//System.out.println(localenv.toString());
 		if(hasProjectAll){
-//			Schema scm = src.getSchema();
-//			for(int i=0;i<scm.columnName.size();i++){
-//				String col = scm.columnName.get(i);
-//				Field f = env.get(col);
-//				if(f==null)f = env.get(Util.getAttr(col));
-//				ret.cols.add(f);
-//			}
 			ret.cols.addAll(tmpr.cols);
 		}
 		ret.addColFromExpr(localenv, expr);

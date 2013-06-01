@@ -75,7 +75,10 @@ public class Env {
 	}
 	public void appendFromRecord(List<String> name, List<Integer> offset, List<Field> cols){
 		for(int i=0;i<name.size();i++){
-			put(name.get(i), cols.get(offset.get(i)));
+			int j = offset.get(i);
+			if(j<0)
+				continue;
+			put(name.get(i), cols.get(j));
 		}
 	}
 	
