@@ -258,7 +258,6 @@ public class IOTable extends Table {
 		
 	}
 	
-	// FIXME IndexCursor's first and last should be put into use!!!
 	public class IndexCursor implements Cursor {
 		BTree btree;
 		BCursor bc;
@@ -289,19 +288,19 @@ public class IOTable extends Table {
 			if(last == null)last = btree.root.last();
 			head();
 		}
-
+		
 		@Override
 		public void next() throws Throwable {
 			if(index.unique){
 				if(bc.hasNext())
-					bc = bc.next();
+					nextBc();
 				else
 					bc = null;
 			}else {
 				idx++;
 				if(idx >= index.buckets.get(bc.getValue()).size()){
 					if(bc.hasNext()){
-						bc = bc.next();
+						nextBc();
 						idx = 0;
 					}else
 						bc = null;
@@ -309,18 +308,21 @@ public class IOTable extends Table {
 			}
 		}
 
+		private void nextBc() throws Throwable {
+			bc = bc==last?null:bc.next();
+		}
 		@Override
 		public void prev() throws Throwable {
 			if(index.unique){
 				if(bc.hasPrev())
-					bc = bc.prev();
+					prevBc();
 				else
 					bc = null;
 			}else {
 				idx--;
 				if(idx < 0){
 					if(bc.hasPrev()){
-						bc = bc.prev();
+						prevBc();
 						idx = index.buckets.get(bc.getValue()).size() - 1;
 					}else
 						bc = null;
@@ -328,6 +330,9 @@ public class IOTable extends Table {
 			}
 		}
 
+		private void prevBc() throws Throwable {
+			bc = bc==head?null:bc.prev();
+		}
 		@Override
 		public Object fetch(String col) {
 			return fetchRecord().getCol(col);
@@ -349,7 +354,7 @@ public class IOTable extends Table {
 
 		@Override
 		public boolean hasNext() {
-			return bc!=null && (!index.unique && idx < index.buckets.get(bc.getValue()).size()-1) || bc.hasNext();
+			return bc!=null && bc!=last && (!index.unique && idx < index.buckets.get(bc.getValue()).size()-1) || bc.hasNext();
 		}
 
 		@Override
