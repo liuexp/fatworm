@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import fatworm.absyn.BinaryOp;
 import fatworm.absyn.FuncCall;
 import fatworm.util.ByteBuilder;
+import fatworm.util.Util;
 
 public abstract class Field {
 
@@ -27,7 +28,8 @@ public abstract class Field {
 		case java.sql.Types.BOOLEAN:
 			return new BOOL(x);
 		case java.sql.Types.CHAR:
-			return new CHAR(x);
+//			Util.warn("I just constructed CHAR field " + new String(x));
+			return new CHAR(new String(x));
 		case java.sql.Types.DATE:
 			return new DATE(x);
 		case java.sql.Types.DECIMAL:
@@ -41,7 +43,8 @@ public abstract class Field {
 		case java.sql.Types.TIMESTAMP:
 			return new TIMESTAMP(x);
 		case java.sql.Types.VARCHAR:
-			return new VARCHAR(x);
+//			Util.warn("I just constructed VARCHAR field " + new String(x));
+			return new VARCHAR(new String(x));
 			
 			default:
 				return null;
@@ -89,11 +92,11 @@ public abstract class Field {
 	}
 	
 	public static void error(String e){
-		throw new RuntimeException(e);
+		Util.error(e);
 	}
 	
 	public static void error2(String e){
-		System.err.println(e);
+		Util.warn(e);
 	}
 	
 	public abstract boolean applyWithComp(BinaryOp op, Field x);
@@ -167,11 +170,11 @@ public abstract class Field {
 		case java.sql.Types.BOOLEAN:
 			return new BOOL(buf.get()==0?false:true);
 		case java.sql.Types.CHAR:
-			// FIXME this should be fixed-length
 			length = buf.getInt();
 			byte [] dst = new byte[length];
 			buf.get(dst, 0, length);
-			return new CHAR(ByteBuffer.wrap(dst).toString());
+//			Util.warn("I just constructed CHAR field " + new String(dst));
+			return new CHAR(new String(dst));
 		case java.sql.Types.DATE:
 			return new DATE(buf.getLong());
 		case java.sql.Types.DECIMAL:
@@ -193,7 +196,8 @@ public abstract class Field {
 			length = buf.getInt();
 			dst = new byte[length];
 			buf.get(dst, 0, length);
-			return new VARCHAR(ByteBuffer.wrap(dst).toString());
+//			Util.warn("I just constructed VARCHAR field " + new String(dst));
+			return new VARCHAR(new String(dst));
 			default:
 				return NULL.getInstance();
 		}

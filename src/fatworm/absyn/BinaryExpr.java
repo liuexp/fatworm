@@ -111,6 +111,7 @@ public class BinaryExpr extends Expr {
 			int b = ((INT)rval).v;
 			return new INT(a%b);
 		}
+		Util.warn("mymod falling back to null");
 		return NULL.getInstance();
 	}
 

@@ -6,11 +6,12 @@ import java.util.List;
 
 import fatworm.field.DECIMAL;
 import fatworm.field.Field;
+import fatworm.field.INT;
 import fatworm.util.Env;
 
 public class IntLiteral extends Expr {
 	
-	public DECIMAL i;
+	public Field i;
 
 	public IntLiteral(BigInteger i) {
 		super();
@@ -18,9 +19,17 @@ public class IntLiteral extends Expr {
 		this.size=1;
 		this.i = new DECIMAL(i.toString());
 		value = this.i;
-		type = java.sql.Types.INTEGER;
+		type = java.sql.Types.DECIMAL;
 	}
 	
+	public IntLiteral(int i) {
+		super();
+		this.isConst = true;
+		this.size=1;
+		this.i = new DECIMAL(i.toString());
+		value = this.i;
+		type = java.sql.Types.INTEGER;
+	}
 	@Override
 	public String toString() {
 		return i.toString();
@@ -28,7 +37,7 @@ public class IntLiteral extends Expr {
 
 	@Override
 	public boolean evalPred(Env env) {
-		return i.v.intValue() == 0 ? true : false;
+		return i.applyWithComp(BinaryOp.EQ, new INT(0)) ? true : false;
 	}
 
 	@Override

@@ -68,6 +68,7 @@ public class Schema implements Serializable {
 					break;
 				case FatwormParser.CHAR:
 					col = new Column(colName, java.sql.Types.CHAR);
+					col.A = Integer.parseInt(def.getChild(0).getText());
 					break;
 				case FatwormParser.DATETIME:
 					col = new Column(colName, java.sql.Types.DATE);
@@ -86,6 +87,7 @@ public class Schema implements Serializable {
 					break;
 				case FatwormParser.VARCHAR:
 					col = new Column(colName, java.sql.Types.VARCHAR);
+					col.A = Integer.parseInt(def.getChild(0).getText());
 					break;
 					default:
 						Util.error("Schema undefined def.");

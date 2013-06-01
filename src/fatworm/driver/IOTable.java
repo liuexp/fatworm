@@ -58,7 +58,8 @@ public class IOTable extends Table {
 				if(e!=null && !e.evalPred(env))continue;
 				for(int i=0;i<expr.size();i++){
 					Field res = expr.get(i).eval(env);
-					r.cols.set(r.schema.findIndex(colName.get(i)), res);
+					int idx = r.schema.findIndex(colName.get(i));
+					r.cols.set(idx, Field.fromString(r.schema.getColumn(idx).type, res.toString()));
 					env.put(colName.get(i), res);
 				}
 				c.updateWithRecord(r);
@@ -208,6 +209,10 @@ public class IOTable extends Table {
 		public void updateWithRecord(Record r) throws Throwable {
 			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).delRecord(schema, offset);
 			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).addRecord(r, offset);
+			//FIXME offset, update cache and record list on page
+//			if(offset>= cache.size()){
+//				int tonext = offset - cache.size() - 
+//			}
 		}
 
 		@Override

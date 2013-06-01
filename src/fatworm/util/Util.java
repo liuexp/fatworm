@@ -76,7 +76,13 @@ public class Util {
 		case FatwormParser.MIN:
 			return new FuncCall(t.getType(), getAttr(t.getChild(0)));
 		case FatwormParser.INTEGER_LITERAL:
-			return new IntLiteral(new BigInteger(t.getText()));
+			try {
+				Integer z=Integer.parseInt(t.getText());
+				return new IntLiteral(z);
+			} catch (NumberFormatException e) {
+				return new IntLiteral(new BigInteger(t.getText()));
+//				e.printStackTrace();
+			}
 		case FatwormParser.FLOAT_LITERAL:
 			return new FloatLiteral(Float.parseFloat(t.getText()));
 		case FatwormParser.STRING_LITERAL:
@@ -107,8 +113,14 @@ public class Util {
 				} else if(op!=null){
 					Expr tmp = getExpr(t.getChild(0));
 					if(tmp instanceof IntLiteral){
-						DECIMAL f = (DECIMAL)((IntLiteral)tmp).i;
-						return new IntLiteral(f.v.negate().toBigIntegerExact());
+
+						if(((IntLiteral)tmp).i instanceof DECIMAL){
+							DECIMAL f = (DECIMAL)((IntLiteral)tmp).i;
+							return new IntLiteral(f.v.negate().toBigIntegerExact());
+						}else{
+							INT f = (INT)((IntLiteral)tmp).i;
+							return new IntLiteral(-f.v);
+						}
 					}else if(tmp instanceof FloatLiteral){
 						FLOAT f = (FLOAT)((FloatLiteral)tmp).i;
 						return new FloatLiteral(-f.v);
@@ -331,6 +343,7 @@ public class Util {
 	}
 	
 	public static void error(String x){
+		warn("[Exception]" + x);
 		throw new RuntimeException(x);
 	}
 	
