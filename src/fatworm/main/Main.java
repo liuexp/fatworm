@@ -2,8 +2,11 @@ package fatworm.main;
 
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,9 +33,9 @@ public class Main {
 
 	/**
 	 * @param args
-	 * @throws Exception 
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Throwable {
 		DBEngine db = DBEngine.getInstance();
 		Scanner in = new Scanner(System.in);
 		//DATE zz = new DATE("2013-4-16 19:42:30");
@@ -71,6 +74,11 @@ public class Main {
 //		buf.rewind();
 //		buf.getInt();
 //		System.out.println(buf.slice().array().length);
+//		Byte[] tmpb = new Byte[3];
+//		tmpb[0] = 1;
+//		List<Byte> z = Arrays.asList(tmpb);
+//		Collections.reverse(z);
+//		System.out.println(tmpb[0]);
 		System.out.print(">");
 		db.open("/tmp/meow");
 		while (in.hasNextLine()) {

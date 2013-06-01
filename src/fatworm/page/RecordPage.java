@@ -2,17 +2,14 @@ package fatworm.page;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
-import fatworm.io.BKey;
 import fatworm.io.BufferManager;
 import fatworm.io.File;
-import fatworm.util.ByteBuilder;
 
 public class RecordPage extends RawPage {
 
@@ -40,6 +37,14 @@ public class RecordPage extends RawPage {
 			nextPageID = -1;
 			prevPageID = -1;
 			dirty = true;
+			this.buf = ByteBuffer.wrap(tmp);
+			int length = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
+			partialBytes = new byte[length];
+			buf.position(File.pageSize - length);
+			buf.get(partialBytes);
+//			Collections.reverse(Arrays.asList(partialBytes));
+			ArrayUtils.reverse(partialBytes);
+			records = new ArrayList<Record>();
 		}
 	}
 
@@ -57,21 +62,23 @@ public class RecordPage extends RawPage {
 			partialBytes = new byte[length];
 			buf.get(partialBytes);
 		}else{
-//			int length = offsetTable.get(offsetTable.size()-1);
-			int length = File.pageSize - buf.position();
+			// FIXME why did I chose the second length at first ?
+			int length = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
+			// int length = File.pageSize - buf.position();
 			partialBytes = new byte[length];
 			buf.position(File.pageSize - length);
 			buf.get(partialBytes);
-			Collections.reverse(Arrays.asList(partialBytes));
+			ArrayUtils.reverse(partialBytes);
+//			Collections.reverse(Arrays.asList(partialBytes));
 		}
 		this.buf = buf;
 	}
 	
 	@Override
 	public byte[] toBytes() throws Throwable {
-		//TODO put records
-		// and if not enough space then separate
-		if(partialBytes.length + headerSize() < File.pageSize){
+		if(partialBytes.length + headerSize() <= File.pageSize){
+//			beginTransaction();
+			dirty = true;
 			buf.position(0);
 			buf.putInt(cntRecord);
 			buf.putInt(prevPageID);
@@ -79,29 +86,117 @@ public class RecordPage extends RawPage {
 			for(int i=0;i<cntRecord;i++){
 				buf.putInt(offsetTable.get(i));
 			}
-			byte[] tmp = partialBytes.clone();
-			Collections.reverse(Arrays.asList(tmp));
-			buf.position(File.pageSize - tmp.length);
-			buf.put(tmp);
+			
+			if(!isPartial()){
+				// first expand the partial bytes
+				byte[] tmp = expandAndReverse(partialBytes);
+				buf.position(File.pageSize - tmp.length);
+				buf.put(tmp);
+			} else {
+				buf.putInt(partialBytes.length);
+				buf.put(partialBytes);
+			}
+//			commit();
 		}else{
-			// TODO put it into a for loop
-			// put as many as possible
-			buf.position(0);
 			int remainingSize = partialBytes.length;
-			Integer nid = bm.newPage();
-			beginTransaction();
-			dirty = true;
-			// TODO how to do this?
-			RecordPage rp = bm.getRecordPage(nextPageID, false);
+			Integer previd = null, thisid = pageID;
+			int curOffset = 0;
+			Integer realNext = nextPageID;
+			while(remainingSize > 0){
+				int cntFit = 1;
+				for(;cntFit<=cntRecord && offsetTable.get(curOffset + cntFit-1)+getHeaderSize(cntFit) <= File.pageSize;cntFit++);
+				if(offsetTable.get(curOffset+cntFit-1)+getHeaderSize(cntFit) > File.pageSize)
+					cntFit--;
+				if(cntFit >= 1){
+					// case 1 at least one record fits the page
+					remainingSize -= offsetTable.get(curOffset + cntFit-1);
+					curOffset += cntFit;
+
+					previd = thisid;
+					thisid = bm.newPage();
+					if(previd != null){
+						RecordPage pp = bm.getRecordPage(previd, false);
+						pp.beginTransaction();
+						pp.nextPageID = thisid;
+						pp.commit();
+					}
+					RecordPage thisp = bm.getRecordPage(thisid, true);
+					thisp.beginTransaction();
+					thisp.dirty = true;
+					thisp.prevPageID = previd;
+					for(int j = 0;j<cntFit;j++){
+						boolean flag = thisp.tryAppendRecord(records.get(curOffset + j));
+						assert flag;
+					}
+					thisp.commit();
+				}else {
+					// case 2 the first record (in sequential order) only fits partially
+					int recordSize = offsetTable.get(curOffset);
+					remainingSize -= recordSize;
+					curOffset += 1;
+					thisid = fitPartial(bm, partialBytes, thisid, curOffset, recordSize);
+				}
+			}
+			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.prevPageID = nid;
+			rp.prevPageID = thisid;
+			rp.commit();
+			rp = bm.getRecordPage(thisid, false);
+			rp.beginTransaction();
+			rp.nextPageID = realNext;
 			rp.commit();
 			
-			commit();
 		}
 		return buf.array();
 	}
+
+	private static Integer fitPartial(BufferManager bm, byte[] bytes, Integer thisid, int startOffset, int recordSize)
+			throws Throwable {
+		Integer previd;
+		int fittedSize = 0;
+		while(fittedSize < recordSize){
+			int maxFitSize = File.pageSize - getHeaderSize(1) - Integer.SIZE / Byte.SIZE;
+			previd = thisid;
+			thisid = bm.newPage();
+			if(previd != null){
+				RecordPage pp = bm.getRecordPage(previd, false);
+				pp.beginTransaction();
+				pp.nextPageID = thisid;
+				pp.commit();
+			}
+			RecordPage thisp = bm.getRecordPage(thisid, true);
+			thisp.beginTransaction();
+			thisp.dirty = true;
+			thisp.prevPageID = previd;
+			thisp.putPartial(bytes, startOffset + fittedSize, maxFitSize, fittedSize + maxFitSize >= recordSize);
+			fittedSize += maxFitSize;
+			thisp.commit();
+		}
+		return thisid;
+	}
 	
+	private void putPartial(byte[] b, int s, int maxFitSize,
+			boolean isEnd) throws Throwable {
+		beginTransaction();
+		dirty = true;
+		cntRecord = 1;
+		records = new ArrayList<Record>();
+		int length = Math.min(maxFitSize, b.length - s);
+		partialBytes = new byte[length];
+		System.arraycopy(b, s, partialBytes, 0, length);
+		offsetTable = new ArrayList<Integer>();
+		offsetTable.add(isEnd ? -2 : -1);
+		commit();
+	}
+
+	private byte[] expandAndReverse(byte[] z) {
+		byte[] tmp = new byte[File.pageSize - headerSize()];
+		System.arraycopy(z, 0, tmp, 0, z.length);
+//		Collections.reverse(Arrays.asList(tmp));
+		ArrayUtils.reverse(tmp);
+		return tmp;
+	}
+
 	public boolean isPartial(){
 		return cntRecord == 1 && offsetTable.get(0) == -1;
 	}
@@ -111,7 +206,11 @@ public class RecordPage extends RawPage {
 	}
 	
 	public int headerSize(){
-		return (3+cntRecord) * Integer.SIZE / Byte.SIZE;
+		return getHeaderSize(cntRecord);
+	}
+	
+	public static int getHeaderSize(int cnt){
+		return (3+cnt) * Integer.SIZE / Byte.SIZE;
 	}
 	
 	public List<Record> getRecords(Schema schema){
@@ -132,18 +231,19 @@ public class RecordPage extends RawPage {
 		}
 	}
 	
-	// XXX this method is not for record insertion!!! only for record updating!!
+	// XXX this method is not for record insertion!!! only for record updating!! so that the size in memory can be guaranteed.
 	public void addRecord(Record r, int idx){
 		dirty = true;
 		parseRecord(r.schema);
 		records.add(idx, r);
 		byte[] recordBytes = Record.toByte(r);
 		int lengthOfRecord = recordBytes.length;
-		byte[] newb = new byte[partialBytes.length + lengthOfRecord];
+		int totalLength = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
+		byte[] newb = new byte[totalLength + lengthOfRecord];
 		int lastOffset = idx>0?offsetTable.get(idx-1):0;
 		System.arraycopy(partialBytes, 0, newb, 0, lastOffset);
 		System.arraycopy(recordBytes, 0, newb, lastOffset, lengthOfRecord);
-		System.arraycopy(partialBytes, lastOffset, newb, lastOffset + lengthOfRecord, partialBytes.length - lastOffset);
+		System.arraycopy(partialBytes, lastOffset, newb, lastOffset + lengthOfRecord, totalLength - lastOffset);
 		partialBytes = newb;
 		offsetTable.add(idx, lastOffset + lengthOfRecord);
 		for(int i=idx+1;i<offsetTable.size();i++)
@@ -156,20 +256,41 @@ public class RecordPage extends RawPage {
 		byte[] recordBytes = Record.toByte(r);
 		int lengthOfRecord = recordBytes.length;
 		if(partialBytes.length + lengthOfRecord + headerSize() > File.pageSize)
-			return false;
+			return appendPartialRecord(recordBytes);
 		addRecord(r, cntRecord);
 		return true;
 	}
 	
+	private boolean appendPartialRecord(byte[] recordBytes) {
+		try {
+			dirty = true;
+			Integer realNext = nextPageID;
+			Integer thisid = fitPartial(bm, recordBytes, pageID, 0, recordBytes.length);
+			RecordPage rp = bm.getRecordPage(realNext, false);
+			rp.beginTransaction();
+			rp.prevPageID = thisid;
+			rp.commit();
+			rp = bm.getRecordPage(thisid, false);
+			rp.beginTransaction();
+			rp.nextPageID = realNext;
+			rp.commit();
+			return true;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public void delRecord(Schema schema, int idx){
 		dirty = true;
 		parseRecord(schema);
 		records.remove(idx);
+		int totalLength = offsetTable.size() > 0 ? offsetTable.get(offsetTable.size()-1) : 0;
 		int lastOffset = (idx>0?offsetTable.get(idx-1):0);
 		int lengthOfRecord = offsetTable.get(idx) - lastOffset;
-		byte[] newb = new byte[partialBytes.length - lengthOfRecord];
+		byte[] newb = new byte[totalLength - lengthOfRecord];
 		System.arraycopy(partialBytes, 0, newb, 0, lastOffset);
-		System.arraycopy(partialBytes, offsetTable.get(idx), newb, 0, partialBytes.length - offsetTable.get(idx));
+		System.arraycopy(partialBytes, offsetTable.get(idx), newb, 0, totalLength - offsetTable.get(idx));
 		partialBytes = newb;
 		offsetTable.remove(idx);
 		for(int i=idx;i<offsetTable.size();i++)

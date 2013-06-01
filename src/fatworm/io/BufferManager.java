@@ -13,7 +13,6 @@ import java.util.Comparator;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.page.BTreePage;
-import fatworm.page.DataPage;
 import fatworm.page.Page;
 import fatworm.page.RawPage;
 import fatworm.page.RecordPage;

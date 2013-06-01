@@ -12,7 +12,9 @@ import fatworm.field.INT;
 import fatworm.field.NULL;
 import fatworm.io.BKey;
 import fatworm.io.BTree;
+import fatworm.io.BufferManager;
 import fatworm.io.Cursor;
+import fatworm.page.RecordPage;
 import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
 import fatworm.util.Util;
@@ -26,6 +28,7 @@ public class IOTable extends Table {
 	public static final Integer MODOOFFSET = 512;
 
 	public IOTable() {
+		firstPageID = -1;
 	}
 	public IOTable(CommonTree t) {
 		this();
@@ -34,7 +37,8 @@ public class IOTable extends Table {
 		if(schema.primaryKey != null){
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
-			DBEngine.getInstance().getDatabase().createIndex(Util.getPKIndexName(schema.primaryKey.name), schema.tableName, schema.primaryKey.name, true);
+			// FIXME this table hasn't got into database's lists
+//			DBEngine.getInstance().getDatabase().createIndex(Util.getPKIndexName(schema.primaryKey.name), schema.tableName, schema.primaryKey.name, true);
 		}
 	}
 
@@ -52,9 +56,19 @@ public class IOTable extends Table {
 	public void addRecord(Record r) {
 		SimpleCursor c = open();
 		try {
+			if(!c.hasThis()){
+				BufferManager bm = DBEngine.getInstance().recordManager;
+				firstPageID = bm.newPage();
+				RecordPage thisp = bm.getRecordPage(firstPageID, true);
+				thisp.tryAppendRecord(r);
+				thisp.beginTransaction();
+				thisp.dirty = true;
+				thisp.nextPageID = thisp.prevPageID = thisp.getID();
+				thisp.commit();
+				return;
+			}
 			c.prev();
-			//TODO
-			
+			c.appendThisPage(r);
 			//FIXME extract this and combine with those create index
 			for(Index idx : tableIndex){
 				try {
@@ -130,6 +144,14 @@ public class IOTable extends Table {
 			return DBEngine.getInstance().recordManager.getPrevPage(pageID);
 		}
 		
+		public boolean appendThisPage(Record r){
+			try {
+				return DBEngine.getInstance().recordManager.getRecordPage(pageID, false).tryAppendRecord(r);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 		@Override
 		public void prev() throws Throwable {
 			if(offset > 0 )offset --;
@@ -161,7 +183,7 @@ public class IOTable extends Table {
 
 		@Override
 		public boolean hasNext() throws Throwable {
-			return getNextPage() != firstPageID;
+			return !getNextPage().equals(firstPageID);
 		}
 
 		@Override
@@ -174,7 +196,7 @@ public class IOTable extends Table {
 		}
 		@Override
 		public boolean hasThis() {
-			return pageID >= 0 && !reachedEnd;
+			return pageID >= 0 && !reachedEnd && offset < cache.size();
 		}
 		
 	}
