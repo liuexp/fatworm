@@ -82,8 +82,9 @@ public class BufferManager {
 		return null;
 	}
 	
-	public synchronized void fireMeOne() throws Throwable{
+	public synchronized boolean fireMeOne() throws Throwable{
 		synchronized(victimQueue){
+			if(victimQueue.isEmpty())return false;
 			Page victim = victimQueue.pollFirst();
 			Collection<Page> tmpV = new LinkedList<Page> ();
 			while(victim.isInTransaction() && !victimQueue.isEmpty()){
@@ -95,6 +96,7 @@ public class BufferManager {
 			victim.flush();
 			pages.remove(victim.getID());
 			victimQueue.addAll(tmpV);
+			return true;
 		}
 	}
 

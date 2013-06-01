@@ -28,6 +28,7 @@ public class FetchTable extends Plan {
 	public Table table;
 	Schema schema;
 	Cursor cursor;
+	public List<String> orderField = new LinkedList<String>(); // only those with type ASC should be collected.
 	public FetchTable(String table) {
 		super();
 		tableName = table;

@@ -427,8 +427,16 @@ public class Util {
 	public static <K,V> String deepToString(Map<K, V> res) {
 		StringBuffer ret = new StringBuffer();
 		ret.append("{");
-		for(K x:res.keySet()){
-			ret.append(x == null?"null":x.toString() + "="+ res.get(x).toString()+" , ");
+//		for(K x:res.keySet()){
+//			ret.append(x == null?"null":x.toString() + "="+ res.get(x)==null?"null":res.get(x).toString()+" , ");
+//		}
+		for(Map.Entry<K, V> e : res.entrySet()){
+			K x = e.getKey();
+			V y = e.getValue();
+			ret.append(x==null?"null":x.toString());
+			ret.append("=");
+			ret.append(y==null?"null":y.toString());
+			ret.append(", ");
 		}
 		ret.append("}");
 		return ret.toString();
