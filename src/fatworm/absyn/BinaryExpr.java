@@ -245,4 +245,15 @@ public class BinaryExpr extends Expr {
 		Util.addAllCol(z, r.getRequestedColumns());
 		return z;
 	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		this.l.rename(oldName, newName);
+		this.r.rename(oldName, newName);
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return this.l.hasSubquery() || this.r.hasSubquery();
+	}
 }

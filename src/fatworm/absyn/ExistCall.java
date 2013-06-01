@@ -38,4 +38,14 @@ public class ExistCall extends Expr {
 	public List<String> getRequestedColumns() {
 		return src.getRequestedColumns();
 	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return true;
+	}
 }

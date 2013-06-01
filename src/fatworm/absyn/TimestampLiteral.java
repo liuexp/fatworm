@@ -35,4 +35,13 @@ public class TimestampLiteral extends Expr {
 		return new LinkedList<String>();
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return false;
+	}
+
 }

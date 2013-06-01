@@ -39,5 +39,16 @@ public class QueryCall extends Expr {
 	public List<String> getRequestedColumns() {
 		return new LinkedList<String>();
 	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean hasSubquery() {
+		return true;
+	}
  
 }
