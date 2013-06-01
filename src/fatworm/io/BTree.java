@@ -1,8 +1,12 @@
 package fatworm.io;
 
+import fatworm.page.BTreePage;
+
 public class BTree {
 
-	// every node fills up a whole page.
+	public BTreePage page;
+	public BufferManager bm;
+	public int keyType;
 	public BTree() {
 		// TODO Auto-generated constructor stub
 	}

@@ -7,7 +7,7 @@ Warning
 
 TODO
 ====================
-* Btree, every node fills up a page.
+* Btree, every node fills up a page. for int/float/long key it's okay just use a fixed length page. for var-length page, should I use extra page or var-length fanout?
 * Finish data manipulation language(index).
 * buffer manager
 * comparisons with Mysql

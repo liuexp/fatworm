@@ -36,19 +36,19 @@ public class BufferManager {
 		fileName = file;
 	}
 	
-	public BTreePage getBTreePage(int pageid) throws IOException{
+	public BTreePage getBTreePage(int pageid, boolean create) throws IOException{
 		Page ret2 = getPageHelper(pageid);
 		if(ret2 != null)return (BTreePage) ret2;
-		BTreePage p = new BTreePage(dataFile, pageid);
+		BTreePage p = new BTreePage(dataFile, pageid, create);
 		pages.put(pageid, p);
 		victimQueue.add(p);
 		return p;
 	}
 	
-	public DataPage getDataPage(int pageid) throws IOException{
+	public DataPage getDataPage(int pageid, boolean create) throws IOException{
 		Page ret2 = getPageHelper(pageid);
 		if(ret2 != null)return (DataPage) ret2;
-		DataPage p = new DataPage(dataFile, pageid);
+		DataPage p = new DataPage(dataFile, pageid, create);
 		pages.put(pageid, p);
 		victimQueue.add(p);
 		return p;

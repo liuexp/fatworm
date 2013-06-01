@@ -1,5 +1,6 @@
 package fatworm.main;
 
+import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -62,6 +63,14 @@ public class Main {
 //		q.add(System.currentTimeMillis());
 //		System.out.println(q.pollFirst());
 //		System.out.println(q.pollFirst());
+//		byte[] bbb = new byte[8];
+//		ByteBuffer buf = ByteBuffer.wrap(bbb);
+//		System.out.println(bbb.length);
+//		buf.putInt(1);
+//		buf.putInt(2);
+//		buf.rewind();
+//		buf.getInt();
+//		System.out.println(buf.slice().array().length);
 		System.out.print(">");
 		db.open("/tmp/meow");
 		while (in.hasNextLine()) {
