@@ -14,6 +14,10 @@ public class DATE extends Field {
 		this();
 		v = Util.parseTimestamp(Util.trim(x));
 	}
+	public DATE(Long x) {
+		this();
+		v = new java.sql.Timestamp(x);
+	}
 	public DATE(java.sql.Timestamp x){
 		this();
 		v = x;

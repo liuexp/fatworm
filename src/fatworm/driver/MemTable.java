@@ -94,6 +94,9 @@ public class MemTable extends Table {
 		r.autoFill();
 		for(int i=0;i<v.getChildCount();i++){
 			String colName = t.getChild(i+1).getText();
+			//Column c = r.schema.getColumn(i);
+			//if(c.type == java.sql.Types.CHAR || c.type == java.sql.Types.VARCHAR)
+				//trim to c.M
 			r.setField(colName, Util.getField(schema.getColumn(colName), v.getChild(i)));
 		}
 		for(int i=0;i<r.cols.size();i++){

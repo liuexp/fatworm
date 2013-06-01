@@ -2,9 +2,7 @@ package fatworm.logicplan;
 
 import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
-import fatworm.driver.ResultSetMetaData;
 import fatworm.driver.Schema;
-import fatworm.driver.Table;
 import fatworm.util.Env;
 import fatworm.util.Util;
 import fatworm.driver.MemTable;

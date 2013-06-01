@@ -1,7 +1,6 @@
 package fatworm.absyn;
 
 import java.math.BigDecimal;
-import java.sql.Types;
 
 import fatworm.driver.Schema;
 import fatworm.field.DECIMAL;

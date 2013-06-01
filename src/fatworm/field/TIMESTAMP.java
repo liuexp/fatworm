@@ -21,6 +21,10 @@ public class TIMESTAMP extends Field {
 		this();
 		v = timestamp;
 	}
+	public TIMESTAMP(Long x) {
+		this();
+		v = new java.sql.Timestamp(x);
+	}
 	@Override
 	public String toString() {
 		return v.toString();

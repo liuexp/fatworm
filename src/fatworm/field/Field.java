@@ -1,6 +1,7 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 import fatworm.absyn.BinaryOp;
@@ -150,9 +151,43 @@ public abstract class Field {
 			return NULL.getInstance();
 	}
 	
-	public static Field fromBytes(int type, byte[] y){
+	public static Field fromBytes(byte[] y){
 		ByteBuffer buf = java.nio.ByteBuffer.wrap(y);
-		return fromString(type, buf.toString());
+		int length=0;
+		int type = buf.getInt();
+		switch(type){
+		case java.sql.Types.BOOLEAN:
+			return new BOOL(buf.get()==0?false:true);
+		case java.sql.Types.CHAR:
+			// FIXME this should be fixed-length
+			length = buf.getInt();
+			byte [] dst = new byte[length];
+			buf.get(dst, 0, length);
+			return new CHAR(ByteBuffer.wrap(dst).toString());
+		case java.sql.Types.DATE:
+			return new DATE(buf.getLong());
+		case java.sql.Types.DECIMAL:
+			int scale = buf.getInt();
+			length = buf.getInt();
+			dst = new byte[length];
+			buf.get(dst, 0, length);
+			return new DECIMAL(new BigDecimal(new BigInteger(dst), scale));
+		case java.sql.Types.FLOAT:
+			return new FLOAT(buf.getFloat());
+		case java.sql.Types.INTEGER:
+			return new INT(buf.getInt());
+		case java.sql.Types.NULL:
+			return NULL.getInstance();
+		case java.sql.Types.TIMESTAMP:
+			return new TIMESTAMP(buf.getLong());
+		case java.sql.Types.VARCHAR:
+			length = buf.getInt();
+			dst = new byte[length];
+			buf.get(dst, 0, length);
+			return new VARCHAR(ByteBuffer.wrap(dst).toString());
+			default:
+				return NULL.getInstance();
+		}
 	}
 	
 	public abstract void pushByte(ByteBuilder b);

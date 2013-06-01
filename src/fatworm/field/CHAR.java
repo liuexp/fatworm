@@ -7,7 +7,6 @@ import fatworm.util.Util;
 public class CHAR extends Field {
 
 	String v;
-	//int l;
 	public CHAR(){
 		type = java.sql.Types.CHAR;
 	}
@@ -29,8 +28,7 @@ public class CHAR extends Field {
 	}
 	@Override
 	public void pushByte(ByteBuilder b) {
-		//FIXME check if this l is needed here
-		//b.putInt(l);
+		//FIXME this should be fixed-length
 		b.putString(v);
 	}
 }
