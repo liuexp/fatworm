@@ -9,8 +9,7 @@ Warning
 
 TODO
 ====================
-* Be careful with alias in Env. FIXME: how to do alias on Join table?
-* ORDER doesn't look good on equality...
+* comparisons with Mysql
 * Finish data manipulation language.
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
 * select (a + b) as t, max(c) from A group by t;  // this makes sense
