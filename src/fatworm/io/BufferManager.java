@@ -108,8 +108,8 @@ public class BufferManager {
 		if(z != null){
 			z.markFree();
 			victimQueue.remove(z);
+			pages.remove(pageID);
 		}
-		//TODO
 	}
 	
 	public synchronized Integer newPage(){
