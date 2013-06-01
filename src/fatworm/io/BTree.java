@@ -1,9 +1,14 @@
 package fatworm.io;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 
+import fatworm.page.BTreePage;
+import fatworm.page.RawPage;
 import fatworm.field.BOOL;
 import fatworm.field.CHAR;
 import fatworm.field.DATE;
@@ -19,6 +24,9 @@ public class BTree {
 
 	// every node fills up a whole page.
 
+	public static final int MODOFFSET = File.pageSize / 4; //how many slots could there be
+	public static final int BytesPerChar = (int) Charset.defaultCharset().newEncoder().maxBytesPerChar();
+	public static final int LongSize = Long.SIZE / Byte.SIZE;
 	public int type; //key type
 	public BTree() {
 		// TODO Auto-generated constructor stub
@@ -28,14 +36,7 @@ public class BTree {
 		
 	}
 	
-	private interface BKey {
-		public void delete();	// to reclaim space from data/string page.
-		public int compareTo(Object o);
-		public int keySize();
-		public byte[] toByte();
-	}
-	
-	private class IntKey implements BKey{
+	private class IntKey extends BKey{
 
 		public int k;
 		public IntKey(int z){
@@ -45,14 +46,9 @@ public class BTree {
 		public void delete() {}
 
 		@Override
-		public int compareTo(Object o) {
+		public int compareTo(BKey o) {
 			int z = ((IntKey)o).k;
 			return k < z ? -1 : ( k>z? 1 : 0);
-		}
-
-		@Override
-		public int keySize() {
-			return Integer.SIZE / Byte.SIZE;
 		}
 
 		@Override
@@ -60,9 +56,20 @@ public class BTree {
 			return Util.intToByte(k);
 		}
 		
+		@Override
+		public int hashCode() {
+			return k;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof BKey)
+				return 0 == compareTo((BKey)o);
+			else return false;
+		}
 	}
 	
-	private class FloatKey implements BKey{
+	private class FloatKey extends BKey{
 
 		public float k;
 		public FloatKey(float k){
@@ -75,117 +82,204 @@ public class BTree {
 		public void delete() {}
 
 		@Override
-		public int compareTo(Object o) {
+		public int compareTo(BKey o) {
 			float z = ((FloatKey)o).k;
 			return k < z? -1 : (k>z? 1 : 0);
-		}
-
-		@Override
-		public int keySize() {
-			return Integer.SIZE / Byte.SIZE;
 		}
 
 		@Override
 		public byte[] toByte() {
 			return Util.intToByte(Float.floatToIntBits(k));
 		}
+		@Override
+		public int hashCode() {
+			return new Float(k).hashCode();
+		}
 		
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof BKey)
+				return 0 == compareTo((BKey)o);
+			else return false;
+		}
 	}
 	
-	private class DecimalKey implements BKey{
+	private class DecimalKey extends BKey{
 
+		public BigDecimal k;
+		public int encodedOffset = -1;
+		// encodedOffset = pageID * 1024 + slotOffset in page
+		// XXX note here we assume at most 16GB of space to index so that encodedOffset is just an 4 byte int
+		public int pageID = -1;
 		public DecimalKey(BigDecimal v) {
-			// TODO Auto-generated constructor stub
+			k = v;
+		}
+		public DecimalKey(int v) throws Throwable {
+			encodedOffset = v;
+			pageID = encodedOffset / MODOFFSET;
+			fromPage();
+		}
+
+		private void fromPage() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int slotOffset = encodedOffset % MODOFFSET;
+			int curOffset = 4;
+			for(int i=0;i<slotOffset;i++){
+				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+			}
+			curOffset += 4;// skip the length
+			k = rp.getDecimal(curOffset);
+		}
+		
+		private void toPage() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int slotOffset = encodedOffset % MODOFFSET;
+			int curOffset = 4;
+			for(int i=0;i<slotOffset;i++){
+				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+			}
+			int length = rp.putDecimal(curOffset + 4, k);
+			rp.putInt(curOffset, length);
+		}
+		@Override
+		public void delete() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int curOffset = 0;
+			int cnt = rp.getInt(curOffset)-1;
+			rp.putInt(curOffset, cnt);
+			if(cnt <= 0)
+				bm.releasePage(pageID);
 		}
 
 		@Override
-		public void delete() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public int compareTo(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int keySize() {
-			// TODO Auto-generated method stub
-			return 0;
+		public int compareTo(BKey o) {
+			BigDecimal z = ((DecimalKey)o).k;
+			return k.compareTo(z);
 		}
 
 		@Override
 		public byte[] toByte() {
-			// TODO Auto-generated method stub
-			return null;
+			return Util.intToByte(encodedOffset);
 		}
 		
+		@Override
+		public int hashCode() {
+			return k.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof BKey)
+				return 0 == compareTo((BKey)o);
+			else return false;
+		}
 	}
 	
-	private class TimestampKey implements BKey{
+	private class TimestampKey extends BKey{
 
+		public Timestamp k;
 		public TimestampKey(Timestamp v) {
-			// TODO Auto-generated constructor stub
+			k = v;
+		}
+		public TimestampKey(Long v) {
+			k = new Timestamp(v);
 		}
 
 		@Override
-		public void delete() {
-			// TODO Auto-generated method stub
-			
-		}
+		public void delete() {}
 
 		@Override
-		public int compareTo(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
+		public int compareTo(BKey o) {
+			Timestamp z = ((TimestampKey)o).k;
+			return k.compareTo(z);
 		}
 
 		@Override
 		public int keySize() {
-			// TODO Auto-generated method stub
-			return 0;
+			return LongSize;
 		}
 
 		@Override
 		public byte[] toByte() {
-			// TODO Auto-generated method stub
-			return null;
+			return Util.longToByte(k.getTime());
+		}
+		@Override
+		public int hashCode() {
+			return k.hashCode();
 		}
 		
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof BKey)
+				return 0 == compareTo((BKey)o);
+			else return false;
+		}
 	}
 	
-	private class StringKey implements BKey{
+	private class StringKey extends BKey{
 
+		public String k;
+		public int encodedOffset;
+		public int pageID = -1;
 		public StringKey(String v) {
-			// TODO Auto-generated constructor stub
+			k = v;
+		}
+		public StringKey(int v) throws Throwable{
+			encodedOffset = v;
+			pageID = encodedOffset / MODOFFSET;
+			fromPage();
+		}
+
+		private void fromPage() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int slotOffset = encodedOffset % MODOFFSET;
+			int curOffset = 4;
+			for(int i=0;i<slotOffset;i++){
+				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+			}
+			k = rp.getString(curOffset);
+		}
+		
+		private void toPage() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int slotOffset = encodedOffset % MODOFFSET;
+			int curOffset = 4;
+			for(int i=0;i<slotOffset;i++){
+				curOffset += 4 + BytesPerChar * rp.getInt(curOffset);
+			}
+			rp.putString(curOffset, k);
+		}
+		@Override
+		public void delete() throws Throwable {
+			RawPage rp = bm.getRawPage(pageID, false);
+			int curOffset = 0;
+			int cnt = rp.getInt(curOffset)-1;
+			rp.putInt(curOffset, cnt);
+			if(cnt <= 0)
+				bm.releasePage(pageID);
 		}
 
 		@Override
-		public void delete() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public int compareTo(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int keySize() {
-			// TODO Auto-generated method stub
-			return 0;
+		public int compareTo(BKey o) {
+			String z = ((StringKey)o).k;
+			return k.compareToIgnoreCase(z);
 		}
 
 		@Override
 		public byte[] toByte() {
-			// TODO Auto-generated method stub
-			return null;
+			return Util.intToByte(encodedOffset);
+		}
+		@Override
+		public int hashCode() {
+			return k.hashCode();
 		}
 		
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof BKey)
+				return 0 == compareTo((BKey)o);
+			else return false;
+		}
 	}
 
 	public BKey getBKey(Field f){

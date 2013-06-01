@@ -52,9 +52,11 @@ public class DECIMAL extends Field{
 	public void pushByte(ByteBuilder b, int A, int B) {
 		int os = v.scale();
 		b.putInt(os);
-		v.setScale(B, BigDecimal.ROUND_HALF_EVEN);
-		BigInteger z = v.unscaledValue();
-		BigDecimal vv = new BigDecimal(z.mod(BigInteger.valueOf(10).pow(A+B)), os);
-		b.putBytes(vv.unscaledValue().toByteArray());
+//		v.setScale(B, BigDecimal.ROUND_HALF_EVEN);
+//		BigInteger z = v.unscaledValue();
+//		BigDecimal vv = new BigDecimal(z.mod(BigInteger.valueOf(10).pow(A+B)), os);
+//		b.putBytes(vv.unscaledValue().toByteArray());
+		// it doesn't look like a good idea to make it fixed length here.
+		b.putBytes(v.unscaledValue().toByteArray());
 	}
 }
