@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
 import fatworm.page.Page;
 
 public class File {
-	public static final long recordPageMult = 8;
+	public static final long recordPageMult = 16;
 	public static final long btreePageMult = 4;
 	public static final long recordPageSize = recordPageMult * 1024;			//64KB
 	public static final long btreePageSize = btreePageMult * 1024;				//4KB
