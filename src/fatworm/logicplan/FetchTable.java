@@ -11,6 +11,8 @@ import fatworm.absyn.BinaryOp;
 import fatworm.absyn.Expr;
 import fatworm.absyn.Id;
 import fatworm.driver.DBEngine;
+import fatworm.driver.Database.Index;
+import fatworm.driver.IOTable;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.driver.Table;
@@ -84,9 +86,20 @@ public class FetchTable extends Plan {
 				cursor = new EmptyCursor();
 				return;
 			}
-			
+			// if there's an index built on those column, return IndexCursor
+			// TODO maybe I should prefer those more effective intervals?
 			List<String> condName = new LinkedList<String>(condInt.keySet());
 			for(String name:condName){
+				if(table.hasIndexOn(name)){
+					Index index = table.getIndexOn(name);
+					Interval interval = condInt.get(name);
+					if(table instanceof IOTable){
+						IOTable iot = (IOTable) table;
+						cursor = iot.scope(index, interval.min, interval.max);
+						return;
+					}
+					break;
+				}
 			}
 		}
 		cursor = table.open();
