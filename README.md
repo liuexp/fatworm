@@ -11,6 +11,7 @@ TODO
 ====================
 * comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
+
                 select * from InfraTest where k <= 2 or 2 <= k
 
 * Btree
