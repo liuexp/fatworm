@@ -2,20 +2,14 @@ package fatworm.driver;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.field.Field;
-import fatworm.field.INT;
-import fatworm.field.NULL;
 import fatworm.io.Cursor;
 import fatworm.util.Env;
-import fatworm.util.Util;
 
 // FIXME temporary table in memory.
 public class MemTable extends Table {

@@ -12,10 +12,7 @@ import fatworm.driver.Database.Index;
 import fatworm.field.Field;
 import fatworm.field.INT;
 import fatworm.field.NULL;
-import fatworm.io.BKey;
-import fatworm.io.BTree;
 import fatworm.io.Cursor;
-import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -26,10 +23,8 @@ public abstract class Table implements Serializable {
 	 */
 	private static final long serialVersionUID = 5595620741840746862L;
 	public Schema schema;
-	//public List<Integer> pageIDs;
 	public Integer firstPageID; // so that dynamically splitting the page becomes possible
 	public List<Index> tableIndex = new ArrayList<Index>();
-	//public List<Integer> freePageList;
 	public int delete(Expr e) throws Throwable {
 		int ret = 0;
 		for(Cursor c = open();c.hasThis();){

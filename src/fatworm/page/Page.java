@@ -1,7 +1,5 @@
 package fatworm.page;
 
-import java.io.IOException;
-
 
 /**
  * @author liuexp

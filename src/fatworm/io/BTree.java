@@ -1,9 +1,6 @@
 package fatworm.io;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
 

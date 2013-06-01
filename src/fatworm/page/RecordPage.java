@@ -102,8 +102,8 @@ public class RecordPage extends RawPage {
 			int thisid = pageID;
 			int curOffset = 0;
 			int realNext = nextPageID;
-			List<Integer> bakOffset = new ArrayList(offsetTable);
-			List<Record> bakRecord = new ArrayList(records);
+			List<Integer> bakOffset = new ArrayList<Integer>(offsetTable);
+			List<Record> bakRecord = new ArrayList<Record>(records);
 			int bakCntRecord = cntRecord;
 			while(curOffset < bakCntRecord){
 				int cntFit = 1;
