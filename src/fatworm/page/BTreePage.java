@@ -131,6 +131,24 @@ public class BTreePage extends RawPage {
 		}
 		return 4;
 	}
+	public static int fanoutSize(int type){
+		switch(type){
+		case java.sql.Types.BOOLEAN:
+		case java.sql.Types.INTEGER:
+		case java.sql.Types.FLOAT:
+			return 510;
+		case java.sql.Types.CHAR:
+		case java.sql.Types.VARCHAR:
+		case java.sql.Types.DECIMAL:
+			return 510;		// for now we take its key value as encoded INT, may change to 340 if necessary
+		case java.sql.Types.DATE:
+		case java.sql.Types.TIMESTAMP:
+			return 340;
+			default:
+				Util.error("meow@BTreePage");
+		}
+		return 340;
+	}
 	
 	@Override
 	public int headerSize(){

@@ -104,7 +104,7 @@ public class IOTable extends Table {
 		public void reset() {
 			pageID = IOTable.this.firstPageID;
 			offset = 0;
-			cache = DBEngine.getInstance().recordManager.getRecords(pageID);
+			cache = DBEngine.getInstance().recordManager.getRecords(pageID, schema);
 		}
 
 		@Override
@@ -119,7 +119,7 @@ public class IOTable extends Table {
 		}
 
 		private List<Record> getRecords(Integer pid) {
-			return DBEngine.getInstance().recordManager.getRecords(pid);
+			return DBEngine.getInstance().recordManager.getRecords(pid, schema);
 		}
 		
 		private Integer getNextPage() throws Throwable{
@@ -271,7 +271,7 @@ public class IOTable extends Table {
 		}
 		
 		private List<Record> getRecords(Integer pid) {
-			return DBEngine.getInstance().recordManager.getRecords(pid);
+			return DBEngine.getInstance().recordManager.getRecords(pid, schema);
 		}
 
 		@Override

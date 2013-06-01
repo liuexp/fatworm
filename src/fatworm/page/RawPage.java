@@ -62,7 +62,7 @@ public class RawPage implements Page {
 	public ByteBuffer buf = ByteBuffer.allocateDirect(File.pageSize);
 	public int cnt = 0;
 	public boolean hasFlushed = false;
-	public boolean inTransaction = false;
+	public int inTransaction = 0;
 	
 	@Override
 	public synchronized void flush() throws Throwable {
@@ -256,18 +256,18 @@ public class RawPage implements Page {
 	}
 	@Override
 	public void beginTransaction() {
-		inTransaction=true;
+		inTransaction++;
 		//dirty = true;
 	}
 	@Override
 	public synchronized void commit() throws Throwable {
-		inTransaction=false;
+		if(inTransaction>0)inTransaction--;
 		if(hasFlushed){
 			write();
 		}
 	}
 	@Override
 	public boolean isInTransaction() {
-		return inTransaction;
+		return inTransaction == 0;
 	}
 }
