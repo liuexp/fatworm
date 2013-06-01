@@ -47,10 +47,11 @@ public class Main {
 		TIMESTAMP y = new TIMESTAMP("2013-04-20 14:50:28.118");
 		System.out.println(x.applyWithComp(BinaryOp.LESS, y));
 		System.out.print(">");
-		
+		db.open("/tmp/meow");
 		while (in.hasNextLine()) {
 				try {
 					String tmp = in.nextLine();
+					if(tmp.equalsIgnoreCase("quit"))break;
 					@SuppressWarnings("unused")
 					fatworm.driver.ResultSet result = db.execute(tmp);
 					Plan plan = result.plan;
@@ -65,6 +66,7 @@ public class Main {
 				System.out.print("\r\n>");
 		}
 		in.close();
+		db.close();
 	}
 
 }

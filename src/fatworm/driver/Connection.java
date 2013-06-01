@@ -1,5 +1,6 @@
 package fatworm.driver;
 
+import java.io.IOException;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -75,7 +76,12 @@ public class Connection implements java.sql.Connection {
 
 	@Override
 	public void close() throws SQLException {
-		DBEngine.getInstance().close();
+		try {
+			DBEngine.getInstance().close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
