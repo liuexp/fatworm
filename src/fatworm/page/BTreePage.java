@@ -1,35 +1,31 @@
 package fatworm.page;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
-
+import java.util.List;
 import fatworm.io.File;
+import fatworm.util.Util;
 
+// FIXME dont need offsetTable, and there're 2 kind of pages for btreeBuffermanager(the other for handling string keys)
+// 4096 = 4 * 5 + 4 * 510 + 4 * 509 (INT key)
+// 4096 > 4 * 5 + 4 * 340 + 8 * 339 (Long key)
 public class BTreePage extends VarPage {
-
-	// for each page/block, offset in the file is #pageid * pageSize
-	// header: #child, parentPageID, prevPageID, nextPageID, offsetTable(specifically for variable length record, remember to ensure space by moving records & updating table before writing out)
-	// note that if a key is partial, then offsetTable contains one entry -1;
-	// for each key:
-	// Field
+	private static final byte ROOTNODE = 1;
+	private static final byte INTERNALNODE = 2;
+	private static final byte LEAFNODE = 3;
+	// Page structure:
+	// Page/Node type: 0 for string data, ROOTNODE for root node, etc.
+	// for string data, #segments, every segment is an int for the length, and then the string.
+	// (deprecated)for root, #children, children list, key list.
+	// (deprecated)for internal node, parent, #children, children list, key list.
+	// now for EVERY (INT-key) node, parent, prev, next, #children, 510 x children list, 509 x key list.
 	
+	public byte type;
 	public Integer parentPageID;
-	public int cntChild = 0;
-	public byte[] buffer;
-	public BTreePage(File f, int pageid, boolean create) throws IOException {
-		lastTime = System.currentTimeMillis();
-		dataFile = f;
-		pageID = pageid;
-		byte [] tmp = new byte[File.pageSize];
-		if(!create){
-			dataFile.read(tmp, pageID);
-			fromBytes(tmp);
-		}else{
-			nextPageID = -1;
-			prevPageID = -1;
-		}
+	public Integer prevPageID;
+	public Integer cntChildren;
+	public List<Integer> children;
+	public List<Integer> key;
+	public BTreePage(File dataFile, int pageid) {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -51,5 +47,31 @@ public class BTreePage extends VarPage {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public boolean isLeaf(){
+		return type == LEAFNODE;
+	}
+	public boolean isRoot(){
+		return type == ROOTNODE;
+	}
+	public boolean isInternal(){
+		return type == INTERNALNODE;
+	}
+	public int keySize(int type){
+		switch(type){
+		case java.sql.Types.BOOLEAN:
+		case java.sql.Types.INTEGER:
+		case java.sql.Types.FLOAT:
+		case java.sql.Types.CHAR:
+		case java.sql.Types.VARCHAR:
+		case java.sql.Types.DECIMAL:
+			return Integer.SIZE / Byte.SIZE;
+		case java.sql.Types.DATE:
+		case java.sql.Types.TIMESTAMP:
+			return Long.SIZE / Byte.SIZE;
+			default:
+				Util.error("meow@BTreePage");
+		}
+		return 4;
+	}
 }
