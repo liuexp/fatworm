@@ -170,6 +170,8 @@ public class RawPage implements Page {
 	}
 	
 	public synchronized int putBytes(int offset, byte[] byteval) {
+		if(offset+4 >= buf.limit())
+			Util.warn("meow2:"+offset + "," + buf.limit());
 		buf.position(offset);
 		buf.putInt(byteval.length);
 		buf.put(byteval);
@@ -215,10 +217,10 @@ public class RawPage implements Page {
 	@Override
 	public void fromBytes(byte[] b) throws Throwable {
 		buf = ByteBuffer.wrap(b);
-		buf.rewind();
+		buf.position(0);
 		size = buf.getInt();
 		cnt = buf.getInt();
-		buf.rewind();
+		buf.position(0);
 	}
 	@Override
 	public byte[] toBytes() throws Throwable {

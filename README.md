@@ -9,6 +9,7 @@ TODO
 ====================
 * so strange that fake flush within transaction didn't work so well as expected.
 * watch it for SimpleCursor, because hasThis() is always true for a doubly linked list!!!
+* looks like RawPage's size isn't correctly synchronized. and the cnt++ should probably use RawPage's own method.
 * select pusher.
 * theta-join
 * merge-join

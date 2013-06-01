@@ -227,9 +227,12 @@ public class DBEngine {
 		return btreeManager.pages.size() * File.btreePageMult+ recordManager.pages.size()* File.recordPageMult >= maxMemSize;
 	}
 	public void fireOther(BufferManager me) throws Throwable{
-		if(me == btreeManager)
+		if(me == btreeManager){
 			recordManager.fireMeOne();
-		else
+			Util.warn("[BTreeBufferManager]I'm btree, I just fired one record");
+		}else{
 			btreeManager.fireMeOne();
+			Util.warn("[RecordBufferManager]I'm record, I just fired one btree");
+		}
 	}
 }

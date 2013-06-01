@@ -47,7 +47,8 @@ public class Database implements Serializable {
 				createIndexForRecord(index, b, c, r);
 			}
 		} catch (Throwable e) {
-			Util.error(e.getMessage());
+//			Util.error(e.getMessage());
+			e.printStackTrace();
 		}
 		indexList.put(idx, index);
 		table.tableIndex.add(index);
