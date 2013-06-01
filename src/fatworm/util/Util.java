@@ -27,7 +27,9 @@ import fatworm.absyn.FuncCall;
 import fatworm.absyn.Id;
 import fatworm.absyn.InCall;
 import fatworm.absyn.IntLiteral;
+import fatworm.absyn.LinearCombinationList;
 import fatworm.absyn.QueryCall;
+import fatworm.absyn.ScalarTimes;
 import fatworm.absyn.StringLiteral;
 import fatworm.absyn.ExistCall;
 import fatworm.absyn.AnyCall;
@@ -111,7 +113,17 @@ public class Util {
 			default:
 				BinaryOp op = getBinaryOp(t.getText());
 				if(op!=null && t.getChildCount() == 2){
-					return new BinaryExpr(getExpr(t.getChild(0)), op, getExpr(t.getChild(1)));
+					Expr l = getExpr(t.getChild(0));
+					Expr r = getExpr(t.getChild(1));
+					if(op == BinaryOp.MULTIPLY && (l.isConst || r.isConst)){
+						if(l.isConst && l.getType() == java.sql.Types.INTEGER && r instanceof Id){
+							return new ScalarTimes((Id) r, ((INT)l.value).v);
+						}
+						if(r.isConst && r.getType() == java.sql.Types.INTEGER && l instanceof Id){
+							return new ScalarTimes((Id) l, ((INT)r.value).v);
+						}
+					}
+					return new BinaryExpr(l, op, r);
 				} else if(op!=null){
 					Expr tmp = getExpr(t.getChild(0));
 					if(tmp instanceof IntLiteral){
@@ -232,6 +244,8 @@ public class Util {
 			if(y.getType() == FatwormParser.AS){
 				hasAlias = true;
 				Expr tmp = getExpr(y.getChild(0));
+				if(tmp instanceof BinaryExpr)
+					tmp = unrollLinear((BinaryExpr) tmp);
 				expr.add(tmp);
 				String as = y.getChild(1).getText();
 				alias.add(as);
@@ -252,6 +266,8 @@ public class Util {
 				hasProjectAll = true;
 			}else{
 				Expr tmp = getExpr(y);
+				if(tmp instanceof BinaryExpr)
+					tmp = unrollLinear((BinaryExpr) tmp);
 				expr.add(tmp);
 				alias.add(tmp.toString());
 				hasAggr |= tmp.hasAggr();
@@ -526,6 +542,52 @@ public class Util {
 			if(!found)return false;
 		}
 		return true;
+	}
+
+	public static Expr unrollLinear(BinaryExpr pred) {
+		Expr cur = pred;
+		if(pred.op!=BinaryOp.PLUS)
+			return pred;
+		ArrayList<ScalarTimes> l1 = new ArrayList<ScalarTimes>();
+		while(cur instanceof BinaryExpr){
+			if(((BinaryExpr)cur).op == BinaryOp.PLUS){
+				if(((BinaryExpr)cur).l instanceof ScalarTimes){
+					l1.add((ScalarTimes) ((BinaryExpr)cur).l);
+					cur = ((BinaryExpr)cur).r;
+					continue;
+				}
+				if(((BinaryExpr)cur).l instanceof Id){
+					l1.add(new ScalarTimes((Id) ((BinaryExpr)cur).l, 1));
+					cur = ((BinaryExpr)cur).r;
+					continue;
+				}
+				if(((BinaryExpr)cur).r instanceof ScalarTimes){
+					l1.add((ScalarTimes) ((BinaryExpr)cur).r);
+					cur = ((BinaryExpr)cur).l;
+					continue;
+				}
+				if(((BinaryExpr)cur).r instanceof Id){
+					l1.add(new ScalarTimes((Id) ((BinaryExpr)cur).r, 1));
+					cur = ((BinaryExpr)cur).l;
+					continue;
+				}
+			}
+			break;
+		}
+		if(cur instanceof ScalarTimes){
+			l1.add((ScalarTimes) cur);
+		}else{
+			return pred;
+		}
+		if(l1.isEmpty())
+			return pred;
+		ArrayList<Expr> xs = new ArrayList<Expr> ();
+		ArrayList<Integer> cs = new ArrayList<Integer>();
+		for(ScalarTimes z:l1){
+			xs.add(z.x);
+			cs.add(z.c);
+		}
+		return new LinearCombinationList(xs, cs);
 	}
 
 }

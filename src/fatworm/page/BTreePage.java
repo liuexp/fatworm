@@ -36,7 +36,7 @@ public class BTreePage extends RawPage {
 	// of course another way is to use bucket
 	// wait a second, if I dont reclaim space after deletion, it would be much better if I use bucketing...
 	private int nodeType;
-	private Integer parentPageID;
+	private int parentPageID;
 	public ArrayList<Integer> children;
 	public ArrayList<BKey> key;
 	public int keyType;
@@ -278,14 +278,14 @@ public class BTreePage extends RawPage {
 			}
 			children = newchild1;
 			newPage.children = newchild2;
-			Util.warn("BTree splitting:"+pageID+" to "+newPage.pageID);
+//			Util.warn("BTree splitting:"+pageID+" to "+newPage.pageID);
 			if(!isRoot){
 				commit();
 				newPage.commit();
 				int pidx = -1;
 				BTreePage parent = parent();
 				for(int i=0;i<parent.children.size();i++){
-					if(pageID.equals(parent.children.get(i))){
+					if(pageID==parent.children.get(i)){
 						pidx = i;
 						break;
 					}
@@ -307,7 +307,7 @@ public class BTreePage extends RawPage {
 				newRoot.children.add(newPage.pageID);
 //				DBEngine.getInstance().announceBTreeNewRoot(btree.root.getID(), newRoot.getID());
 				btree.table.announceNewRoot(btree.root.getID(), newRoot.getID());
-				Util.warn("BTree changing root!oldRoot="+btree.root.getID()+", newRoot="+newRoot.getID());
+//				Util.warn("BTree changing root!oldRoot="+btree.root.getID()+", newRoot="+newRoot.getID());
 				btree.root = newRoot;
 				newRoot.dirty = true;
 				newRoot.commit();
@@ -399,7 +399,7 @@ public class BTreePage extends RawPage {
 	// idx < 0 or idx >= key.size() indicate notFound
 	// to get the children/value of that key, it's associated with children[idx+1]
 	public final class BCursor {
-		private final Integer idx;
+		private final int idx;
 		
 		public BCursor(int idx){
 			this.idx = idx;
@@ -462,7 +462,7 @@ public class BTreePage extends RawPage {
 
 		public BCursor adjust() throws Throwable {
 			if(valid())return this;
-			if(idx.equals(key.size()) && BTreePage.this.hasNext()){
+			if(idx==key.size() && BTreePage.this.hasNext()){
 				return BTreePage.this.next().head();
 			}
 			return null;
@@ -470,7 +470,7 @@ public class BTreePage extends RawPage {
 
 		public BCursor adjustLeft() {
 			if(valid())return this;
-			if(idx.equals(key.size()) && idx > 0){
+			if(idx==key.size() && idx > 0){
 				return new BCursor(idx-1);
 			}
 			return null;
@@ -480,12 +480,12 @@ public class BTreePage extends RawPage {
 		public boolean equals(Object o){
 			if(o instanceof BCursor){
 				BCursor b = (BCursor) o;
-				return getPageID().equals(b.getPageID()) && idx.equals(b.idx);
+				return getPageID()==b.getPageID() && idx==b.idx;
 			}
 			return false;
 		}
 
-		private Integer getPageID() {
+		private int getPageID() {
 			return BTreePage.this.getID();
 		}
 	}

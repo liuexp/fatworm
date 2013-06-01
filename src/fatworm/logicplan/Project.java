@@ -4,9 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.FuncCall;
+import fatworm.absyn.LinearCombinationList;
 import fatworm.driver.Column;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
+import fatworm.field.Field;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -20,6 +23,7 @@ public class Project extends Plan {
 	boolean hasNullCol=false;
 	boolean hasProjectAll=false;
 	boolean noTablePrefix = false;
+	boolean useListEnv = false;
 
 	public Project(Plan src, List<Expr> expr, boolean hasProjectAll) {
 		super();
@@ -40,6 +44,16 @@ public class Project extends Plan {
 		if(src.getSchema().isJoin)
 			noTablePrefix = true;
 		Util.warn("This is Project's schema:"+this.schema.toString());
+		
+		// TODO if expr Requested nothing from outside
+		if(expr.size()==1){
+			Expr e = expr.get(0);
+			if(e instanceof LinearCombinationList){
+				LinearCombinationList l = (LinearCombinationList) e;
+				l.fillIndex(src.getSchema());
+				useListEnv = true;
+			}
+		}
 	}
 
 	@Override
@@ -68,33 +82,20 @@ public class Project extends Plan {
 	public Record next() {
 		Env localenv = env.clone();
 		Record tmpr = src.next();
-//		if(noTablePrefix)
-//			localenv.appendFromRecord1(tmpr);
-//		else
-			localenv.appendFromRecord(tmpr);
-		
 		Record ret = new Record(schema);
 		//System.out.println(localenv.toString());
 		if(hasProjectAll){
 			ret.cols.addAll(tmpr.cols);
 		}
-		ret.addColFromExpr(localenv, expr);
-		//System.out.println(ret.toString());
-//		if(hasNullCol){
-//			for(Column c:schema.columnDef.values()){
-//				if(c.type == java.sql.Types.NULL){
-//					Field tmp=localenv.get(c.name);
-//					if(tmp == null)
-//						tmp = localenv.get(Util.getAttr(c.name));
-//					if(tmp!=null){
-//						c.type = tmp.type;
-//						hasNullCol=false;
-//						Util.warn("resolved null column "+c.name+" to type "+c.type);
-//					}else
-//						hasNullCol=true;
-//				}
-//			}
-//		}
+		if(useListEnv){
+			for(int i=0;i<expr.size();i++){
+				LinearCombinationList e = (LinearCombinationList) expr.get(i);
+				ret.cols.add(e.evalByIndex(tmpr));
+			}
+		}else{
+			localenv.appendFromRecord(tmpr);
+			ret.addColFromExpr(localenv, expr);
+		}
 		return ret;
 	}
 

@@ -101,23 +101,18 @@ public class Group extends Plan {
 		ptr = 0;
 		Map<Field, Record> groupHelper = new HashMap<Field, Record>();
 		Map<Field, Env> aggrHelper = new HashMap<Field, Env>();
+		Map<Field, List<FuncCall.ContField>> aggrHelper2 = new HashMap<Field, List<FuncCall.ContField>>();
 		Env env = envGlobal.clone();
 		
 		src.eval(env);
 		LinkedList<FuncCall> evalAggr = new LinkedList<FuncCall>();
-		Set<String> aggrNeed = new HashSet<String>();
+		offsetList = new ArrayList<Integer>();
 		for(FuncCall a : myAggr){
 			if(a.canEvalOn(schema)){
 				env.remove(a.toString());
 				evalAggr.add(a);
-				aggrNeed.add(a.col.toLowerCase());
+				offsetList.add(src.getSchema().findStrictIndex(a.col));
 			}
-		}
-		nameList = new ArrayList<String>();
-		offsetList = new ArrayList<Integer>();
-		for(String x:aggrNeed){
-			nameList.add(x);
-			offsetList.add(src.getSchema().findStrictIndex(x));
 		}
 		
 		LinkedList<Record> tmpTable = new LinkedList<Record>();
@@ -125,18 +120,35 @@ public class Group extends Plan {
 		while(src.hasNext()){
 			Record r = src.next();
 			Field f = by==null? NULL.getInstance(): r.getCol(byIdx1);
-			Env tmpEnv = aggrHelper.get(f);
-			if(tmpEnv == null)
-				tmpEnv = env.clone();
-//			tmpEnv.appendFromRecord(r);
-			tmpEnv.appendFromRecord(nameList, offsetList, r.cols);
-			for(FuncCall a : evalAggr){
-				a.evalCont(tmpEnv);
+			List<FuncCall.ContField> tmpEnv = aggrHelper2.get(f);
+			if(tmpEnv == null){
+				tmpEnv = new LinkedList<FuncCall.ContField>();
+				int i = 0;
+				for(FuncCall a : evalAggr){
+					FuncCall.ContField cont = a.evalCont(null, r.cols.get(offsetList.get(i++)));
+					tmpEnv.add(cont);
+				}
+				aggrHelper2.put(f, tmpEnv);
+			}else{
+				int i = 0;
+				for(FuncCall a : evalAggr){
+					FuncCall.ContField cont = tmpEnv.get(i);
+					a.evalCont(cont, r.cols.get(offsetList.get(i++)));
+				}
 			}
-			aggrHelper.put(f, tmpEnv);
+			
 			tmpTable.addLast(r);
 		}
-//		src.reset();
+		
+		for(Map.Entry<Field, List<FuncCall.ContField>> e : aggrHelper2.entrySet()){
+			Env tmpEnv = new Env();
+			int i = 0;
+			for(FuncCall a : evalAggr){
+				FuncCall.ContField cont = e.getValue().get(i++);
+				tmpEnv.put(a.toString(), cont);
+			}
+			aggrHelper.put(e.getKey(), tmpEnv);
+		}
 
 		nameList = new ArrayList<String>();
 		offsetList = new ArrayList<Integer>();
@@ -152,8 +164,6 @@ public class Group extends Plan {
 
 			if(pr == null){
 				Env tmpEnv = aggrHelper.get(f);
-//				env.appendFrom(tmpEnv);
-//				env.appendFromRecord(r);
 				tmpEnv.appendFromRecord(nameList, offsetList, r.cols);
 				pr = new Record(schema);
 				groupHelper.put(f, pr);
@@ -167,8 +177,6 @@ public class Group extends Plan {
 			for(Field f : groupHelper.keySet()){
 				Record r = groupHelper.get(f);
 				Env tmpEnv = aggrHelper.get(f);
-//				env.appendFrom(tmpEnv);
-//				env.appendFromRecord(r);
 				if(having==null||having.evalPred(tmpEnv)){
 					results.add(r);
 				}
@@ -178,8 +186,6 @@ public class Group extends Plan {
 			for(Field f : groupHelper.keySet()){
 				Record r = groupHelper.get(f);
 				tmpEnv = aggrHelper.get(f);
-//				env.appendFrom(tmpEnv);
-//				tmpEnv.appendFromRecord(r);
 				tmpEnv.appendAlias(schema.tableName, func, alias);
 				if(having==null||having.evalPred(tmpEnv)){
 					results.add(r);

@@ -18,6 +18,7 @@ public class FuncCall extends Expr {
 	boolean hasEvalCont;
 	// FIXME this might not be just a column name rather than an expression?
 	public String col;
+	private String myName;
 	public FuncCall(int func, String col) {
 		super();
 		this.col = col;
@@ -63,9 +64,25 @@ public class FuncCall extends Expr {
 			Util.error("Mie!!");
 		}
 	}
+	
+	public ContField evalCont(ContField f, Field val) {
+		hasEvalCont = true;
+		if(f == null){
+			f = ContField.newContField(func);
+		}
+		if(f instanceof ContField){
+			((ContField) f).applyWithAggr(val);
+		} else {
+			Util.error("Mie!!");
+		}
+		return f;
+	}
 	@Override
 	public String toString() {
-		return Util.getFuncName(func) + "(" + col + ")";
+//		return Util.getFuncName(func) + "(" + col + ")";
+		if(myName!=null)return myName;
+		myName = ""+Env.getNewTemp();
+		return myName;
 	}
 	@Override
 	public int hashCode(){

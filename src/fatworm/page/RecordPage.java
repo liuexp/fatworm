@@ -99,9 +99,9 @@ public class RecordPage extends RawPage {
 			}
 //			commit();
 		}else{
-			Integer thisid = pageID;
+			int thisid = pageID;
 			int curOffset = 0;
-			Integer realNext = nextPageID;
+			int realNext = nextPageID;
 			List<Integer> bakOffset = new ArrayList(offsetTable);
 			List<Record> bakRecord = new ArrayList(records);
 			int bakCntRecord = cntRecord;
@@ -130,12 +130,12 @@ public class RecordPage extends RawPage {
 			}
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.dirty = !rp.prevPageID.equals(thisid);
+			rp.dirty = rp.prevPageID!=thisid;
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
-			rp.dirty = !rp.nextPageID.equals(realNext);
+			rp.dirty = rp.nextPageID!=realNext;
 			rp.nextPageID = realNext;
 			rp.commit();
 			
@@ -147,15 +147,15 @@ public class RecordPage extends RawPage {
 		return bakOffset.get(curOffset + cntFit-1) - (curOffset>0?bakOffset.get(curOffset-1):0) +getHeaderSize(cntFit) <= File.recordPageSize;
 	}
 
-	private Integer fitRecords(Integer thisid, List<Record> rs)
+	private Integer fitRecords(int thisid, List<Record> rs)
 			throws Throwable {
-		Integer previd;
+		int previd;
 		previd = thisid;
 		thisid = bm.newPage();
-		if(previd != null){
+		if(previd >= 0){
 			RecordPage pp = bm.getRecordPage(previd, false);
 			pp.beginTransaction();
-			pp.dirty = !pp.nextPageID.equals(thisid);;
+			pp.dirty = pp.nextPageID!=thisid;
 			pp.nextPageID = thisid;
 			pp.commit();
 		}
@@ -322,12 +322,12 @@ public class RecordPage extends RawPage {
 			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords(pageID, r);
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
-			rp.dirty = !rp.prevPageID.equals(thisid);
+			rp.dirty = rp.prevPageID!=thisid;
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
-			rp.dirty = !rp.nextPageID.equals(realNext);
+			rp.dirty = rp.nextPageID!=realNext;
 			rp.nextPageID = realNext;
 			rp.commit();
 			return true;
@@ -393,6 +393,6 @@ public class RecordPage extends RawPage {
 	}
 
 	public boolean canReclaim() {
-		return cntRecord <= 0 && !nextPageID.equals(pageID);
+		return cntRecord <= 0 && nextPageID!=pageID;
 	}
 }
