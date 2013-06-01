@@ -101,4 +101,12 @@ public class Select extends Plan {
 		return z;
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+		src.rename(oldName, newName);
+		if(pred.getType(src.getSchema())==java.sql.Types.NULL){
+			pred.rename(oldName, newName);
+		}
+	}
+
 }

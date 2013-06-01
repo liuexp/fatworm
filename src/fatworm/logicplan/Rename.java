@@ -84,4 +84,9 @@ public class Rename extends Plan {
 		return z;
 	}
 
+	@Override
+	public void rename(String oldName, String newName) {
+		src.rename(oldName, newName);
+	}
+
 }

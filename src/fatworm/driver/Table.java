@@ -87,12 +87,18 @@ public abstract class Table implements Serializable {
 		return schema;
 	}
 	public boolean hasIndexOn(String col){
-		return tableIndex.indexOf(schema.getColumn(col)) >= 0;
+		for(Index idx:tableIndex){
+			if(idx.column==schema.getColumn(col))
+				return true;
+		}
+		return false;
 	}
 	public Index getIndexOn(String col){
-		int i = tableIndex.indexOf(schema.getColumn(col));
-		if(i>=0)return tableIndex.get(i);
-		else return null;
+		for(Index idx:tableIndex){
+			if(idx.column==schema.getColumn(col))
+				return idx;
+		}
+		return null;
 	}
 	@Override
 	public boolean equals(Object o){

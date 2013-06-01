@@ -53,13 +53,14 @@ import fatworm.util.Util;
 // but a direct interpreter is much easier to write.
 public class DBEngine {
 
-	private static final long maxMemSize = 1024 * 1024;
+	private static final long maxMemSize = 1000 * 1024;
 	public Map<String, Database> dbList = new HashMap<String, Database>();
 	private static DBEngine instance;
 	private Database db;
 	private String metaFile;
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
+	public boolean turnOnIndex = false;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)

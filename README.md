@@ -7,11 +7,10 @@ Warning
 
 TODO
 ====================
-* so strange that fake flush within transaction didn't work so well as expected.
-* watch it for SimpleCursor, because hasThis() is always true for a doubly linked list!!!
-* looks like RawPage's size isn't correctly synchronized. and the cnt++ should probably use RawPage's own method.
+* looks like RawPage's cnt & deletion isn't correctly handled
+* !!! index hasn't been turned on actually...
 * select pusher.
-* theta-join
+* theta-join and theta builder.
 * merge-join
 * watch for BCursor, after deletion there might be empty pages.
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 

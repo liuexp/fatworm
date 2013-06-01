@@ -49,6 +49,7 @@ public class IOTable extends Table {
 			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.pageID, index.column.type);
 			BCursor head = l==null||l.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(l));
 			BCursor last = r==null||r.type==java.sql.Types.NULL?null:b.root.lookup(b.newBKey(r));
+//			Util.warn("Using index for traversals!");
 			return new IndexCursor(index, head, last);
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
@@ -362,6 +363,9 @@ public class IOTable extends Table {
 			Integer encodedOffset = index.unique ? bc.getValue() : index.buckets.get(bc.getValue()).get(idx);
 			Integer pid = encodedOffset / MODOOFFSET;
 			Integer offset = encodedOffset % MODOOFFSET;
+			if(offset<0){
+				Util.warn("meow");
+			}
 			return getRecords(pid).get(offset);
 		}
 		
@@ -378,7 +382,7 @@ public class IOTable extends Table {
 
 		@Override
 		public boolean hasThis() {
-			return bc != null;
+			return bc != null&& bc.valid();
 		}
 	}
 }

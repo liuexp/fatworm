@@ -24,9 +24,10 @@ public class Group extends Plan {
 	public int ptr;
 	public List<Record> results;
 	public List<String> expandedCols = new ArrayList<String>();
+	List<String> alias;
 	public Schema schema;
 	
-	public Group(Plan src, List<Expr> func, String by, Expr having) {
+	public Group(Plan src, List<Expr> func, String by, Expr having, List<String> alias) {
 		super();
 		this.src = src;
 		this.by = by;
@@ -34,6 +35,7 @@ public class Group extends Plan {
 		this.func = func;
 		src.parent = this;
 		ptr = 0;
+		this.alias = alias;
 		// note that aggregate functions from source must be eval on source, not here.
 		for(int i=0;i<func.size();i++){
 			myAggr.addAll(func.get(i).getAggr());
@@ -121,6 +123,7 @@ public class Group extends Plan {
 			Env tmpEnv = aggrHelper.get(f);
 			env.appendFrom(tmpEnv);
 			env.appendFromRecord(r);
+			env.appendAlias(schema.tableName, func, alias);
 			//System.out.println(r.toString());
 			//System.out.println(Util.deepToString(env.res));
 			if(having==null||having.evalPred(env)){
@@ -182,6 +185,12 @@ public class Group extends Plan {
 		Util.removeAllCol(z, src.getColumns());
 		Util.addAllCol(z, having.getRequestedColumns());
 		return z;
+	}
+
+	@Override
+	public void rename(String oldName, String newName) {
+		// FIXME
+		src.rename(oldName, newName);
 	}
 
 }

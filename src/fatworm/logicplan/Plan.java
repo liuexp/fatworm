@@ -44,4 +44,5 @@ public abstract class Plan {
 	public abstract List<String> getColumns();
 	// for propagation of outer values into inner subquery-expression
 	public abstract List<String> getRequestedColumns();
+	public abstract void rename(String oldName, String newName);
 }

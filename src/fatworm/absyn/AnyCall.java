@@ -70,8 +70,12 @@ public class AnyCall extends Expr {
 
 	@Override
 	public void rename(String oldName, String newName) {
-//		expr.rename(oldName, newName);
-		//FIXME also rename src
+		if(src.getRequestedColumns().contains(oldName)){
+			src.rename(oldName, newName);
+		}
+		if(expr.getRequestedColumns().contains(oldName)){
+			expr.rename(oldName, newName);
+		}
 	}
 
 	@Override
