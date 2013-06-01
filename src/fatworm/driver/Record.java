@@ -65,7 +65,7 @@ public class Record {
 		for(int i=0;i<schema.columnName.size();i++){
 			String colName = schema.columnName.get(i);
 			Column col = schema.getColumn(colName);
-			if(col.getDefault()!=null || col.type == java.sql.Types.TIMESTAMP || col.type == java.sql.Types.DATE){
+			if(col.hasDefault() || col.type == java.sql.Types.TIMESTAMP || col.type == java.sql.Types.DATE){
 				cols.add(Util.getField(col, null));
 			} else 
 				cols.add(null);

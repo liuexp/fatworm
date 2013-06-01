@@ -59,6 +59,7 @@ public class Database implements Serializable {
 			Util.error(e.getMessage());
 		}
 		indexList.put(idx, index);
+		table.tableIndex.add(index);
 	}
 	public void dropIndex(String idx) {
 		Index index = indexList.get(idx);
@@ -67,6 +68,7 @@ public class Database implements Serializable {
 		} catch (Throwable e) {
 			Util.error(e.getMessage());
 		}
+		index.table.tableIndex.remove(index);
 	}
 	
 	public static class Index implements Serializable {
@@ -89,6 +91,15 @@ public class Database implements Serializable {
 			table = b;
 			column = c;
 			unique = false;
+		}
+		
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof Index){
+				Index z = (Index)o;
+				return z.indexName.equals(indexName) && z.table.equals(table);
+			}
+			return false;
 		}
 	}
 }

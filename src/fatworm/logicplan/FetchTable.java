@@ -52,13 +52,21 @@ public class FetchTable extends Plan {
 	@Override
 	public Record next() {
 		Record ret = cursor.fetchRecord();
-		cursor.next();
+		try {
+			cursor.next();
+		} catch (Throwable e) {
+//			e.printStackTrace();
+		}
 		return ret;
 	}
 
 	@Override
 	public void reset() {
-		cursor.reset();
+		try {
+			cursor.reset();
+		} catch (Throwable e) {
+//			e.printStackTrace();
+		}
 	}
 
 	@Override

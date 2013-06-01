@@ -10,6 +10,8 @@ import fatworm.absyn.Expr;
 import fatworm.driver.Database.Index;
 import fatworm.field.INT;
 import fatworm.field.NULL;
+import fatworm.io.BKey;
+import fatworm.io.BTree;
 import fatworm.io.Cursor;
 import fatworm.page.BTreePage.BCursor;
 import fatworm.util.Env;
@@ -41,18 +43,49 @@ public class IOTable extends Table {
 	}
 	@Override
 	public int update(List<String> colName, List<Expr> expr, Expr e) {
-		// TODO Auto-generated method stub
+		SimpleCursor c = open();
+		// TODO 
 		return 0;
 	}
 
 	@Override
 	public void addRecord(Record r) {
 		SimpleCursor c = open();
-		//TODO
+		try {
+			c.prev();
+			//TODO
+			
+			//FIXME extract this and combine with those create index
+			for(Index idx : tableIndex){
+				try {
+					BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
+					BKey key = b.newBKey(r.getCol(idx.column.name));
+					BCursor bc = b.root.lookup(key);
+					if(idx.unique){
+						bc.insert(key, c.getIdx());
+					}else{
+						if(bc.getKey().equals(key)){
+							idx.buckets.get(bc.getValue()).add(c.getIdx());
+						}else{
+							List<Integer> tmp = new ArrayList<Integer>();
+							tmp.add(c.getIdx());
+							bc.insert(key, idx.buckets.size());
+							idx.buckets.add(tmp);
+						}
+					}
+				} catch (Throwable e) {
+					Util.error(e.getMessage());
+				}
+			}
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void deleteAll() {
+		SimpleCursor c = open();
 		// TODO 
 		
 	}
@@ -63,6 +96,7 @@ public class IOTable extends Table {
 		Integer pageID;
 		int offset;
 		List<Record> cache = new ArrayList<Record>();
+		boolean reachedEnd;
 		public SimpleCursor(){
 			reset();
 		}
@@ -77,6 +111,7 @@ public class IOTable extends Table {
 		public void next() throws Throwable {
 			if(offset < cache.size() - 1)offset ++;
 			else{
+				reachedEnd = !hasNext();
 				pageID = getNextPage();
 				offset = 0;
 				cache = getRecords(pageID);
@@ -90,10 +125,19 @@ public class IOTable extends Table {
 		private Integer getNextPage() throws Throwable{
 			return DBEngine.getInstance().recordManager.getNextPage(pageID);
 		}
+
+		private Integer getPrevPage() throws Throwable {
+			return DBEngine.getInstance().recordManager.getPrevPage(pageID);
+		}
 		
 		@Override
-		public void prev() {
-			// FIXME who will ever call me here at all?
+		public void prev() throws Throwable {
+			if(offset > 0 )offset --;
+			else {
+				pageID = getPrevPage();
+				cache = getRecords(pageID);
+				offset = cache.size() - 1;
+			}
 		}
 
 		@Override
@@ -130,44 +174,78 @@ public class IOTable extends Table {
 		}
 		@Override
 		public boolean hasThis() {
-			return pageID >= 0 ;
+			return pageID >= 0 && !reachedEnd;
 		}
 		
 	}
 	
 	public class IndexCursor implements Cursor {
-
+		BTree btree;
 		BCursor bc;
+		BCursor head;
+		BCursor last;
+		Index index;
+		int idx;
 		
-		
+		public IndexCursor(Index index, BTree btree) throws Throwable{
+			this.btree = btree;
+			this.index = index;
+			reset();
+		}
 		@Override
-		public void reset() {
-			// TODO Auto-generated method stub
-			
+		public void reset() throws Throwable {
+			if(head == null)head = btree.root.head();
+			if(last == null)last = btree.root.last();
+			bc = head;
+			idx = 0;
 		}
 
 		@Override
-		public void next() {
-			// TODO Auto-generated method stub
-			
+		public void next() throws Throwable {
+			if(index.unique){
+				if(bc.hasNext())
+					bc = bc.next();
+				else
+					bc = null;
+			}else {
+				idx++;
+				if(idx >= index.buckets.get(bc.getValue()).size()){
+					if(bc.hasNext()){
+						bc = bc.next();
+						idx = 0;
+					}else
+						bc = null;
+				}
+			}
 		}
 
 		@Override
-		public void prev() {
-			// TODO Auto-generated method stub
-			
+		public void prev() throws Throwable {
+			if(index.unique){
+				if(bc.hasPrev())
+					bc = bc.prev();
+				else
+					bc = null;
+			}else {
+				idx--;
+				if(idx < 0){
+					if(bc.hasPrev()){
+						bc = bc.prev();
+						idx = index.buckets.get(bc.getValue()).size() - 1;
+					}else
+						bc = null;
+				}
+			}
 		}
 
 		@Override
 		public Object fetch(String col) {
-			// TODO Auto-generated method stub
-			return null;
+			return fetchRecord().getCol(col);
 		}
 
 		@Override
 		public Object[] fetch() {
-			// TODO Auto-generated method stub
-			return null;
+			return fetchRecord().cols.toArray();
 		}
 
 		@Override
@@ -181,26 +259,31 @@ public class IOTable extends Table {
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
+			return bc!=null && (!index.unique && idx < index.buckets.get(bc.getValue()).size()-1) || bc.hasNext();
 		}
 
 		@Override
 		public Record fetchRecord() {
-			// TODO Auto-generated method stub
-			return null;
+			Integer encodedOffset = index.unique ? bc.getValue() : index.buckets.get(bc.getValue()).get(idx);
+			Integer pid = encodedOffset / MODOOFFSET;
+			Integer offset = encodedOffset % MODOOFFSET;
+			return getRecords(pid).get(offset);
+		}
+		
+		private List<Record> getRecords(Integer pid) {
+			return DBEngine.getInstance().recordManager.getRecords(pid);
 		}
 
 		@Override
 		public Integer getIdx() {
-			// TODO Auto-generated method stub
+			// shouldnt reach here
+			assert false;
 			return null;
 		}
 
 		@Override
 		public boolean hasThis() {
-			// TODO Auto-generated method stub
-			return false;
+			return bc != null;
 		}
 	}
 }

@@ -20,8 +20,7 @@ public class Driver implements java.sql.Driver {
 
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
-		//TODO translate connection url
-		return new fatworm.driver.Connection();
+		return new fatworm.driver.Connection(url);
 	}
 
 	@Override

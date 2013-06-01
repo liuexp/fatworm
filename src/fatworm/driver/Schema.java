@@ -160,6 +160,16 @@ public class Schema implements Serializable {
 		return "[" + tableName + "]" + Util.deepToString(columnName);
 	}
 	
+	@Override
+	public boolean equals(Object o){
+//		return toString().equalsIgnoreCase(o.toString());
+		if(o instanceof Schema){
+			Schema z = (Schema ) o;
+			return z.tableName.equalsIgnoreCase(this.tableName);
+		}
+		return false;
+	}
+	
 	public Column getColumn(String col){
 		if(columnDef.containsKey(col))return columnDef.get(col);
 		String attr = Util.getAttr(col);
