@@ -8,6 +8,10 @@ import fatworm.util.Util;
 
 public class TIMESTAMP extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6402476687174263908L;
 	public java.sql.Timestamp v;
 
 	public TIMESTAMP(){

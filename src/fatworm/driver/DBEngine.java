@@ -132,6 +132,7 @@ public class DBEngine {
 		case CREATE_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
 			db.addTable(name, new IOTable(t));
+//			db.addTable(name, new MemTable(t));
 			return new ResultSet(None.getInstance());
 		case DROP_TABLE:
 			name = t.getChild(0).getText().toLowerCase();

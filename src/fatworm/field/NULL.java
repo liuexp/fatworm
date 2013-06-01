@@ -5,6 +5,10 @@ import fatworm.util.ByteBuilder;
 
 public class NULL extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2494072860665295387L;
 	//FIXME maybe one instance for NULL is enough
 	static NULL instance;
 	public NULL() {

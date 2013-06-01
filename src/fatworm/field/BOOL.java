@@ -8,6 +8,10 @@ import fatworm.util.Util;
 
 public class BOOL extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1425697057749540301L;
 	public boolean v;
 	public BOOL(boolean x){
 		v = x;

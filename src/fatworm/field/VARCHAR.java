@@ -6,6 +6,10 @@ import fatworm.util.Util;
 
 public class VARCHAR extends Field {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1712259790098935216L;
 	public String v;
 
 	public VARCHAR(){

@@ -1,7 +1,6 @@
 package fatworm.field;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import fatworm.absyn.BinaryOp;
 import fatworm.util.ByteBuilder;
@@ -9,6 +8,10 @@ import fatworm.util.Util;
 
 public class DECIMAL extends Field{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2957449704715507213L;
 	public BigDecimal v;
 	public DECIMAL(String x) {
 		this();
