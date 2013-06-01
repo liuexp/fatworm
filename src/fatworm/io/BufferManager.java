@@ -149,7 +149,8 @@ public class BufferManager {
 		if(pageID < 0)return ret;
 		try {
 			RecordPage rp = getRecordPage(pageID, false);
-			if(!rp.isPartial())return rp.getRecords(schema);
+			if(!rp.isPartial())
+				return rp.getRecords(schema);
 			ByteBuilder b = new ByteBuilder();
 			while(true){
 				b.putByteArray(rp.getPartialBytes());

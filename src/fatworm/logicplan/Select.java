@@ -17,6 +17,7 @@ public class Select extends Plan {
 	public Env env;
 	public Record current;
 	public boolean hasPushed;
+	public boolean markedSkip = false;
 	public Select(Plan src, Expr pred) {
 		super();
 		this.src = src;
@@ -45,6 +46,10 @@ public class Select extends Plan {
 	}
 
 	private void fetchNext() {
+		if(markedSkip){
+			current = src.hasNext()? src.next():null;
+			return;
+		}
 		Record ret = null;
 		while(src.hasNext()){
 			Record r = src.next();
@@ -118,7 +123,7 @@ public class Select extends Plan {
 			return false;
 		if(src instanceof Project)
 			return ((Project)src).isConst();
-		if(src instanceof Select || src instanceof RenameTable)
+		if(src instanceof Select || src instanceof RenameTable )//||src instanceof Rename)
 			return true;
 		if(src instanceof Join)
 			return Util.subsetof(pred.getRequestedColumns(), ((Join)src).left.getColumns()) || Util.subsetof(pred.getRequestedColumns(), ((Join)src).right.getColumns());

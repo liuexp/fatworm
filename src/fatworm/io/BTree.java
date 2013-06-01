@@ -75,6 +75,11 @@ public class BTree {
 				return 0 == compareTo((BKey)o);
 			else return false;
 		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
+		}
 	}
 	
 	private static class FloatKey extends BKey{
@@ -109,6 +114,11 @@ public class BTree {
 			if(o instanceof BKey)
 				return 0 == compareTo((BKey)o);
 			else return false;
+		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
 		}
 	}
 	
@@ -192,6 +202,11 @@ public class BTree {
 				return 0 == compareTo((BKey)o);
 			else return false;
 		}
+		
+		@Override
+		public String toString(){
+			return "" + k;
+		}
 	}
 	
 	private static class TimestampKey extends BKey{
@@ -233,6 +248,11 @@ public class BTree {
 				return 0 == compareTo((BKey)o);
 			else return false;
 		}
+		
+		@Override
+		public String toString(){
+			return "TIMESTAMP=" + k;
+		}
 	}
 	
 	private class StringKey extends BKey{
@@ -252,7 +272,7 @@ public class BTree {
 		private void fromPage() throws Throwable {
 			RawPage rp = bm.getRawPage(pageID, false);
 			int slotOffset = encodedOffset % MODOFFSET;
-			int curOffset = 4;
+			int curOffset = 8;
 			for(int i=0;i<slotOffset;i++){
 				curOffset += 4 + rp.getInt(curOffset);
 			}
@@ -311,6 +331,11 @@ public class BTree {
 			if(o instanceof BKey)
 				return 0 == compareTo((BKey)o);
 			else return false;
+		}
+		
+		@Override
+		public String toString(){
+			return "'" + k + "'";
 		}
 	}
 

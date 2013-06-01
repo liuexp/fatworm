@@ -15,6 +15,9 @@ public class Join extends Plan {
 	public Plan left,right;
 	public Record curLeft;
 	public Schema schema;
+//	public List<Record> lresult = new LinkedList<Record> ();
+//	public List<Record> rresult = new LinkedList<Record> ();
+	public boolean init = false;
 	public Join(Plan left, Plan right) {
 		super();
 		this.left = left;
