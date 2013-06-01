@@ -111,24 +111,7 @@ public class RecordPage extends RawPage {
 					// case 1 at least one record fits the page
 					remainingSize -= offsetTable.get(curOffset + cntFit-1);
 					curOffset += cntFit;
-
-					previd = thisid;
-					thisid = bm.newPage();
-					if(previd != null){
-						RecordPage pp = bm.getRecordPage(previd, false);
-						pp.beginTransaction();
-						pp.nextPageID = thisid;
-						pp.commit();
-					}
-					RecordPage thisp = bm.getRecordPage(thisid, true);
-					thisp.beginTransaction();
-					thisp.dirty = true;
-					thisp.prevPageID = previd;
-					for(int j = 0;j<cntFit;j++){
-						boolean flag = thisp.tryAppendRecord(records.get(curOffset + j));
-						assert flag;
-					}
-					thisp.commit();
+					thisid = fitRecords(thisid, curOffset, cntFit);
 				}else {
 					// case 2 the first record (in sequential order) only fits partially
 					int recordSize = offsetTable.get(curOffset);
@@ -139,10 +122,12 @@ public class RecordPage extends RawPage {
 			}
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
+			rp.dirty = true;
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
+			rp.dirty = true;
 			rp.nextPageID = realNext;
 			rp.commit();
 			
@@ -150,17 +135,42 @@ public class RecordPage extends RawPage {
 		return buf.array();
 	}
 
+	private Integer fitRecords(Integer thisid, int curOffset, int cntFit)
+			throws Throwable {
+		Integer previd;
+		previd = thisid;
+		thisid = bm.newPage();
+		if(previd != null){
+			RecordPage pp = bm.getRecordPage(previd, false);
+			pp.beginTransaction();
+			pp.dirty = true;
+			pp.nextPageID = thisid;
+			pp.commit();
+		}
+		RecordPage thisp = bm.getRecordPage(thisid, true);
+		thisp.beginTransaction();
+		thisp.dirty = true;
+		thisp.prevPageID = previd;
+		for(int j = 0;j<cntFit;j++){
+			boolean flag = thisp.tryAppendRecord(records.get(curOffset + j));
+			assert flag;
+		}
+		thisp.commit();
+		return thisid;
+	}
+
 	private static Integer fitPartial(BufferManager bm, byte[] bytes, Integer thisid, int startOffset, int recordSize)
 			throws Throwable {
 		Integer previd;
 		int fittedSize = 0;
+		int maxFitSize = getMaxFitSize();
 		while(fittedSize < recordSize){
-			int maxFitSize = File.pageSize - getHeaderSize(1) - Integer.SIZE / Byte.SIZE;
 			previd = thisid;
 			thisid = bm.newPage();
 			if(previd != null){
 				RecordPage pp = bm.getRecordPage(previd, false);
 				pp.beginTransaction();
+				pp.dirty = true;
 				pp.nextPageID = thisid;
 				pp.commit();
 			}
@@ -173,6 +183,10 @@ public class RecordPage extends RawPage {
 			thisp.commit();
 		}
 		return thisid;
+	}
+	
+	private static int getMaxFitSize(){
+		return File.pageSize - getHeaderSize(1) - Integer.SIZE / Byte.SIZE;
 	}
 	
 	private void putPartial(byte[] b, int s, int maxFitSize,
@@ -255,23 +269,28 @@ public class RecordPage extends RawPage {
 		parseRecord(r.schema);
 		byte[] recordBytes = Record.toByte(r);
 		int lengthOfRecord = recordBytes.length;
-		if(partialBytes.length + lengthOfRecord + headerSize() > File.pageSize)
-			return appendPartialRecord(recordBytes);
+		
+		if(lengthOfRecord > getMaxFitSize())
+			return appendPartialRecord(recordBytes, r, true);
+		else if(partialBytes.length + lengthOfRecord + headerSize() > File.pageSize)
+			return appendPartialRecord(recordBytes, r, false);
 		addRecord(r, cntRecord);
 		return true;
 	}
 	
-	private boolean appendPartialRecord(byte[] recordBytes) {
+	private boolean appendPartialRecord(byte[] recordBytes, Record r, boolean split) {
 		try {
 			dirty = true;
 			Integer realNext = nextPageID;
-			Integer thisid = fitPartial(bm, recordBytes, pageID, 0, recordBytes.length);
+			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords();
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
+			rp.dirty = true;
 			rp.prevPageID = thisid;
 			rp.commit();
 			rp = bm.getRecordPage(thisid, false);
 			rp.beginTransaction();
+			rp.dirty = true;
 			rp.nextPageID = realNext;
 			rp.commit();
 			return true;
@@ -312,5 +331,25 @@ public class RecordPage extends RawPage {
 	public void setPartialBytes(byte [] partialBytes) {
 		this.partialBytes = partialBytes;
 		dirty = true;
+	}
+
+	public void tryReclaim() {
+		if(cntRecord > 0 )return;
+		try {
+			RecordPage rp = bm.getRecordPage(prevPageID, false);
+			rp.beginTransaction();
+			rp.dirty = true;
+			rp.nextPageID = nextPageID;
+			rp.commit();
+			rp = bm.getRecordPage(nextPageID, false);
+			rp.beginTransaction();
+			rp.dirty = true;
+			rp.prevPageID = prevPageID;
+			rp.commit();
+			delete();
+			bm.releasePage(pageID);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

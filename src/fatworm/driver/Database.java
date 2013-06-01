@@ -34,32 +34,40 @@ public class Database implements Serializable {
 	}
 	public void createIndex(String idx, String tbl, String col, boolean unique) {
 		Table table = tableList.get(tbl);
+		createIndexWithTable(idx, col, unique, table);
+	}
+	public void createIndexWithTable(String idx, String col, boolean unique,
+			Table table) {
 		Index index = new Index(idx, table, table.schema.getColumn(col), unique);
 		try {
 			BTree b = new BTree(DBEngine.getInstance().btreeManager, index.column.type);
 			index.pageID = b.root.getID();
 			for(Cursor c = table.open();c.hasThis();c.next()){
 				Record r = c.fetchRecord();
-				BKey key = b.newBKey(r.getCol(index.column.name));
-				BCursor bc = b.root.lookup(key);
-				if(index.unique){
-					bc.insert(key, c.getIdx());
-				}else{
-					if(bc.getKey().equals(key)){
-						index.buckets.get(bc.getValue()).add(c.getIdx());
-					}else{
-						List<Integer> tmp = new ArrayList<Integer>();
-						tmp.add(c.getIdx());
-						bc.insert(key, index.buckets.size());
-						index.buckets.add(tmp);
-					}
-				}
+				createIndexForRecord(index, b, c, r);
 			}
 		} catch (Throwable e) {
 			Util.error(e.getMessage());
 		}
 		indexList.put(idx, index);
 		table.tableIndex.add(index);
+	}
+	public static void createIndexForRecord(Index index, BTree b, Cursor c, Record r)
+			throws Throwable {
+		BKey key = b.newBKey(r.getCol(index.column.name));
+		BCursor bc = b.root.lookup(key);
+		if(index.unique){
+			bc.insert(key, c.getIdx());
+		}else{
+			if(bc.getKey().equals(key)){
+				index.buckets.get(bc.getValue()).add(c.getIdx());
+			}else{
+				List<Integer> tmp = new ArrayList<Integer>();
+				tmp.add(c.getIdx());
+				bc.insert(key, index.buckets.size());
+				index.buckets.add(tmp);
+			}
+		}
 	}
 	public void dropIndex(String idx) {
 		Index index = indexList.get(idx);

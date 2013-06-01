@@ -8,6 +8,7 @@ import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Database.Index;
+import fatworm.field.Field;
 import fatworm.field.INT;
 import fatworm.field.NULL;
 import fatworm.io.BKey;
@@ -38,7 +39,7 @@ public class IOTable extends Table {
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 			// FIXME this table hasn't got into database's lists
-//			DBEngine.getInstance().getDatabase().createIndex(Util.getPKIndexName(schema.primaryKey.name), schema.tableName, schema.primaryKey.name, true);
+			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
@@ -48,7 +49,24 @@ public class IOTable extends Table {
 	@Override
 	public int update(List<String> colName, List<Expr> expr, Expr e) {
 		SimpleCursor c = open();
-		// TODO 
+		int ret = 0;
+		try {
+			for(;c.hasThis();c.next()){
+				Record r = c.fetchRecord();
+				Env env = new Env();
+				env.appendFromRecord(r);
+				if(e!=null && !e.evalPred(env))continue;
+				for(int i=0;i<expr.size();i++){
+					Field res = expr.get(i).eval(env);
+					r.cols.set(r.schema.findIndex(colName.get(i)), res);
+					env.put(colName.get(i), res);
+				}
+				c.updateWithRecord(r);
+				ret++;
+			}
+		} catch (Throwable e1) {
+			e1.printStackTrace();
+		}
 		return 0;
 	}
 
@@ -69,39 +87,33 @@ public class IOTable extends Table {
 			}
 			c.prev();
 			c.appendThisPage(r);
-			//FIXME extract this and combine with those create index
-			for(Index idx : tableIndex){
-				try {
-					BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
-					BKey key = b.newBKey(r.getCol(idx.column.name));
-					BCursor bc = b.root.lookup(key);
-					if(idx.unique){
-						bc.insert(key, c.getIdx());
-					}else{
-						if(bc.getKey().equals(key)){
-							idx.buckets.get(bc.getValue()).add(c.getIdx());
-						}else{
-							List<Integer> tmp = new ArrayList<Integer>();
-							tmp.add(c.getIdx());
-							bc.insert(key, idx.buckets.size());
-							idx.buckets.add(tmp);
-						}
-					}
-				} catch (Throwable e) {
-					Util.error(e.getMessage());
-				}
-			}
+			createIndexForRecord(r, c);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
+//			Util.error(e.getMessage());
 			e.printStackTrace();
+		}
+	}
+	private void createIndexForRecord(Record r, SimpleCursor c) {
+		for(Index idx : tableIndex){
+			try {
+				BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
+				Database.createIndexForRecord(idx, b, c, r);
+			} catch (Throwable e) {
+				Util.error(e.getMessage());
+			}
 		}
 	}
 
 	@Override
 	public void deleteAll() {
 		SimpleCursor c = open();
-		// TODO 
-		
+		while(c.hasThis()){
+			try {
+				c.delete();
+			} catch (Throwable e) {
+				Util.error(e.getMessage());
+			}
+		}
 	}
 	
 	// FIXME watch it here as simple cursor is doubly linked list.
@@ -174,7 +186,22 @@ public class IOTable extends Table {
 
 		@Override
 		public void delete() throws Throwable {
-			// TODO how to do this at all
+			RecordPage rp = DBEngine.getInstance().recordManager.getRecordPage(pageID, false);
+			rp.delRecord(schema, offset);
+			if(offset >= cache.size() - 1){
+				reachedEnd = !hasNext();
+				pageID = getNextPage();
+				offset = 0;
+				cache = getRecords(pageID);
+			}else{
+				cache.remove(offset);
+			}
+			rp.tryReclaim();
+		}
+		
+		public void updateWithRecord(Record r) throws Throwable {
+			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).delRecord(schema, offset);
+			DBEngine.getInstance().recordManager.getRecordPage(pageID, false).addRecord(r, offset);
 		}
 
 		@Override
@@ -201,6 +228,7 @@ public class IOTable extends Table {
 		
 	}
 	
+	// TODO use index to accelerate
 	public class IndexCursor implements Cursor {
 		BTree btree;
 		BCursor bc;
