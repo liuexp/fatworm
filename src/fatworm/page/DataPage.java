@@ -85,4 +85,19 @@ public class DataPage extends VarPage {
 	public int headerSize() {
 		return (cntRecord + 2) * 4;
 	}
+	@Override
+	public void beginTransaction() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void commit() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isInTransaction() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
