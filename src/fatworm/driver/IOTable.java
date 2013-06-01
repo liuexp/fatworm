@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
 
 import fatworm.absyn.Expr;
 import fatworm.driver.Database.Index;
 import fatworm.field.Field;
-import fatworm.field.INT;
-import fatworm.field.NULL;
-import fatworm.io.BKey;
 import fatworm.io.BTree;
 import fatworm.io.BufferManager;
 import fatworm.io.Cursor;
@@ -27,7 +23,7 @@ public class IOTable extends Table {
 	 * 
 	 */
 	private static final long serialVersionUID = -7673588089635019327L;
-	public static final Integer MODOOFFSET = File.pageSize / 4;
+	public static final Integer MODOOFFSET = (int) (File.recordPageSize / 4);
 
 	public IOTable() {
 		firstPageID = -1;
@@ -91,7 +87,7 @@ public class IOTable extends Table {
 		} catch (Throwable e1) {
 			e1.printStackTrace();
 		}
-		return 0;
+		return ret;
 	}
 
 	@Override
@@ -262,7 +258,6 @@ public class IOTable extends Table {
 		
 	}
 	
-	// TODO use index to accelerate
 	public class IndexCursor implements Cursor {
 		BTree btree;
 		BCursor bc;

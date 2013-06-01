@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Comparator;
 
+import fatworm.driver.DBEngine;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.page.BTreePage;
@@ -20,7 +21,7 @@ import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class BufferManager {
-	private static final long maxPages = 1024 * 1024 / (File.pageMult); 	//maximum #pages a buffer manager can hold
+//	private static final long maxPages = 1024 * 1024 / (2*File.pageMult); 	//maximum #pages a buffer manager can hold
 	public File dataFile;
 	public FreeList freeList;
 	public Map<Integer, Page> pages = new TreeMap<Integer, Page>();
@@ -34,8 +35,8 @@ public class BufferManager {
 	
 	public String fileName = null;
 	
-	public BufferManager(String file) throws IOException, ClassNotFoundException{
-		dataFile = new File(file);
+	public BufferManager(String file, int type) throws IOException, ClassNotFoundException{
+		dataFile = new File(file, type);
 		try{
 			freeList = FreeList.read(file);
 		} catch (java.io.FileNotFoundException e) {
@@ -75,22 +76,26 @@ public class BufferManager {
 	private synchronized Page getPageHelper(int pageid) throws Throwable {
 		if(pages.containsKey(pageid))
 			return pages.get(pageid);
-		synchronized(victimQueue) {
-			while(pages.size() >= maxPages){
-				Page victim = victimQueue.pollFirst();
-				Collection<Page> tmpV = new LinkedList<Page> ();
-				while(victim.isInTransaction() && !victimQueue.isEmpty()){
-					tmpV.add(victim);
-					victim = victimQueue.pollFirst();
-				}
-				if(victim.isInTransaction())
-					Util.warn("flushing out a page still in transaction, will try to recover.");
-				victim.flush();
-				pages.remove(victim.getID());
-				victimQueue.addAll(tmpV);
-			}
+		while(DBEngine.getInstance().nearOOM()){
+			DBEngine.getInstance().fireOther(this);
 		}
 		return null;
+	}
+	
+	public synchronized void fireMeOne() throws Throwable{
+		synchronized(victimQueue){
+			Page victim = victimQueue.pollFirst();
+			Collection<Page> tmpV = new LinkedList<Page> ();
+			while(victim.isInTransaction() && !victimQueue.isEmpty()){
+				tmpV.add(victim);
+				victim = victimQueue.pollFirst();
+			}
+			if(victim.isInTransaction())
+				Util.warn("flushing out a page still in transaction, will try to recover.");
+			victim.flush();
+			pages.remove(victim.getID());
+			victimQueue.addAll(tmpV);
+		}
 	}
 
 	public void close() throws Throwable {

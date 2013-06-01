@@ -9,15 +9,15 @@ TODO
 ====================
 * so strange that fake flush within transaction didn't work so well as expected.
 * watch it for SimpleCursor, because hasThis() is always true for a doubly linked list!!!
+* select pusher.
+* theta-join
+* merge-join
 * watch for BCursor, after deletion there might be empty pages.
-* Btree, every node fills up a page. for int/float/long key it's okay just use a fixed length page. for var-length page, should I use extra page or var-length fanout?
-* comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
 
                 select * from InfraTest where k <= 2 or 2 <= k
 
 * Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
-* If resolve alias simply by renaming, then those in having must also be renamed.
 * Figure out general expressions renaming so that Select plan can be pushed beyond Rename.
 
 Testing

@@ -47,13 +47,15 @@ public class BTreePage extends RawPage {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
 		pageID = pageid;
-		byte [] tmp = new byte[File.pageSize];
+		byte [] tmp = new byte[(int) File.recordPageSize];
 		this.keyType = keyType;
 		this.btree = btree;
 		// XXX let's settle it this way for now = =+
 		fanout = keySize(keyType) == LongSize ? 340 : 510;
 		if(!create){
 			dataFile.read(tmp, pageID);
+			children = new ArrayList<Integer>();
+			key = new ArrayList<BKey>();
 			fromBytes(tmp);
 		}else{
 			nextPageID = -1;
@@ -169,10 +171,12 @@ public class BTreePage extends RawPage {
 		dirty = true;
 		if(!isFull())add(idx, k, val);
 		else {
+			boolean isLeaf = isLeaf();
+			boolean isRoot = isRoot();
 			beginTransaction();
 			BTreePage newPage = btree.bm.getBTreePage(btree, btree.bm.newPage(), keyType, true);
 			newPage.beginTransaction();
-			newPage.nodeType = nodeType = isLeaf() ? LEAFNODE : INTERNALNODE;
+			newPage.nodeType = nodeType = isLeaf ? LEAFNODE : INTERNALNODE;
 			newPage.parentPageID = parentPageID;
 			newPage.nextPageID = nextPageID;
 			newPage.prevPageID = pageID;
@@ -194,7 +198,7 @@ public class BTreePage extends RawPage {
 			List<BKey> newlist1 = new ArrayList<BKey> ();
 			List<BKey> newlist2 = new ArrayList<BKey> ();
 			BKey toParent = key.get(mid-1);
-			if(isLeaf()){
+			if(isLeaf){
 				for(int i=0;i<mid;i++)
 					newlist1.add(key.get(i));
 				for(int i=mid;i<key.size();i++)
@@ -210,7 +214,7 @@ public class BTreePage extends RawPage {
 			
 			List<Integer> newchild1 = new ArrayList<Integer> ();
 			List<Integer> newchild2 = new ArrayList<Integer> ();
-			if(isLeaf()){
+			if(isLeaf){
 				for(int i=0;i<mid;i++)
 					newchild1.add(children.get(i));
 				newchild1.add(-1);
@@ -237,7 +241,7 @@ public class BTreePage extends RawPage {
 			}
 			children = newchild1;
 			newPage.children = newchild2;
-			if(!isRoot()){
+			if(!isRoot){
 				commit();
 				newPage.commit();
 				int pidx = -1;
@@ -321,6 +325,8 @@ public class BTreePage extends RawPage {
 	}
 	
 	public synchronized BTreePage parent() throws Throwable {
+		if(parentPageID<0)
+			Util.warn("meow");
 		return getPage(parentPageID);
 	}
 
