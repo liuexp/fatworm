@@ -128,6 +128,14 @@ public class Group extends Plan {
 				results.add(r);
 			}
 		}
+		if(results.size() == 0 && (having==null||having.evalPred(env))){
+			Record pr = new Record(schema);
+			pr.addColFromExpr(new Env(), func);
+			for(int i=0;i<expandedCols.size();i++){
+				pr.addCol(env.get(expandedCols.get(i)));
+			}
+			results.add(pr);
+		}
 	}
 	
 	@Override

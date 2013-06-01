@@ -39,7 +39,7 @@ public class IOTable extends Table {
 //			Index pindex = new Index(Util.getPKIndexName(schema.primaryKey.name), this, schema.primaryKey);
 			// XXX I'm going to hack it this way
 			// FIXME this table hasn't got into database's lists
-			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
+//			DBEngine.getInstance().getDatabase().createIndexWithTable(Util.getPKIndexName(schema.primaryKey.name), schema.primaryKey.name, true, this);
 		}
 	}
 
@@ -99,7 +99,8 @@ public class IOTable extends Table {
 				BTree b = new BTree(DBEngine.getInstance().btreeManager, idx.pageID, idx.column.type);
 				Database.createIndexForRecord(idx, b, c, r);
 			} catch (Throwable e) {
-				Util.error(e.getMessage());
+//				Util.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}

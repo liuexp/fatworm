@@ -19,7 +19,7 @@ public class DECIMAL extends Field{
 	}
 	public DECIMAL(BigDecimal x){
 		this();
-		v = x;
+		v = x.setScale(10, BigDecimal.ROUND_HALF_EVEN);
 	}
 
 	@Override

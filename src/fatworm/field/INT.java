@@ -25,7 +25,8 @@ public class INT extends Field {
 
 	public INT(String x) {
 		this();
-		v = Integer.valueOf(Util.trim(x));
+//		v = Integer.valueOf(Util.trim(x));
+		v = new BigDecimal(Util.trim(x)).intValueExact();
 	}
 
 	public BigDecimal toDecimal() {
