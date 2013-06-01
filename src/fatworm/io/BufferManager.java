@@ -37,10 +37,10 @@ public class BufferManager {
 		fileName = file;
 	}
 	
-	public BTreePage getBTreePage(int pageid, boolean create) throws IOException{
+	public BTreePage getBTreePage(int pageid, int type, boolean create) throws IOException{
 		Page ret2 = getPageHelper(pageid);
 		if(ret2 != null)return (BTreePage) ret2;
-		BTreePage p = new BTreePage(dataFile, pageid, create);
+		BTreePage p = new BTreePage(dataFile, pageid, type, create);
 		pages.put(pageid, p);
 		victimQueue.add(p);
 		return p;

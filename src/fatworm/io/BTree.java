@@ -27,9 +27,18 @@ public class BTree {
 	public static final int MODOFFSET = File.pageSize / 4; //how many slots could there be
 	public static final int BytesPerChar = (int) Charset.defaultCharset().newEncoder().maxBytesPerChar();
 	public static final int LongSize = Long.SIZE / Byte.SIZE;
+	public static final int IntSize = Integer.SIZE / Byte.SIZE;
+	//public int fanout;
 	public int type; //key type
-	public BTree() {
-		// TODO Auto-generated constructor stub
+	public BTreePage root;
+	public BufferManager bm;
+
+	public BTree(BufferManager bm, int type) throws IOException {
+		this.bm = bm;
+		this.type = type;
+		int keysize = BTreePage.keySize(type);
+		//fanout = (File.pageSize - 5*Byte.SIZE) / (IntSize + keysize);
+		root = bm.getBTreePage(bm.newPage(), type, true);
 	}
 	
 	private class BCursor {

@@ -35,6 +35,7 @@ public class RawPage implements Page {
 			return false;
 		}
 	}
+	public RawPage(){}
 	public RawPage(File f, int pageid, boolean create) {
 		lastTime = System.currentTimeMillis();
 		dataFile = f;
