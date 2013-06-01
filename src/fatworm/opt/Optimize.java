@@ -16,7 +16,9 @@ public class Optimize {
 
 	private static Plan pushSelect(Plan plan) {
 		plan = decomposeAnd(plan);
-		return null;
+		// TODO figure out how to push select through Rename(renaming expressions)
+		// be more careful about requested & provided columns
+		return plan;
 	}
 
 	private static Plan decomposeAnd(Plan plan) {
