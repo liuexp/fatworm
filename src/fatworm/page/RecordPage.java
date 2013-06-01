@@ -158,6 +158,28 @@ public class RecordPage extends RawPage {
 		thisp.commit();
 		return thisid;
 	}
+	
+	private Integer fitRecords(Integer thisid, Record r)
+			throws Throwable {
+		Integer previd;
+		previd = thisid;
+		thisid = bm.newPage();
+		if(previd != null){
+			RecordPage pp = bm.getRecordPage(previd, false);
+			pp.beginTransaction();
+			pp.dirty = true;
+			pp.nextPageID = thisid;
+			pp.commit();
+		}
+		RecordPage thisp = bm.getRecordPage(thisid, true);
+		thisp.beginTransaction();
+		thisp.dirty = true;
+		thisp.prevPageID = previd;
+		boolean flag = thisp.tryAppendRecord(r);
+		assert flag;
+		thisp.commit();
+		return thisid;
+	}
 
 	private static Integer fitPartial(BufferManager bm, byte[] bytes, Integer thisid, int startOffset, int recordSize)
 			throws Throwable {
@@ -242,6 +264,7 @@ public class RecordPage extends RawPage {
 			byte [] tmpb = new byte[length];
 			System.arraycopy(partialBytes, lastOffset, tmpb, 0, length);
 			records.add(Record.fromByte(schema, tmpb));
+			lastOffset = offsetTable.get(i);
 		}
 	}
 	
@@ -282,7 +305,7 @@ public class RecordPage extends RawPage {
 		try {
 			dirty = true;
 			Integer realNext = nextPageID;
-			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords();
+			Integer thisid = split?fitPartial(bm, recordBytes, pageID, 0, recordBytes.length):fitRecords(pageID, r);
 			RecordPage rp = bm.getRecordPage(realNext, false);
 			rp.beginTransaction();
 			rp.dirty = true;
@@ -333,8 +356,8 @@ public class RecordPage extends RawPage {
 		dirty = true;
 	}
 
-	public void tryReclaim() {
-		if(cntRecord > 0 )return;
+	public boolean tryReclaim() {
+		if(!canReclaim() )return false;
 		try {
 			RecordPage rp = bm.getRecordPage(prevPageID, false);
 			rp.beginTransaction();
@@ -348,8 +371,14 @@ public class RecordPage extends RawPage {
 			rp.commit();
 			delete();
 			bm.releasePage(pageID);
+			return true;
 		} catch (Throwable e) {
 			e.printStackTrace();
+			return false;
 		}
+	}
+
+	public boolean canReclaim() {
+		return cntRecord <= 0 && !nextPageID.equals(pageID);
 	}
 }

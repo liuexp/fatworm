@@ -130,7 +130,8 @@ public class IOTable extends Table {
 		public void reset() {
 			pageID = IOTable.this.firstPageID;
 			offset = 0;
-			cache = DBEngine.getInstance().recordManager.getRecords(pageID, schema);
+			cache = getRecords(pageID);
+			reachedEnd = false;
 		}
 
 		@Override
@@ -145,7 +146,7 @@ public class IOTable extends Table {
 		}
 
 		private List<Record> getRecords(Integer pid) {
-			return DBEngine.getInstance().recordManager.getRecords(pid, schema);
+			return new ArrayList<Record>(DBEngine.getInstance().recordManager.getRecords(pid, schema));
 		}
 		
 		private Integer getNextPage() throws Throwable{
@@ -196,7 +197,11 @@ public class IOTable extends Table {
 			}else{
 				cache.remove(offset);
 			}
-			rp.tryReclaim();
+			boolean flag = rp.canReclaim();
+			if(flag && !pageID.equals(firstPageID)){ //it's safe to reclaim
+				rp.tryReclaim();
+				firstPageID = pageID;
+			}
 		}
 		
 		public void updateWithRecord(Record r) throws Throwable {
