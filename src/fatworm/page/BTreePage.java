@@ -2,6 +2,8 @@ package fatworm.page;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import fatworm.driver.DBEngine;
@@ -35,8 +37,8 @@ public class BTreePage extends RawPage {
 	// wait a second, if I dont reclaim space after deletion, it would be much better if I use bucketing...
 	private int nodeType;
 	private Integer parentPageID;
-	public List<Integer> children;
-	public List<BKey> key;
+	public ArrayList<Integer> children;
+	public ArrayList<BKey> key;
 	public int keyType;
 	public BTree btree;
 	public int fanout;
@@ -202,8 +204,8 @@ public class BTreePage extends RawPage {
 				}
 			}
 			
-			List<BKey> newlist1 = new ArrayList<BKey> ();
-			List<BKey> newlist2 = new ArrayList<BKey> ();
+			ArrayList<BKey> newlist1 = new ArrayList<BKey> ();
+			ArrayList<BKey> newlist2 = new ArrayList<BKey> ();
 			BKey toParent = key.get(mid);
 			if(isLeaf){
 				for(int i=0;i<mid;i++)
@@ -219,8 +221,8 @@ public class BTreePage extends RawPage {
 			key = newlist1;
 			newPage.key = newlist2;
 			
-			List<Integer> newchild1 = new ArrayList<Integer> ();
-			List<Integer> newchild2 = new ArrayList<Integer> ();
+			ArrayList<Integer> newchild1 = new ArrayList<Integer> ();
+			ArrayList<Integer> newchild2 = new ArrayList<Integer> ();
 			if(isLeaf){
 				for(int i=0;i<mid+1;i++)
 					newchild1.add(children.get(i));
@@ -285,14 +287,20 @@ public class BTreePage extends RawPage {
 	}
 
 	public int indexOf(BKey k){
-		int idx = 0;
-//		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
-		while(idx < key.size()){
-			if(key.get(idx) != null && k.compareTo(key.get(idx))<=0)
-				return idx;
-			idx++;
-		}
-		return idx;
+//		int idx = 0;
+////		while(idx < key.size() && (key.get(idx) == null || k.compareTo(key.get(idx)) >= 0)) idx++;
+//		while(idx < key.size()){
+//			if(key.get(idx) != null && k.compareTo(key.get(idx))<=0)
+//				return idx;
+//			idx++;
+//		}
+//		return idx;
+		return Collections.binarySearch(key, k, new Comparator<BKey>(){
+			@Override
+			public int compare(BKey arg0, BKey arg1) {
+				return arg0.compareTo(arg1);
+			}
+		});
 	}
 	public BCursor lookup(BKey k) throws Throwable{
 		int idx = indexOf(k);

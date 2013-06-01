@@ -19,6 +19,7 @@ public class Project extends Plan {
 	Env env;
 	boolean hasNullCol=false;
 	boolean hasProjectAll=false;
+	boolean noTablePrefix = false;
 
 	public Project(Plan src, List<Expr> expr, boolean hasProjectAll) {
 		super();
@@ -36,6 +37,8 @@ public class Project extends Plan {
 		this.schema.fromList(expr, src.getSchema());
 		this.names = this.schema.columnName;
 		this.hasProjectAll = hasProjectAll;
+		if(src.getSchema().isJoin)
+			noTablePrefix = true;
 	}
 
 	@Override
@@ -64,7 +67,11 @@ public class Project extends Plan {
 	public Record next() {
 		Env localenv = env.clone();
 		Record tmpr = src.next();
-		localenv.appendFromRecord(tmpr);
+//		if(noTablePrefix)
+//			localenv.appendFromRecord1(tmpr);
+//		else
+			localenv.appendFromRecord(tmpr);
+		
 		Record ret = new Record(schema);
 		//System.out.println(localenv.toString());
 		if(hasProjectAll){

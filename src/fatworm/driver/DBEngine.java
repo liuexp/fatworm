@@ -64,7 +64,7 @@ public class DBEngine {
 	public BufferManager btreeManager;
 	public BufferManager recordManager;
 	public final boolean turnOnIndex = true;
-	public final boolean turnOnDebug = true;
+	public final boolean turnOnDebug = false;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)

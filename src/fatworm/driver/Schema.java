@@ -30,6 +30,8 @@ public class Schema implements Serializable {
 	
 	public Column primaryKey;
 	public Map<String, Column> columnDef = new HashMap<String, Column>();
+
+	public boolean isJoin = false;
 	
 	public int findIndex(String x) {
 		if(x==null)return -1;
@@ -148,11 +150,11 @@ public class Schema implements Serializable {
 	public void fromList(List<Expr> expr, Schema src) {
 //		tableName = "ProjectFrom("+src.tableName+")";
 		tableName = src.tableName;
-		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
-			//System.out.println("meow");
-			columnName.addAll(src.columnName);
-			columnDef.putAll(src.columnDef);
-		}else {
+//		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
+//			//System.out.println("meow");
+//			columnName.addAll(src.columnName);
+//			columnDef.putAll(src.columnDef);
+//		}else {
 			for(int i=0;i<expr.size();i++){
 				Expr e = expr.get(i);
 				String colName = e.toString();
@@ -162,7 +164,7 @@ public class Schema implements Serializable {
 				columnDef.put(colName, col);
 				columnName.add(colName);
 			}
-		}
+//		}
 	}
 	@Override
 	public String toString(){
