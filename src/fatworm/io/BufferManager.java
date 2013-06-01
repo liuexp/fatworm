@@ -20,7 +20,7 @@ import fatworm.util.ByteBuilder;
 import fatworm.util.Util;
 
 public class BufferManager {
-	private static final long maxPages = 1024 * 1024 / 4; 	//maximum #pages a buffer manager can hold
+	private static final long maxPages = 1024 * 1024 / (File.pageMult); 	//maximum #pages a buffer manager can hold
 	public File dataFile;
 	public FreeList freeList;
 	public Map<Integer, Page> pages = new TreeMap<Integer, Page>();

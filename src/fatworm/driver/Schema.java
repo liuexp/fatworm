@@ -140,7 +140,8 @@ public class Schema implements Serializable {
 	}
 
 	public void fromList(List<Expr> expr, Schema src) {
-		tableName = "ProjectFrom("+src.tableName+")";
+//		tableName = "ProjectFrom("+src.tableName+")";
+		tableName = src.tableName;
 		if(expr.size()==0||Util.trim(expr.get(0).toString()).equals("*")){
 			//System.out.println("meow");
 			columnName.addAll(src.columnName);

@@ -92,8 +92,8 @@ public class DBEngine {
 		try {
 			return execute(t);
 		} catch (Throwable e) {
-			Util.error(e.getMessage());
-//			e.printStackTrace();
+//			Util.error(e.getMessage());
+			e.printStackTrace();
 			return new ResultSet(None.getInstance());
 		}
 	}
