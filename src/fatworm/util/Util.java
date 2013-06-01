@@ -348,7 +348,7 @@ public class Util {
 	}
 	
 	public static void warn(String x){
-//		System.err.println("[Warning]" + x);
+		System.err.println("[Warning]" + x);
 	}
 	
 	public static <T> boolean deepEquals(List<T> a, List<T> b){
