@@ -1,9 +1,11 @@
 package fatworm.main;
 
 import java.sql.ResultSet;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 
 import fatworm.absyn.BinaryExpr;
 import fatworm.absyn.BinaryOp;
@@ -16,6 +18,7 @@ import fatworm.field.Field;
 import fatworm.field.INT;
 import fatworm.field.TIMESTAMP;
 import fatworm.logicplan.Plan;
+import fatworm.page.Page;
 import fatworm.util.Util;
 
 public class Main {
@@ -49,6 +52,16 @@ public class Main {
 //		TIMESTAMP y = new TIMESTAMP("2013-04-20 14:50:28.118");
 //		System.out.println(x.applyWithComp(BinaryOp.LESS, y));
 //		System.out.println(new BinaryExpr(new Id("a"), BinaryOp.AND, new Id("b")).isAnd());
+//		TreeSet<Long> q= new TreeSet<Long> (new Comparator<Long>(){
+//			public int compare(Long a, Long b){
+//				return a.compareTo(b);
+//			}
+//		});
+//		q.add(System.currentTimeMillis());
+//		for(int i=0;i<10000;i++)q.first();
+//		q.add(System.currentTimeMillis());
+//		System.out.println(q.pollFirst());
+//		System.out.println(q.pollFirst());
 		System.out.print(">");
 		db.open("/tmp/meow");
 		while (in.hasNextLine()) {

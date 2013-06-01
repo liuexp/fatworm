@@ -411,6 +411,10 @@ public class Util {
 	public static String getMetaFile(String file) {
 		return file + ".meta";
 	}
+
+	public static String getFreeFile(String file) {
+		return file + ".free";
+	}
 	
 	// XXX this method should only be used for getRequestedColumns from subquery
 	public static void removeAllCol(Collection<String> a, Collection<String> b){
@@ -437,4 +441,5 @@ public class Util {
 				a.add(y);
 		}
 	}
+
 }

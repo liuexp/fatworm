@@ -3,6 +3,7 @@ package fatworm.driver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.runtime.tree.CommonTree;
@@ -23,6 +24,7 @@ public class MemTable extends Table {
 	private static final long serialVersionUID = -8437348728477933924L;
 	public transient List<Record> records;
 	public MemTable(){
+		//pageIDs = new LinkedList<Integer>();
 		initTransient();
 	}
 	public MemTable(CommonTree t){

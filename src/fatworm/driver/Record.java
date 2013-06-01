@@ -12,6 +12,7 @@ import fatworm.util.Util;
 public class Record {
 
 	public List<Field> cols = new ArrayList<Field>();
+	public Integer nullMap = 0;
 	public Schema schema;
 	public Record() {
 		// TODO Auto-generated constructor stub
