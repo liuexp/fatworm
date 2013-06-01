@@ -56,8 +56,11 @@ public class INT extends Field {
 			return Field.cmpHelper(op, value, ((INT)x).toDecimal());
 		case java.sql.Types.FLOAT:
 			return Field.cmpHelper(op, value, ((FLOAT)x).toDecimal());
+		case java.sql.Types.CHAR:
+		case java.sql.Types.VARCHAR:
+			return Field.cmpHelper(op, value, (new INT(x.toString())).toDecimal());
 		}
-		error2("INT.compWith missing type");
+		error2("INT.compWith missing type " + x.type);
 		return false;
 	}
 	@Override

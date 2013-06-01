@@ -100,6 +100,10 @@ public class ThetaJoin extends Plan {
 					}
 				}else{
 					lastRight = new ArrayList<Record>();
+					while(lval.applyWithComp(BinaryOp.GREATER, rval) && right.hasNext()){
+						curr = right.next();
+						rval = curr.getCol(rightName);
+					}
 					while(lval.applyWithComp(BinaryOp.EQ, rval)){
 						Record tmp = productRecord(curl, curr);
 						if(predTest(tmp))
@@ -112,10 +116,12 @@ public class ThetaJoin extends Plan {
 					}
 					lastr = lval;
 				}
-				if(!left.hasNext())break;
+				if(!left.hasNext())
+					break;
 				curl = left.next();
 			}
 		}
+//		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
 	}
 
 	private BinaryExpr findMergeJoin() {

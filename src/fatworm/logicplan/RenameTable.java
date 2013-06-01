@@ -11,7 +11,7 @@ import fatworm.util.Util;
 public class RenameTable extends Plan {
 
 	public Plan src;
-	String alias;
+	public String alias;
 	public Schema schema;
 	public RenameTable(Plan src, String alias) {
 		super();

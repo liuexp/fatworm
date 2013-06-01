@@ -109,4 +109,22 @@ public class Select extends Plan {
 		}
 	}
 
+	public boolean isPushable() {
+		if(pred.hasSubquery())
+			return false;
+		if(src instanceof Group || src instanceof FetchTable || src instanceof One || src instanceof None)
+			return false;
+		if(src instanceof ThetaJoin || src instanceof Rename )
+			return false;
+		if(src instanceof Project)
+			return ((Project)src).isConst();
+		if(src instanceof Select || src instanceof RenameTable)
+			return true;
+		if(src instanceof Join)
+			return Util.subsetof(pred.getRequestedColumns(), ((Join)src).left.getColumns()) || Util.subsetof(pred.getRequestedColumns(), ((Join)src).right.getColumns());
+		
+		Util.warn("Select isPushable meow!!!");
+		return false;
+	}
+
 }

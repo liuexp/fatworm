@@ -134,4 +134,11 @@ public class Project extends Plan {
 			}
 		}
 	}
+	
+	public boolean isConst(){
+		for(Expr e:expr){
+			if(!e.isConst)return false;
+		}
+		return true;
+	}
 }
