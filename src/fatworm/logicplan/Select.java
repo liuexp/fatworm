@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fatworm.absyn.Expr;
+import fatworm.absyn.BinaryExpr;
 import fatworm.driver.Record;
 import fatworm.driver.Schema;
 import fatworm.util.Env;
@@ -18,7 +19,11 @@ public class Select extends Plan {
 	public Select(Plan src, Expr pred) {
 		super();
 		this.src = src;
-		this.pred = pred;
+		if(pred instanceof BinaryExpr){
+			this.pred = ((BinaryExpr)pred).toCNF();
+		} else {
+			this.pred = pred;
+		}
 		src.parent = this;
 		myAggr.addAll(this.src.getAggr());
 	}

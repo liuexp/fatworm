@@ -215,13 +215,13 @@ public class BinaryExpr extends Expr {
 		Expr right = (r instanceof BinaryExpr)?((BinaryExpr)r).toCNF() : r;
 		BinaryExpr ret = null;
 		if(this.op == BinaryOp.OR){
-			if(left instanceof BinaryExpr && ((BinaryExpr)left).op == BinaryOp.AND){
+			if(left.isAnd()){
 				ret = new BinaryExpr(
 						new BinaryExpr(((BinaryExpr)left).l, BinaryOp.OR, right),
 						BinaryOp.AND,
 						new BinaryExpr(((BinaryExpr)left).r, BinaryOp.OR, right)
 						);
-			} else if(right instanceof BinaryExpr && ((BinaryExpr)right).op == BinaryOp.AND){
+			} else if(right.isAnd()){
 				ret = new BinaryExpr(
 						new BinaryExpr(left, BinaryOp.OR, ((BinaryExpr)right).l),
 						BinaryOp.AND,
@@ -235,6 +235,8 @@ public class BinaryExpr extends Expr {
 		else ret = ret.toCNF();
 		return ret;
 	}
+	
+
 
 	@Override
 	public List<String> getRequestedColumns() {
