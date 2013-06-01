@@ -250,7 +250,7 @@ public class BTreePage extends RawPage {
 			}
 			children = newchild1;
 			newPage.children = newchild2;
-//			Util.warn("BTree splitting:"+pageID+" to "+newPage.pageID);
+			Util.warn("BTree splitting:"+pageID+" to "+newPage.pageID);
 			if(!isRoot){
 				commit();
 				newPage.commit();
@@ -277,8 +277,9 @@ public class BTreePage extends RawPage {
 				newRoot.children = new ArrayList<Integer>();
 				newRoot.children.add(pageID);
 				newRoot.children.add(newPage.pageID);
-				DBEngine.getInstance().announceBTreeNewRoot(btree.root.getID(), newRoot.getID());
-//				Util.warn("BTree changing root!oldRoot="+btree.root.getID()+", newRoot="+newRoot.getID());
+//				DBEngine.getInstance().announceBTreeNewRoot(btree.root.getID(), newRoot.getID());
+				btree.table.announceNewRoot(btree.root.getID(), newRoot.getID());
+				Util.warn("BTree changing root!oldRoot="+btree.root.getID()+", newRoot="+newRoot.getID());
 				btree.root = newRoot;
 				newRoot.dirty = true;
 				newRoot.commit();

@@ -34,7 +34,7 @@ public class Record implements Serializable  {
 	}
 	public Field getCol(int idx) {
 		if(idx<0){
-			Util.warn("meow: column not found!"+by+" in? " + schema.toString());
+			Util.warn("meow");
 			return NULL.getInstance();
 		}
 		return cols.get(idx);

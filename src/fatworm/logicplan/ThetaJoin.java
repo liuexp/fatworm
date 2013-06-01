@@ -67,9 +67,6 @@ public class ThetaJoin extends Plan {
 				Util.warn("meow@ThetaJoin eval: Not merge-join, falling back to normal theta join.");
 				hasMergeJoin = false;
 			}
-			if(hasMergeJoin){
-				Util.warn("here left = " + leftName + ", right=" + rightName);
-			}
 //			if(hasMergeJoin){
 //				left = new Order(left, new ArrayList<Expr>(), lattr, orderType);
 //				left.parent = this;
@@ -155,7 +152,7 @@ public class ThetaJoin extends Plan {
 				curl = lresults.pollFirst();
 			}
 		}
-		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
+//		Util.warn("Watch me I'm Merge-Join!!! I got "+results.size()+" results");
 	}
 
 	private BinaryExpr findMergeJoin() {
