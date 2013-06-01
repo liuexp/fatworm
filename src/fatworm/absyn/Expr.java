@@ -1,5 +1,6 @@
 package fatworm.absyn;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import fatworm.driver.Schema;
@@ -39,4 +40,5 @@ public abstract class Expr {
 	public int getType(){
 		return type;
 	}
+	public abstract List<String> getRequestedColumns();
 }
