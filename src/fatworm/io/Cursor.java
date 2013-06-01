@@ -1,12 +1,14 @@
 package fatworm.io;
 
+import fatworm.driver.Record;
+
 public interface Cursor {
 
 	public void reset();
 	
-	public void next();
+	public void next() throws Throwable;
 	
-	public void prev();
+	public void prev() throws Throwable;
 	
 	public Object fetch(String col);
 	
@@ -16,5 +18,11 @@ public interface Cursor {
 	
 	public void close();
 
-	public boolean hasNext();
+	public boolean hasNext() throws Throwable;
+	
+	public Record fetchRecord();
+	
+	public Integer getIdx();
+
+	public boolean hasThis();
 }

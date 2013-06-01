@@ -60,7 +60,7 @@ public class RawPage implements Page {
 	protected Long lastTime;
 	public int size;
 	public ByteBuffer buf = ByteBuffer.allocateDirect(File.pageSize);
-	public int cnt = 1;
+	public int cnt = 0;
 	public boolean hasFlushed = false;
 	public boolean inTransaction = false;
 	
@@ -222,12 +222,14 @@ public class RawPage implements Page {
 	}
 	
 	public synchronized void updateSize(int o){
-		pool.remove(new rpEntry(remainingSize(), pageID));
-		if(size < o){
-			dirty = true;
-			size = o;
+		synchronized(pool){
+			pool.remove(new rpEntry(remainingSize(), pageID));
+			if(size < o){
+				dirty = true;
+				size = o;
+			}
+			pool.add(new rpEntry(remainingSize(), pageID));
 		}
-		pool.add(new rpEntry(remainingSize(), pageID));
 	}
 	
 	@Override

@@ -40,6 +40,7 @@ import static fatworm.parser.FatwormParser.SELECT_DISTINCT;
 import static fatworm.parser.FatwormParser.UPDATE;
 import static fatworm.parser.FatwormParser.USE_DATABASE;
 import fatworm.absyn.Expr;
+import fatworm.io.BufferManager;
 import fatworm.logicplan.None;
 import fatworm.logicplan.Plan;
 import fatworm.parser.FatwormLexer;
@@ -55,6 +56,8 @@ public class DBEngine {
 	private static DBEngine instance;
 	private Database db;
 	private String metaFile;
+	public BufferManager btreeManager;
+	public BufferManager recordManager;
 
 	public static synchronized DBEngine getInstance() {
 		if (instance == null)
@@ -79,15 +82,22 @@ public class DBEngine {
 			out.writeObject(dbList);
 			out.close();
 		}
+		recordManager = new BufferManager(file);
+		btreeManager = new BufferManager(Util.getBTreeFile(file));
 	}
 	
 	public ResultSet execute(String sql) throws Exception {
 		CommonTree t = parse(sql);
 		//System.out.println(t.toStringTree());
-		return execute(t);
+		try {
+			return execute(t);
+		} catch (Throwable e) {
+			Util.error(e.getMessage());
+			return new ResultSet(None.getInstance());
+		}
 	}
 
-	private ResultSet execute(CommonTree t) throws SQLException {
+	private ResultSet execute(CommonTree t) throws Throwable {
 		String name = null;
 		Expr e = null;
 		List<String> colName = new ArrayList<String>();
@@ -167,8 +177,13 @@ public class DBEngine {
 			return new ResultSet(None.getInstance());
 		case CREATE_INDEX:
 		case CREATE_UNIQUE_INDEX:
+			db.createIndex(t.getChild(0).getText().toLowerCase(),
+					t.getChild(1).getText().toLowerCase(),
+					t.getChild(2).getText().toLowerCase(),
+					t.getType() == CREATE_UNIQUE_INDEX);
+			return new ResultSet(None.getInstance());
 		case DROP_INDEX:
-			//TODO
+			db.dropIndex(t.getChild(0).getText().toLowerCase());
 		default:
 				throw new RuntimeException("not implemented.");
 		}
@@ -196,5 +211,9 @@ public class DBEngine {
 
 	public Table getTable(String tbl){
 		return db.getTable(tbl.toLowerCase());
+	}
+	
+	public Database getDatabase(){
+		return db;
 	}
 }

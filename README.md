@@ -7,9 +7,8 @@ Warning
 
 TODO
 ====================
+* watch it for SimpleCursor, because hasThis() is always true for a doubly linked list!!!
 * Btree, every node fills up a page. for int/float/long key it's okay just use a fixed length page. for var-length page, should I use extra page or var-length fanout?
-* Finish data manipulation language(index).
-* buffer manager
 * comparisons with Mysql
 * comparisons with NULL: store as NULL, only convert it on getObject; see MySQL's result on 
 

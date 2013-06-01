@@ -19,7 +19,6 @@ public class DataPage extends VarPage {
 	// for each record:
 	// first the nullmap, then go for each field according to metadata.
 	
-//	public List<Record> records;
 	// when a record doesn't fit into a page, I can't re-construct the record now.
 	// so I just leave the remaining byte[] into buffer
 	// FIXME wait a second maybe it's much better to just leave it as byte[] as it's easier to wrap up RecordAdapter

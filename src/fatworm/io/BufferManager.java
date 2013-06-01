@@ -3,11 +3,13 @@ package fatworm.io;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Comparator;
 
+import fatworm.driver.Record;
 import fatworm.page.BTreePage;
 import fatworm.page.DataPage;
 import fatworm.page.Page;
@@ -120,5 +122,13 @@ public class BufferManager {
 			rp.newEntry();
 			return rp;
 		}
+	}
+
+	public List<Record> getRecords(Integer pageID) {
+		return null;
+	}
+
+	public Integer getNextPage(Integer pageID) throws Throwable {
+		return getDataPage(pageID, false).nextPageID;
 	}
 }

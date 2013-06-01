@@ -13,6 +13,7 @@ import fatworm.absyn.Expr;
 import fatworm.field.Field;
 import fatworm.field.INT;
 import fatworm.field.NULL;
+import fatworm.io.Cursor;
 import fatworm.util.Env;
 import fatworm.util.Util;
 
@@ -40,20 +41,6 @@ public class MemTable extends Table {
 	    in.defaultReadObject();
 	    initTransient();
 	}
-
-	@Override
-	public int delete(Expr e){
-		int ret = 0;
-		for(Iterator<Record> itr = records.iterator();itr.hasNext();){
-			Record r = itr.next();
-			Env env = new Env();
-			env.appendFromRecord(r);
-			if(e!=null&&!e.evalPred(env))continue;
-			itr.remove();
-			ret++;
-		}
-		return ret;
-	}
 	
 	@Override
 	public int update(List<String> colName, List<Expr> expr, Expr e){
@@ -75,54 +62,76 @@ public class MemTable extends Table {
 	}
 
 	@Override
-	public int insert(Tree t) {
-		int ret = 0;
-		Record r = new Record(schema);
-		r.autoFill();
-		for(int i=0;i<t.getChildCount();i++){
-			Tree c = t.getChild(i);
-			String colName = schema.columnName.get(i);
-			r.setField(colName, Util.getField(schema.getColumn(colName), c));
-		}
-		records.add(r);
-		ret++;
-		return ret;
-	}
-
-	@Override
-	public int insert(CommonTree t, Tree v) {
-		int ret = 0;
-		Record r = new Record(schema);
-		r.autoFill();
-		for(int i=0;i<v.getChildCount();i++){
-			String colName = t.getChild(i+1).getText();
-			//Column c = r.schema.getColumn(i);
-			//if(c.type == java.sql.Types.CHAR || c.type == java.sql.Types.VARCHAR)
-				//trim to c.M
-			r.setField(colName, Util.getField(schema.getColumn(colName), v.getChild(i)));
-		}
-		for(int i=0;i<r.cols.size();i++){
-			if(r.cols.get(i) != null)continue;
-			Column c = r.schema.getColumn(i);
-			if(c.notNull){
-				r.cols.set(i, new INT(c.getAutoInc()));
-			} else {
-				r.cols.set(i, NULL.getInstance());
-			}
-		}
-		records.add(r);
-		ret++;
-		return ret;
-	}
-
-	@Override
-	public Schema getSchema() {
-		return schema;
-	}
-
-	@Override
 	public void addRecord(Record r) {
 		records.add(r);
+	}
+	@Override
+	public void deleteAll() {
+		records = new ArrayList<Record>();
+	}
+	@Override
+	public Cursor open() {
+		return new MemCursor();
+	}
+	
+	public class MemCursor implements Cursor{
+
+		public int idx = 0;
+		@Override
+		public void reset() {
+			idx = 0;
+		}
+
+		@Override
+		public void next() {
+			idx ++;
+		}
+
+		@Override
+		public void prev() {
+			idx--;
+		}
+
+		@Override
+		public Object fetch(String col) {
+			return fetchRecord().getCol(col);
+		}
+
+		@Override
+		public Object[] fetch() {
+			return fetchRecord().cols.toArray();
+		}
+
+		@Override
+		public void delete() throws Throwable {
+			records.remove(idx);
+		}
+
+		@Override
+		public void close() {
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			return idx < records.size() - 1;
+		}
+
+		@Override
+		public Record fetchRecord() {
+			return records.get(idx);
+		}
+
+		@Override
+		public Integer getIdx() {
+			return idx;
+		}
+
+		@Override
+		public boolean hasThis() {
+			return idx >=0 && idx < records.size();
+		}
+		
 	}
 	
 }

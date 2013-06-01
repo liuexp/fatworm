@@ -10,6 +10,7 @@ import java.util.List;
 
 import fatworm.io.BKey;
 import fatworm.io.BTree;
+import fatworm.io.Cursor;
 import fatworm.io.File;
 import fatworm.util.Util;
 
@@ -194,10 +195,11 @@ public class BTreePage extends RawPage {
 				for(int i=mid;i<children.size();i++){
 					Integer cpid = children.get(i);
 					newchild2.add(cpid);
-					BTreePage cp = getPage(cpid);
-					cp.beginTransaction();
-					cp.parentPageID = newPage.pageID;
-					cp.commit();
+					//FIXME leaf node's child is value
+//					BTreePage cp = getPage(cpid);
+//					cp.beginTransaction();
+//					cp.parentPageID = newPage.pageID;
+//					cp.commit();
 				}
 			}else {
 				for(int i=0;i<mid;i++)
@@ -248,12 +250,12 @@ public class BTreePage extends RawPage {
 
 	public int indexOf(BKey k){
 		int idx = 0;
-		while((key.get(idx) == null || k.compareTo(key.get(idx)) > 0) && idx < key.size()) idx++;
+		while((key.get(idx) == null || k.compareTo(key.get(idx)) >= 0) && idx < key.size()) idx++;
 		return idx;
 	}
 	public BCursor lookup(BKey k) throws Throwable{
 		int idx = indexOf(k);
-		return isLeaf()? new BCursor(idx) : getPage(children.get(idx == key.size() ? idx : idx+1)).lookup(k);
+		return isLeaf()? new BCursor(idx) : getPage(children.get(idx)).lookup(k);
 	}
 
 	public synchronized void remove(Integer idx) throws Throwable {
@@ -300,10 +302,22 @@ public class BTreePage extends RawPage {
 		return getPage(parentPageID);
 	}
 
+	public void delete() throws Throwable {
+		if(!isLeaf()){
+			for(int i=0;i<children.size();i++){
+				getPage(children.get(i)).delete();
+			}
+		}
+		for(int i=0;i<key.size();i++){
+			key.get(i).delete();
+		}
+		btree.bm.releasePage(pageID);
+	}
+
 	// Index for key: 0<= idx < key.size()
 	// idx < 0 or idx >= key.size() indicate notFound
 	// to get the children/value of that key, it's associated with children[idx+1]
-	private final class BCursor {
+	public final class BCursor {
 		private final Integer idx;
 		
 		public BCursor(int idx){
@@ -365,4 +379,5 @@ public class BTreePage extends RawPage {
 			return idx >=0 && idx < key.size();
 		}
 	}
+
 }
