@@ -56,4 +56,18 @@ public abstract class Expr {
 //	public abstract boolean canEvalOn(Schema schema);
 	public abstract void rename(String oldName, String newName);
 	public abstract boolean hasSubquery();
+	
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Expr){
+			Expr e = (Expr) o;
+			return toString().equalsIgnoreCase(e.toString());
+		}
+		return false;
+	}
 }

@@ -68,7 +68,7 @@ public class Util {
 		switch(t.getType()){
 		case FatwormParser.SELECT:
 		case FatwormParser.SELECT_DISTINCT:
-			return new QueryCall(Util.transSelect((BaseTree) t));
+			return new QueryCall(Util.transSelect((BaseTree) t, false));
 		case FatwormParser.SUM:
 		case FatwormParser.AVG:
 		case FatwormParser.COUNT:
@@ -97,15 +97,15 @@ public class Util {
 		case FatwormParser.EXISTS:
 		case FatwormParser.NOT_EXISTS:
 			if(!(t.getChild(0) instanceof BaseTree))return null;
-			return new ExistCall(transSelect((BaseTree) t.getChild(0)), t.getType() == FatwormParser.NOT_EXISTS);
+			return new ExistCall(transSelect((BaseTree) t.getChild(0), false), t.getType() == FatwormParser.NOT_EXISTS);
 		case FatwormParser.IN:
 			// FIXME according to Fatowrm.g only subquery is allowed
 			// FIXME according to Fatowrm.g there's no NOT_IN
-			return new InCall(transSelect((BaseTree)t.getChild(1)), getExpr(t.getChild(0)), t.getType() != FatwormParser.IN);
+			return new InCall(transSelect((BaseTree)t.getChild(1), false), getExpr(t.getChild(0)), t.getType() != FatwormParser.IN);
 		case FatwormParser.ANY:
 		case FatwormParser.ALL:
 			// FIXME according to Fatowrm.g only subquery is allowed
-			return new AnyCall(transSelect((BaseTree) t.getChild(2)), getExpr(t.getChild(0)), getBinaryOp(t.getChild(1).getText()), t.getType() == FatwormParser.ALL);
+			return new AnyCall(transSelect((BaseTree) t.getChild(2), false), getExpr(t.getChild(0)), getBinaryOp(t.getChild(1).getText()), t.getType() == FatwormParser.ALL);
 			default:
 				BinaryOp op = getBinaryOp(t.getText());
 				if(op!=null && t.getChildCount() == 2){
@@ -154,7 +154,7 @@ public class Util {
 		return s.substring(1, s.length() - 1);
 	}
 
-	public static Plan transSelect(BaseTree t) {
+	public static Plan transSelect(BaseTree t, boolean turnOnOpt) {
 		// Note: Group can't do projection at the same time as order might need those abandoned fields.
 		//			Rename must go after group
 		//			order must go after rename
@@ -277,8 +277,8 @@ public class Util {
 			ret = new Rename(ret, alias);
 		if(t.getType() == SELECT_DISTINCT) //hasDistinct
 			ret = new Distinct(ret);
-		
-		return Optimize.optimize(ret);
+
+		return turnOnOpt?Optimize.optimize(ret):ret;
 	}
 
 	public static Plan transFrom(BaseTree t) {
@@ -291,7 +291,7 @@ public class Util {
 			String as = null;
 			if(y.getType() == FatwormParser.AS){
 				if(y.getChild(0).getType() == SELECT || y.getChild(0).getType() == SELECT_DISTINCT){
-					src = transSelect((BaseTree) y.getChild(0));
+					src = transSelect((BaseTree) y.getChild(0), true);
 				}else table = y.getChild(0).getText();
 				as = y.getChild(1).getText();
 			} else table = y.getText();

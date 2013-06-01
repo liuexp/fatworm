@@ -61,7 +61,9 @@ public class Id extends Expr {
 
 	@Override
 	public void rename(String oldName, String newName) {
-		if(Util.getAttr(oldName).equalsIgnoreCase(Util.getAttr(name))){
+//		if(Util.getAttr(oldName).equalsIgnoreCase(Util.getAttr(name))){
+		if((!name.contains(".")&&Util.getAttr(oldName).equalsIgnoreCase(Util.getAttr(name)))||
+				oldName.equalsIgnoreCase(name)){
 			name = newName;
 		}
 	}
