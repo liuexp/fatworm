@@ -29,7 +29,7 @@ public class Column implements Serializable {
 		this.notNull = notNull;
 		this.autoIncrement = autoIncrement;
 		this.defaultValue = defaultValue;
-		this.ai = 0;
+		this.ai = 1;
 	}
 	public Column(String n, int ty){
 		this(n, ty, false, false, null);

@@ -50,8 +50,8 @@ Testing
         insert into t3 values (9,9)
         select * from t1 group by b having exists(select * from t3 group by c having sum(a) = 6)
         select * from t1 group by b having exists(select * from t2 group by b having sum(a) = 9)
-        select a+b as c from t1 order by c
-        select a+b as c from t1 order by a
+        select 5-(a+b) as c from t1 order by c
+        select 5-(a+b) as c from t1 order by a
         drop table t1
         drop table t2
         drop table t3

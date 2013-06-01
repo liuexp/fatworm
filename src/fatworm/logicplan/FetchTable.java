@@ -14,11 +14,19 @@ public class FetchTable extends Plan {
 	public String tableName;
 	public Table table;
 	public int ptr = 0;
+	Schema schema;
 	public FetchTable(String table) {
 		super();
 		tableName = table;
 		this.table = DBEngine.getInstance().getTable(table);
 		if(table==null)Util.error("meow");
+		this.schema = new Schema(this.table.getSchema().tableName);
+		for(String old:this.table.getSchema().columnName){
+			String now = this.table.schema.tableName + "." + Util.getAttr(old);
+			schema.columnDef.put(now, this.table.getSchema().getColumn(old));
+			schema.columnName.add(now);
+		}
+		schema.primaryKey = this.table.getSchema().primaryKey;
 	}
 
 	// TODO Range Fetch?
@@ -51,7 +59,7 @@ public class FetchTable extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		return table.schema;
+		return schema;
 	}
 
 	@Override

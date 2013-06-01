@@ -4,6 +4,7 @@ package fatworm.driver;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class DBEngine {
 	
 	public ResultSet execute(String sql) throws Exception {
 		CommonTree t = parse(sql);
-		System.out.println(t.toStringTree());
+		//System.out.println(t.toStringTree());
 		return execute(t);
 	}
 
@@ -72,7 +73,7 @@ public class DBEngine {
 		case SELECT:
 		case SELECT_DISTINCT:
 			plan = Util.transSelect(t);
-			System.out.println(plan.toString());
+			//System.out.println(plan.toString());
 			plan.eval(new Env());
 			return new ResultSet(plan);
 		case USE_DATABASE:
@@ -86,7 +87,8 @@ public class DBEngine {
 		case DROP_DATABASE:
 			name = t.getChild(0).getText().toLowerCase();
 			dbList.remove(name);
-			//TODO what if db.name.equals(name)
+			if(db.name.equals(name))
+				db = null;
 			return new ResultSet(None.getInstance());
 		case CREATE_TABLE:
 			name = t.getChild(0).getText().toLowerCase();
@@ -98,7 +100,7 @@ public class DBEngine {
 			return new ResultSet(None.getInstance());
 		case DELETE:
 			name = t.getChild(0).getText().toLowerCase();
-			e = t.getChildCount() == 1 ? null : Util.getExpr(t.getChild(0).getChild(1));
+			e = t.getChildCount() == 1 ? null : Util.getExpr(t.getChild(1).getChild(0));
 			db.getTable(name).delete(e);
 			return new ResultSet(None.getInstance());
 		case UPDATE:
@@ -127,8 +129,14 @@ public class DBEngine {
 			table = db.getTable(name);
 			plan = Util.transSelect((BaseTree) t.getChild(1));
 			plan.eval(new Env());
+			//FIXME this should be put onto disk
+			List<Record> tmpTable = new LinkedList<Record>();
 			while(plan.hasNext()){
-				table.records.add(plan.next());
+				Record r = plan.next();
+				tmpTable.add(r);
+			}
+			for(Record r:tmpTable){
+				table.records.add(r);
 			}
 			plan.close();
 			return new ResultSet(None.getInstance());

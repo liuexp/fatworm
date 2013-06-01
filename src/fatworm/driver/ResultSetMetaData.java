@@ -112,7 +112,7 @@ public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
 	@Override
 	public int getColumnType(int column) throws SQLException {
-		return schema.columnDef.get(schema.columnName.get(column-1)).type;
+		return schema.getColumn(schema.columnName.get(column-1)).type;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class RenameTable extends Plan {
 			String b = schema.tableName + "." + Util.getAttr(a);
 			
 			schema.columnName.add(b);
-			schema.columnDef.put(b, src.getSchema().columnDef.get(a));
+			schema.columnDef.put(b, src.getSchema().getColumn(a));
 		}
 		schema.primaryKey = src.getSchema().primaryKey;
 	}

@@ -40,9 +40,9 @@ public class Order extends Plan {
 		for(String colName : scm.columnName){
 			String ocol = colName;
 			colName = Util.getAttr(colName);
-			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(this.schema.tableName+"."+colName))
+			if(this.schema.columnDef.containsKey(colName)||this.schema.columnDef.containsKey(ocol))
 				continue;
-			this.schema.columnDef.put(colName, scm.columnDef.get(ocol));
+			this.schema.columnDef.put(colName, scm.getColumn(ocol));
 			this.schema.columnName.add(colName);
 			this.expandedCols.add(colName);
 		}

@@ -21,11 +21,11 @@ public class Rename extends Plan {
 		myAggr.addAll(this.src.getAggr());
 		//FIXME HOW to do this at all?
 		this.schema = new Schema(src.getSchema().tableName);
-		for(int i = 0; i < src.getSchema().columnName.size(); ++i){
+		for(int i = 0; i < src.getSchema().columnName.size(); i++){
 			String old = src.getSchema().columnName.get(i);
 			//Actually here according to grammar, asName shouldn't have a '.' in it.
 			String now = schema.tableName + "." + Util.getAttr(as.get(i));
-			schema.columnDef.put(now, src.getSchema().columnDef.get(old));
+			schema.columnDef.put(now, src.getSchema().getColumn(old));
 			schema.columnName.add(now);
 		}
 		schema.primaryKey = src.getSchema().primaryKey;
