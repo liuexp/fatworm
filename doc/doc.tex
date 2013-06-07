@@ -1,0 +1,158 @@
+\documentclass[mathserif]{beamer}
+\usepackage{indentfirst}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{fancybox}
+\usepackage{fancyvrb}
+%\usepackage{minted}
+\usepackage{color}
+\usepackage{makeidx}
+\usepackage{xeCJK}
+%\setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={AR PL New Kai}]{Adobe Song Std}
+\setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]{Adobe Song Std}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{array}
+\usepackage{gnuplot-lua-tikz}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,anchorcolor=green,citecolor=blue}
+\usepackage{wrapfig}
+%\usepackage{lettrine}
+%\usepackage{abstract}
+
+% THEOREMS -------------------------------------------------------
+\newtheorem{Thm}{Theorem}
+\newtheorem{Cor}[Thm]{Corollary}
+\newtheorem{Conj}[Thm]{Conjecture}
+\newtheorem{Lem}[Thm]{Lemma}
+\newtheorem{Prop}[Thm]{Proposition}
+\newtheorem{Prob}{Problem}
+\newtheorem{Exam}{Example}
+\newtheorem{Def}[Thm]{Definition}
+\newtheorem{Rem}[Thm]{Remark}
+\newtheorem{Not}[Thm]{Notation}
+\newtheorem*{Sol}{Solution}
+
+% MATH -----------------------------------------------------------
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\BX}{\mathbf{B}(X)}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\CommentS}[1]{}
+% CODE ----------------------------------------------------------
+\newcommand{\PltImg}[1]{
+\begin{center}
+\input{#1}
+\end{center}
+}
+
+\newenvironment{code}%
+{\vglue 5pt \VerbatimEnvironment\begin{Sbox}\begin{minipage}{0.9\textwidth}\begin{small}\begin{Verbatim}}%
+{\end{Verbatim}\end{small}\end{minipage}\end{Sbox}\setlength{\shadowsize}{2pt}\shadowbox{\TheSbox}\vglue 5pt}
+
+
+\usepackage{pgf}
+%\usepackage{tikz}
+%\usetikzlibrary{arrows,automata}
+%\usepackage[latin1]{inputenc}
+\usepackage{verbatim}
+\usepackage{listings}
+%\usepackage{algorithmic} %old version; we can use algorithmicx instead
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode} %for pseudo code, include algorithmicsx automatically
+
+\lstdefinelanguage{Smalltalk}{
+  morekeywords={self,super,true,false,nil,thisContext}, % This is overkill
+  morestring=[d]',
+  morecomment=[s]{"}{"},
+  alsoletter={\#:},
+  escapechar={!},
+  literate=
+    {BANG}{!}1
+    {UNDERSCORE}{\_}1
+    {\\st}{Smalltalk}9 % convenience -- in case \st occurs in code
+    % {'}{{\textquotesingle}}1 % replaced by upquote=true in \lstset
+    {_}{{$\leftarrow$}}1
+    {>>>}{{\sep}}1
+    {^}{{$\uparrow$}}1
+    {~}{{$\sim$}}1
+    {-}{{\sf -\hspace{-0.13em}-}}1  % the goal is to make - the same width as +
+    %{+}{\raisebox{0.08ex}{+}}1		% and to raise + off the baseline to match -
+    {-->}{{\quad$\longrightarrow$\quad}}3
+	, % Don't forget the comma at the end!
+  tabsize=2
+}[keywords,comments,strings]
+
+\lstloadlanguages{C++, Lisp, Haskell, Python, Smalltalk, Mathematica, Java,bash,Gnuplot,make,Matlab,PHP,Prolog,R,Ruby,sh,SQL,TeX,XML}
+
+
+\title{What Makes Fatworm in Java a Terrible Idea}
+\author{Jingcheng Liu}
+\institute{ACM 2010}
+%\usetheme{Warsaw}
+\usetheme{Madrid}
+%\usetheme[numbers,totalnumber,compress,sidebarshades]{PaloAlto}
+%\usetheme{Copenhagen}
+%\usecolortheme{whale}
+\usecolortheme{seahorse}
+%\setbeamercolor{background canvas}{bg=blue!9} 
+\setbeamertemplate{theorems}[ams style]
+\setbeamertemplate{navigation symbols}{}      
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{
+	\frametitle{Outline}
+	\tableofcontents
+}
+\section{Motivating Example}
+\frame{
+	\frametitle{Examples}
+Here I'm going to demonstrate how a simple change of coding style leads to 16x performance gain,
+which could easily overwhelm many more general optimizations on Logic Plan.
+\begin{Exam}
+	Evaluating binary expressions.%: sort/sort, indexTest/testIndex_hugeIndex.
+\end{Exam}
+%should I push Select through Rename?
+%precise env construction
+%rename expressions with a shorter name
+%fromString, toString, fromDecimal, toDecimal
+%hugeIndex : precise interval => mark un-necessary predicate evaluation.
+\begin{Exam}
+	Product list faster than binary product?
+\end{Exam}
+%after equivalent expressions and constant propogation, and manual direction of adjusting product plan, no significant difference given these data.
+%what really make a difference is Java method call => no tail call optimization, no continuation passing style
+}
+\section{Analysis}
+\frame{
+	\frametitle{What leads to such huge difference}
+	Besides alias, the source of all other evils: Java and JVM.
+
+	Let's leave this section commented out until presentation.
+	\begin{itemize}
+			\item reason 1 %Object is slow
+			\item reason 2 %Method call/recursion is slow(no tail call optimization)
+			\item reason 3 %Speed of evaluating binary expressions(wraping and unwraping of String/Decimal)
+	\end{itemize}
+}
+
+\section{Conclusion}
+\frame{
+	\frametitle{Conclusion}
+	Let's leave this section commented out until presentation.
+%\begin{itemize}
+%	\item Had there been no alias, there would be no more wars.
+%	\item Java didn't guarantee a natural but efficient way to write the code. % checkout Haskell's Monad!
+%	\item If you have to tackle the details yourselves why bother Java, we already have C/C++.
+%\end{itemize}
+}
+\end{document}

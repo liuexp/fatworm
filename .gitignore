@@ -2,3 +2,8 @@ bin/*
 .classpath
 .project
 JingchengLiu_5100309243*
+*.toc
+*.snm
+*.out
+*.nav
+*.toc
