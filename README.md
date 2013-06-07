@@ -5,7 +5,7 @@ Fatworm
 * OPT: select pusher.
 * OPT: order cleanup.
 * OPT: precise env construction.
-* OPT: precise index utilization:  this BTree index is comparably fast (<2%) as some classmate using purely in-memory TreeMap for indexing, and 2x~3x faster than others using BTree index.
+* OPT: precise index utilization: with certain greedy heuristics, this BTree index is comparably fast (difference<2%) as some classmate using purely in-memory TreeMap for indexing, and 2x~3x faster than others using BTree index.
 * OPT: equivalent expressions propagation and constant propagation.
 
 TODO
