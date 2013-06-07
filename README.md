@@ -1,19 +1,15 @@
 Fatworm
 =======================
-
-Warning
-=====================
-* Always push to git before git rebase trunk and git svn dcommit
+* Recall the Honor Code, and use at your own RISK!!!
+* A database engine with BTree for index and tuned buffer manager for I/O.
+* OPT: select pusher.
+* OPT: order cleanup.
+* OPT: precise env construction.
+* OPT: precise index utilization:  this BTree index is comparably fast (<2%) as some classmate using purely in-memory TreeMap for indexing, and 2x~3x faster than others using BTree index.
+* OPT: equivalent expressions propagation and constant propagation.
 
 TODO
 ====================
-* looks like RawPage's cnt & deletion isn't correctly handled
-* !!! index hasn't been turned on actually...
-* watch for BCursor, after deletion there might be empty pages.
-* OPT: Reconstruct Join List according to AndList s.t. more inner join is Theta join, the better.(arno/query, trii/fatworm-select).
-* OPT: improve eval speed on Env.
-* OPT: String pool in memory & serialize
-* Extract the expanding table procedure(on those expressions without aggregate) to run it before GROUP and ORDER
 
 Testing
 ======================
